@@ -16,12 +16,12 @@ const IP = {
     { name: "Management Co", entity: "Delaware LLC", ownership: "75% LLC / 25% LLC", services: ["TBD"] },
   ],
   verticals: [
-    { name: "Residences", color: "#4A5D23", services: ["Brand / License", "Technical Services*", "For-Sale Branded Residences", "Memberships"], note: "*Design; Guest Experiences; Branding; Marketing; PR" },
-    { name: "Hospitality", color: "#3A6B7E", services: ["Hotels", "Retreat Centers", "Short-Term Rentals", "Memberships"] },
-    { name: "Retail", color: "#B8963E", services: ["Brick & Mortar", "Concepting & Consulting", "Chozen CPG"] },
-    { name: "Wellness / Spa", color: "#8B6B4A", services: ["Customer Facing", "Back end IT"] },
+    { name: "Residences", color: "#4A5D23", services: ["Brand / License", "Technical Services*", "For-Sale Branded Residences", "Memberships"], note: "*Design; Guest Experiences; Branding; Marketing; PR", ownership: "100% LLC" },
+    { name: "Hospitality", color: "#3A6B7E", services: ["Hotels", "Retreat Centers", "Short-Term Rentals", "Memberships"], ownership: "100% LLC" },
+    { name: "Retail", color: "#B8963E", services: ["Brick & Mortar", "Concepting & Consulting", "Chozen CPG"], ownership: "100% LLC" },
+    { name: "Wellness / Spa", color: "#8B6B4A", services: ["Customer Facing", "Back end IT"], ownership: "100% LLC" },
     { name: "Technology", color: "#5A5A6B", services: ["Customer-facing (app)", "Back end IT"], ownership: "80% LLC / 15% Third Party" },
-    { name: "Programming", color: "#6B4A6B", services: ["Consulting**", "Marketing & Partnerships", "Onsite Experiences"], note: "**Ongoing Neighborhood & Community Dev; Residents\u2019 Experience; Community Events; Marketing & PR Advisement" },
+    { name: "Programming", color: "#6B4A6B", services: ["Consulting**", "Marketing & Partnerships", "Onsite Experiences"], note: "**Ongoing Neighborhood & Community Dev; Residents\u2019 Experience; Community Events; Marketing & PR Advisement", ownership: "100% LLC" },
   ],
 };
 
@@ -92,22 +92,6 @@ const MEMBERSHIP = {
   ],
 };
 
-const CURRENT_ORG = [
-  { name: "CHOZEN Land", entity: "Delaware LLC", owner: "Tony Cho \u2014 100%", items: ["Chozen Florida Land", "Chozen Florida Buildings"] },
-  { name: "CHOZEN Operations", entity: "Delaware LLC", owner: "Tony Cho \u2014 100%", items: ["Retreat Operations", "Caf\u00e9", "Events", "Hospitality", "Memberships"] },
-  { name: "CHOZEN CCRL", entity: "Delaware LLC", owner: "LLC \u2014 100%", items: ["Operations moving into CCRL"] },
-  { name: "CHOZEN IP", entity: "Delaware LLC", owner: "LLC \u2014 100%", items: ["IP will move here"] },
-];
-
-const OFFERINGS = [
-  { name: "Community Center", items: ["Members Club", "Venues"] },
-  { name: "Retail", items: ["Brick & Mortar", "CPG"] },
-  { name: "Programming", items: ["Partnerships", "Outdoor Rec", "Meditation", "Boat Tours", "Bird Watching", "Events"] },
-  { name: "Residences", items: ["Short-Term Rentals", "Residential Homes (pending)"] },
-  { name: "Hospitality", items: ["Glamping (pending)", "Overnight Accommodation", "Retreat", "Spa", "Caf\u00e9", "Catering", "Members Club"] },
-  { name: "Technology", items: ["Customer Facing (pending)", "Back end IT (pending)"] },
-];
-
 const PILLARS = [
   { icon: "\uD83C\uDF31", title: "Regenerative Onsite Agriculture", yesLabel: "TRUE ORGANIC ONSITE AGRICULTURE", noLabel: "CONVENTIONAL EXTERNAL FOOD SOURCING", yes: "Regenerative onsite agriculture model rooted in native biodiversity and organic production. Food as medicine. Land health through data-driven sustainability.", no: "No greenwashing. No chemical fertilizers, synthetic pesticides, fungicides, or herbicides. No growing only annuals or ornamental non-edible plants.", tags: ["Soil Health", "Agroforestry", "Permaculture", "Syntropic Farming"] },
   { icon: "\u2726", title: "Holistic Wellbeing", yesLabel: "VITALITY INSPIRED BY NATURE", noLabel: "HUMAN UPGRADE COSPLAY", yes: "Performance, longevity, and regenerative healing through advanced wellness technology and practitioner access. Cryotherapy, contrast thermal therapy, compression, IV modalities.", no: "No superficial wellness tactics or unqualified practitioners. No outsourced IV compounding. No shallow bio-optimization.", tags: ["Nature-Based Rhythms", "Thermal Therapy", "Longevity"] },
@@ -119,14 +103,6 @@ const PILLARS = [
   { icon: "\u267B\uFE0F", title: "Circular Operations", yesLabel: "CLOSED-LOOP OPERATIONS", noLabel: "CONVENTIONAL MANAGEMENT", yes: "Smart energy, renewable power, low-impact fixtures, toxin-free cleaning, local food, sustainability education. No plastics.", no: "No wasteful energy, chemical-laden products, factory-farmed food, or single-use plastics.", tags: ["No Plastics", "Solar", "Compost", "Aspiring Net Zero"] },
   { icon: "\u2764\uFE0F", title: "Serving Local Community", yesLabel: "SERVING THE COMMUNITY", noLabel: "EXTRACTIVE ECONOMICS", yes: "Partnerships with local non-profits. Marine and land conservation. ESG-focused scholarships.", no: "Not an isolated or extractive model that overlooks local impact.", tags: ["Makers Spaces", "Artisan Markets", "Artist Residencies"] },
   { icon: "\uD83C\uDFFA", title: "Sacred Retail \u2014 Casa Colibri", yesLabel: "SACRED RETAIL", noLabel: "MASS-PRODUCED & GREENWASHED", yes: "Curates only brands meeting rigorous standards for ingredient quality, ethical sourcing. Local artisans, indigenous peoples, recyclable/refillable offerings.", no: "No mass-produced or low-quality products. No virgin plastics or greenwashed wellness products.", tags: ["Casa Colibri IP", "Artisanal", "Indigenous Sacred Goods"] },
-];
-
-const SOURCES = [
-  "Savills. 2025. Branded Residences 2024/2025.",
-  "Savills. 2024. Spotlight: Branded Residences - The Americas.",
-  "KnightFrank. September 8, 2025. The Global Branded Residences Survey 2025.",
-  "Marriott Autograph Collection. 2022. Term Sheet.",
-  "Proper. 2024. Term Sheet.",
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -147,7 +123,7 @@ function Nav() {
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
-  const links = [{ href: "#ip", label: "IP Structure" }, { href: "#fee-summary", label: "Fee Summary" }, { href: "#fees", label: "Fee Schedule" }, { href: "#membership", label: "Membership" }, { href: "#org", label: "Org Chart" }, { href: "#brand", label: "Brand" }, { href: "#sources", label: "Sources" }];
+  const links = [{ href: "#ip", label: "IP Structure" }, { href: "#fee-summary", label: "Fee Summary" }, { href: "#fees", label: "Fee Schedule" }, { href: "#membership", label: "Membership" }, { href: "#brand", label: "Brand" }];
   return (
     <nav className={`nav ${scrolled ? "scrolled" : ""}`}>
       <div className="navInner">
@@ -156,17 +132,6 @@ function Nav() {
         <button className="navToggle" onClick={() => setOpen(!open)} aria-label="Menu"><span /><span /><span /></button>
       </div>
     </nav>
-  );
-}
-
-function EntityCard({ node }) {
-  return (
-    <div className="ipCard">
-      <h4>{node.name}</h4>
-      <div className="ipEntity">{node.entity}</div>
-      <div className="ipOwnership">{node.ownership || node.owner}</div>
-      <ul>{(node.services || node.items || []).map((s) => <li key={s}>{s}</li>)}</ul>
-    </div>
   );
 }
 
@@ -193,6 +158,188 @@ function Pillar({ p }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// ORG CHART DIAGRAM (matches Excel screenshot layout)
+// ═══════════════════════════════════════════════════════════════
+
+function OrgDiagram() {
+  const boxStyle = (accent) => ({
+    background: "white",
+    border: "1px solid var(--border)",
+    borderTop: accent ? `3px solid ${accent}` : "1px solid var(--border)",
+    borderRadius: "var(--radius)",
+    padding: "16px 20px",
+    fontSize: "0.78rem",
+    lineHeight: 1.6,
+    color: "var(--text-mid)",
+    position: "relative",
+  });
+  const headerStyle = (bg) => ({
+    background: bg || "var(--earth)",
+    color: "white",
+    padding: "8px 16px",
+    borderRadius: "var(--radius) var(--radius) 0 0",
+    fontSize: "0.72rem",
+    fontWeight: 700,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    textAlign: "center",
+  });
+  const subStyle = { fontSize: "0.65rem", color: "var(--text-light)", fontStyle: "italic", textAlign: "center", marginBottom: 8 };
+  const ownerStyle = { fontSize: "0.65rem", color: "var(--text-light)", borderTop: "1px solid var(--border)", marginTop: 10, paddingTop: 8 };
+  const feeBadge = (num) => (
+    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 4, background: "#C8463E", color: "white", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.05em" }}>{num}</span>
+  );
+
+  return (
+    <div style={{ overflowX: "auto" }}>
+      <div style={{ minWidth: 1100, position: "relative", padding: "0 20px" }}>
+
+        {/* ── ROW 1: CHOZEN IP (center) ── */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 0 }}>
+          <div style={{ width: 260 }}>
+            <div style={headerStyle("#4A5D23")}>CHOZEN IP</div>
+            <div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+              <div style={subStyle}>Delaware LLC</div>
+              <div>Intellectual Property</div>
+              <div>Research/Development</div>
+              <div>Creative/Concepting</div>
+              <div>Green Living Certification</div>
+              <div style={ownerStyle}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>NP:</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>80%</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>Third Party</span><span>15%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── CONNECTOR: IP to middle row with fee badges ── */}
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "12px 0", position: "relative" }}>
+          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {feeBadge("V")}
+            {feeBadge("IV")}
+            {feeBadge("I")}
+            {feeBadge("VII")}
+            {feeBadge("III")}
+          </div>
+          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
+        </div>
+
+        {/* ── ROW 2: Middle entities ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 16, marginBottom: 0 }}>
+          {/* Metro Brokerage */}
+          <div>
+            <div style={headerStyle("#5A6B5A")}>Metro Brokerage</div>
+            <div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+              <div style={subStyle}>Delaware LLC</div>
+              <div>Branded Residence Sales</div>
+              <div>Marketing Consulting</div>
+              <div>Tenant Curation</div>
+              <div style={ownerStyle}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>NP:</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>100%</span></div>
+              </div>
+            </div>
+          </div>
+          {/* FOC DevCo */}
+          <div>
+            <div style={headerStyle("#5A6B5A")}>FOC DevCo</div>
+            <div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+              <div style={subStyle}>Delaware LLC</div>
+              <div>Branded Residences and Resort Development</div>
+              <div>Green Development Framework</div>
+              <div style={ownerStyle}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>NP:</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>100%</span></div>
+              </div>
+            </div>
+          </div>
+          {/* CCRL Non-Profit */}
+          <div>
+            <div style={headerStyle("#5A6B5A")}>CHOZEN CCRL Non-Profit</div>
+            <div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+              <div style={subStyle}>Delaware LLC</div>
+              <div>Education</div>
+              <div>Scholarships</div>
+              <div>Conservation</div>
+              <div style={ownerStyle}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>NP:</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>100%</span></div>
+              </div>
+            </div>
+          </div>
+          {/* Mgmt Co */}
+          <div>
+            <div style={headerStyle("#5A6B5A")}>Mgmt Co</div>
+            <div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+              <div style={subStyle}>Delaware LLC</div>
+              <div>TBD</div>
+              <div style={ownerStyle}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>NP:</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>75%</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>25%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── CONNECTOR: middle to verticals with fee badges ── */}
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "12px 0" }}>
+          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {feeBadge("III")}
+            {feeBadge("II")}
+          </div>
+          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
+        </div>
+
+        {/* ── ROW 3: Verticals ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12 }}>
+          {IP.verticals.map((v) => (
+            <div key={v.name}>
+              <div style={headerStyle(v.color)}>{v.name}</div>
+              <div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)", minHeight: 160 }}>
+                <div style={subStyle}>Delaware LLC</div>
+                {v.services.map((s) => <div key={s}>{s}</div>)}
+                <div style={ownerStyle}>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}><span>NP:</span></div>
+                  {v.ownership === "80% LLC / 15% Third Party" ? (
+                    <>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>80%</span></div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}><span>Third Party</span><span>15%</span></div>
+                    </>
+                  ) : (
+                    <div style={{ display: "flex", justifyContent: "space-between" }}><span>[LLC]</span><span>100%</span></div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── FEE STRUCTURE TABLE ── */}
+        <div style={{ marginTop: 40, background: "white", borderRadius: "var(--radius)", border: "1px solid var(--border)", padding: 24, maxWidth: 440 }}>
+          <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "var(--earth)", marginBottom: 16, borderBottom: "2px solid var(--earth)", paddingBottom: 8 }}>Fee Structure</div>
+          {FEE_PILLS.map((f) => (
+            <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "6px 0", borderBottom: "1px solid rgba(200,185,154,0.12)" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 4, background: "#C8463E", color: "white", fontSize: "0.6rem", fontWeight: 700, flexShrink: 0 }}>{f.id}</span>
+              <span style={{ flex: 1, fontSize: "0.78rem", color: "var(--text-mid)" }}>{f.label}:</span>
+              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--earth)" }}>{f.value}</span>
+            </div>
+          ))}
+          <div style={{ marginTop: 12, fontSize: "0.68rem", color: "var(--text-light)", lineHeight: 1.5, fontStyle: "italic" }}>
+            <div>*Residences Technical Services: Design; Guest Experiences; Branding; Marketing; PR</div>
+            <div style={{ marginTop: 4 }}>**Programming Consulting: Ongoing Neighborhood and Community Development; Residents&apos; Experience; Community Events; Marketing &amp; PR Advisement</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // PAGE
 // ═══════════════════════════════════════════════════════════════
 
@@ -212,7 +359,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* IP STRUCTURE */}
+      {/* IP STRUCTURE — ORG CHART DIAGRAM */}
       <section className="section" id="ip">
         <div className="sectionHeader">
           <p className="sectionEyebrow">Intellectual Property</p>
@@ -220,28 +367,7 @@ export default function Home() {
           <div className="divider" />
           <p className="sectionDesc">The IP entity owns and licenses the CHOZEN brand across six revenue verticals, supported by brokerage, development, non-profit, and management arms.</p>
         </div>
-        <div className="ipCore">
-          <h3>{IP.core.name}</h3>
-          <div className="ipEntity">{IP.core.entity}</div>
-          <div className="ipOwnership">{IP.core.ownership}</div>
-          <div className="ipCapabilities">{IP.core.capabilities.map((c) => <span key={c} className="ipCap">{c}</span>)}</div>
-        </div>
-        <div className="ipArrow">{"\u2193"}</div>
-        <div className="ipLabel">Supporting Entities</div>
-        <div className="ipGrid ipGrid2">{IP.partners.map((p) => <EntityCard key={p.name} node={p} />)}</div>
-        <div className="ipGrid ipGrid2" style={{ marginTop: 16 }}>{IP.affiliates.map((a) => <EntityCard key={a.name} node={a} />)}</div>
-        <div className="ipArrow">{"\u2193"}</div>
-        <div className="ipLabel">Revenue Verticals</div>
-        <div className="ipGrid ipGrid6">
-          {IP.verticals.map((v) => (
-            <div key={v.name} className="verticalCard" style={{ borderTopColor: v.color }}>
-              <h4>{v.name}</h4>
-              <ul>{v.services.map((s) => <li key={s}>{s}</li>)}</ul>
-              {v.note && <div className="vertNote">{v.note}</div>}
-              {v.ownership && <div className="ipOwnership" style={{ fontSize: "0.68rem", marginTop: 8 }}>{v.ownership}</div>}
-            </div>
-          ))}
-        </div>
+        <OrgDiagram />
       </section>
 
       {/* FEE SUMMARY */}
@@ -311,31 +437,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ORG CHART */}
-      <section className="section" id="org">
-        <div className="sectionHeader">
-          <p className="sectionEyebrow">Current Structure</p>
-          <h2 className="sectionTitle">Org Chart &mdash; November 2025</h2>
-          <div className="divider" />
-          <p className="sectionDesc">CHOZEN&apos;s current corporate entities and operational offerings.</p>
-        </div>
-        <div className="orgBox">
-          <h3>Corporate Entities</h3>
-          <div className="ipGrid ipGrid4">{CURRENT_ORG.map((n) => (
-            <div key={n.name} className="ipCard" style={{ borderTop: "3px solid var(--moss)" }}>
-              <h4>{n.name}</h4><div className="ipEntity">{n.entity}</div><div className="ipOwnership">{n.owner}</div>
-              <ul>{n.items.map((i) => <li key={i}>{i}</li>)}</ul>
-            </div>
-          ))}</div>
-        </div>
-        <div className="orgBox">
-          <h3>Current Offerings</h3>
-          <div className="ipGrid ipGrid6">{OFFERINGS.map((n) => (
-            <div key={n.name} className="verticalCard"><h4>{n.name}</h4><ul>{n.items.map((i) => <li key={i}>{i}</li>)}</ul></div>
-          ))}</div>
-        </div>
-      </section>
-
       {/* BRAND PILLARS */}
       <section className="sectionAlt" id="brand">
         <div className="sectionInner">
@@ -347,16 +448,6 @@ export default function Home() {
           </div>
           {PILLARS.map((p, i) => <Pillar key={i} p={p} />)}
         </div>
-      </section>
-
-      {/* SOURCES */}
-      <section className="section" id="sources">
-        <div className="sectionHeader">
-          <p className="sectionEyebrow">References</p>
-          <h2 className="sectionTitle">Research Sources</h2>
-          <div className="divider" />
-        </div>
-        <div className="sourcesList"><ol>{SOURCES.map((s, i) => <li key={i}>{s}</li>)}</ol></div>
       </section>
 
       {/* FOOTER */}
