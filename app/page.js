@@ -321,13 +321,153 @@ function IPBuilder() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// BRAND BOOK MODAL
+// ═══════════════════════════════════════════════════════════════
+
+const BOOK_PAGES = [
+  { img: "/brand/cover.jpg", title: "Brand Book 2025" },
+  { img: "/brand/vision.jpg", title: "Our Shared Vision", subtitle: "Rewilding Hearts & Minds in the Heart of Florida", text: "We gather thought leaders, changemakers, community builders and placemakers from around the world who seek to explore regenerative systems and implement climate solutions. By reconnecting with the land and fully immersing our guests in a regenerative lifestyle, we provide a unique culture and vibrant environment to inspire positive change & transformation for future generations." },
+  { img: "/brand/principles.jpg", title: "Principles of the Chozen Path", items: [
+    { bold: "Reunite with your Inner Self", text: "Develop a conscious awareness of your mind, body, emotions and senses" },
+    { bold: "Reconnect with Nature", text: "Live in acknowledgment that we are not above or separate from Nature, but part of its larger ecosystem of all life on this planet" },
+    { bold: "Honor the Sacred", text: "Follow the guidance of all life forms, as well as our ancestors to honor their spirit and connect with their wisdom" },
+    { bold: "Assemble with Community", text: "Gather with thought leaders, changemakers and community builders focused on raising consciousness to harness our collective momentum" },
+    { bold: "Embrace Regenerative Systems", text: "Act in accordance with our shared ethos for a sustainable future by helping to co-create regenerative systems for a climate positive world" },
+    { bold: "Empower the Future", text: "Actively participate in the co-creation of our future to restore humanity and our planet\u2019s health" },
+  ]},
+  { img: "/brand/mission.jpg", title: "Our Mission", subtitle: "Nature is Medicine. Food is Medicine. Community is Medicine.", text: "Our mission is to inspire action to protect mother nature and all of her inhabitants. Through immersive & educational experiences, adventures & excursions we are transforming the way we retreat. We co-create, coexist and come together to celebrate and restore ecological balance while preserving wildlife and our natural environment." },
+  { img: "/brand/ethos1.jpg", title: "Ethos", lines: ["CHOZEN is a place to discover yourself in nature", "A place to experience deep serenity by living in harmony with the natural ecosystem", "Where we honor mother earth and the elements", "Create in dialogue with our planet", "Integrate in nature and experience deep, restorative wellness", "Reconnect with the cosmos: the stars, the moon, the sun, the sky", "Take action to protect humanity\u2019s future", "Commune with wildlife", "Give thanks to those who walked before us", "Walk the Chozen Path"] },
+  { img: "/brand/ethos2.jpg", title: "Ethos \u2014 Nature + Zen", venn: true },
+  { img: "/brand/symbols.jpg", title: "Chozen Symbols", symbols: [
+    { name: "CHOZEN", meaning: "The complete mark" },
+    { name: "Water / River", meaning: "Source of Life" },
+    { name: "Unity / Wholeness", meaning: "Infinity" },
+    { name: "Divine Feminine", meaning: "Divine Mother, Mother Nature" },
+    { name: "Balance", meaning: "So Above & So Below, Time is Now, Earth & Sky" },
+    { name: "Activism", meaning: "Action, Choice" },
+  ]},
+  { img: "/brand/logo-explain.jpg", title: "Logo Explanation", text: "The ChoZen logo represents the unity of humanity and the planet, the marriage of the divine feminine and masculine, the balance of Yin and Yang, the duality of our two brain hemispheres, and the polarity of the Earth and Skies. An hourglass lives within the logo, a reminder of the preciousness of time and the urgency to restore harmony on Earth. The centerline represents the vitality of water, a constant, flowing force that is the source of all life. You can find all of the ChoZen letters embedded within the design." },
+  { img: "/brand/logo-decon.jpg", title: "Logo Deconstruction" },
+  { img: "/brand/voice-tone.jpg", title: "Voice & Tone", voice: [
+    { bold: "Empowered", text: "We use positive words that are aspirational and inspired to embody our passionate ethos" },
+    { bold: "Balance of Feminine + Masculine", text: "We play between soft and direct language to show the equal balance of our poetic yet affirmative voice" },
+    { bold: "Sacred & Soulful", text: "We use language that ignites awakening, self-expression and transformation" },
+    { bold: "Active", text: "We speak in the active voice in statements pertaining to activism and action" },
+    { bold: "Authentic", text: "We value honesty and transparency in conveying our message" },
+    { bold: "Natural", text: "We educate on the human-nature connection through language that is poetic yet scientific" },
+  ], tone: [
+    { bold: "Warm", text: "We write like we would to a friend to make them feel welcomed in an intimate, safe environment" },
+    { bold: "Soft", text: "We use a soft tone in collateral that takes the form of poetry to transport our readers and guests" },
+    { bold: "Socially Aware", text: "We ensure that our message is culturally aware and sensitive to all topics" },
+  ], toneNot: ["Dogmatic or overly spiritual", "Too technical", "Too formal", "Negative or corporate", "Self-helpy"] },
+  { img: "/brand/aesthetic.jpg", title: "Brand Aesthetic", subtitle: "A Camp for the Humanity of the Future Where Nature is the Ceremony", text: "The ChoZen visual identity is a sophisticated, intentional, organic and wild portfolio of the ChoZen Lifestyle. Designed to evoke the feeling of being ChoZen\u2014immersed in beauty, nature, and conscious community. The aesthetic lives as a curated grid that balances ritual, regeneration, and refinement across every visual and message." },
+  { img: "/brand/wildlife.jpg", title: "Florida Wildlife Corridor", text: "The Florida Wildlife Corridor spans 18 million acres, but only 54% is protected, leaving 8.1 million acres vulnerable to development. If current trends continue, Florida could lose another 3.5 million acres of natural land by 2070, threatening key species like the Florida panther and swallow-tailed kite. This habitat loss disrupts biodiversity and weakens essential ecosystem services like clean water, flood protection, and carbon sequestration." },
+];
+
+function BrandBookModal({ onClose }) {
+  const [page, setPage] = useState(0);
+  const p = BOOK_PAGES[page];
+  const total = BOOK_PAGES.length;
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); if (e.key === "ArrowRight" && page < total - 1) setPage(page + 1); if (e.key === "ArrowLeft" && page > 0) setPage(page - 1); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [page, onClose]);
+
+  const overlay = { position: "fixed", inset: 0, zIndex: 1000, background: "rgba(30,26,20,0.85)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 };
+  const modal = { background: "var(--warm-white)", borderRadius: 16, maxWidth: 900, width: "100%", maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", position: "relative" };
+  const header = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid var(--border)" };
+  const body = { flex: 1, overflow: "auto", padding: "32px 40px" };
+  const navRow = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderTop: "1px solid var(--border)" };
+  const navBtn = (disabled) => ({ padding: "8px 20px", borderRadius: 6, border: "1px solid var(--border)", background: disabled ? "transparent" : "var(--earth)", color: disabled ? "var(--text-light)" : "white", cursor: disabled ? "default" : "pointer", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.05em", opacity: disabled ? 0.4 : 1 });
+  const closeBtn = { background: "none", border: "none", fontSize: "1.4rem", cursor: "pointer", color: "var(--text-light)", padding: "4px 8px" };
+
+  return (
+    <div style={overlay} onClick={onClose}>
+      <div style={modal} onClick={(e) => e.stopPropagation()}>
+        <div style={header}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--earth)" }}>Brand Book</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: "0.7rem", color: "var(--text-light)" }}>{page + 1} / {total}</span>
+            <button style={closeBtn} onClick={onClose}>{"\u2715"}</button>
+          </div>
+        </div>
+        <div style={body}>
+          {/* Page Title */}
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 400, color: "var(--earth)", marginBottom: p.subtitle || p.text ? 12 : 0 }}>{p.title}</h2>
+          {p.subtitle && <p style={{ fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>{p.subtitle}</p>}
+          {p.text && <p style={{ fontSize: "0.9rem", lineHeight: 1.75, color: "var(--text-mid)", maxWidth: 680 }}>{p.text}</p>}
+
+          {/* Principles / Items list */}
+          {p.items && <div style={{ marginTop: 16 }}>{p.items.map((item, i) => (
+            <div key={i} style={{ padding: "14px 0", borderBottom: "1px solid var(--border)" }}>
+              <span style={{ fontWeight: 700, color: "var(--earth)" }}>{item.bold}</span>
+              <span style={{ color: "var(--text-mid)" }}> &mdash; {item.text}</span>
+            </div>
+          ))}</div>}
+
+          {/* Ethos Lines */}
+          {p.lines && <div style={{ marginTop: 20, textAlign: "center" }}>{p.lines.map((l, i) => (
+            <p key={i} style={{ fontSize: "0.85rem", letterSpacing: "0.06em", color: "var(--text-mid)", padding: "6px 0", lineHeight: 1.6 }}>. . .{l}. . .</p>
+          ))}</div>}
+
+          {/* Venn diagram page — show image */}
+          {p.venn && <div style={{ marginTop: 20, textAlign: "center" }}><img src={p.img} alt={p.title} style={{ maxWidth: "100%", borderRadius: 8 }} /></div>}
+
+          {/* Symbols */}
+          {p.symbols && <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 16, marginTop: 20 }}>{p.symbols.map((s, i) => (
+            <div key={i} style={{ textAlign: "center", padding: 16, background: "var(--cream)", borderRadius: 8 }}>
+              <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "var(--earth)", marginBottom: 6 }}>{s.name}</div>
+              <div style={{ fontSize: "0.72rem", color: "var(--text-light)", lineHeight: 1.5 }}>{s.meaning}</div>
+            </div>
+          ))}</div>}
+
+          {/* Voice & Tone */}
+          {p.voice && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, marginTop: 20 }}>
+              <div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", color: "var(--earth)", marginBottom: 16 }}>Voice</h3>
+                {p.voice.map((v, i) => <div key={i} style={{ marginBottom: 14 }}><span style={{ fontWeight: 700, color: "var(--earth)" }}>{v.bold}:</span> <span style={{ color: "var(--text-mid)", fontSize: "0.85rem" }}>{v.text}</span></div>)}
+              </div>
+              <div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", color: "var(--earth)", marginBottom: 16 }}>Tone</h3>
+                {p.tone.map((t, i) => <div key={i} style={{ marginBottom: 14 }}><span style={{ fontWeight: 700, color: "var(--earth)" }}>{t.bold}:</span> <span style={{ color: "var(--text-mid)", fontSize: "0.85rem" }}>{t.text}</span></div>)}
+                <div style={{ marginTop: 20, padding: 16, background: "rgba(139,58,58,0.04)", borderRadius: 8, border: "1px solid rgba(139,58,58,0.1)" }}>
+                  <div style={{ fontWeight: 700, fontSize: "0.78rem", color: "#8B3A3A", marginBottom: 8 }}>Our voice and tone is not:</div>
+                  {p.toneNot.map((n, i) => <div key={i} style={{ fontSize: "0.78rem", color: "var(--text-mid)", padding: "3px 0" }}>{"\u2715"} {n}</div>)}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Image-only pages (cover, logo decon) */}
+          {!p.text && !p.items && !p.lines && !p.venn && !p.symbols && !p.voice && page !== 0 && (
+            <div style={{ marginTop: 16 }}><img src={p.img} alt={p.title} style={{ maxWidth: "100%", borderRadius: 8 }} /></div>
+          )}
+          {page === 0 && <div style={{ marginTop: 24, textAlign: "center" }}><img src={p.img} alt="Brand Book Cover" style={{ maxWidth: "100%", borderRadius: 8 }} /></div>}
+        </div>
+        <div style={navRow}>
+          <button style={navBtn(page === 0)} onClick={() => page > 0 && setPage(page - 1)}>{"\u2190"} Previous</button>
+          <div style={{ display: "flex", gap: 4 }}>{BOOK_PAGES.map((_, i) => <span key={i} onClick={() => setPage(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === page ? "var(--moss)" : "var(--border)", cursor: "pointer", transition: "0.2s" }} />)}</div>
+          <button style={navBtn(page === total - 1)} onClick={() => page < total - 1 && setPage(page + 1)}>Next {"\u2192"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
 // PAGE
 // ═══════════════════════════════════════════════════════════════
 
 export default function Home() {
+  const [bookOpen, setBookOpen] = useState(false);
   return (
     <>
       <Nav />
+      {bookOpen && <BrandBookModal onClose={() => setBookOpen(false)} />}
 
       {/* HERO */}
       <section className="hero" id="hero">
@@ -370,6 +510,23 @@ export default function Home() {
           </p>
         </div>
         <IPBuilder />
+      </section>
+
+      {/* BRAND BOOK */}
+      <section className="sectionAlt" style={{ padding: "64px 32px" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
+          <p className="sectionEyebrow">Brand Identity</p>
+          <h2 className="sectionTitle" style={{ marginBottom: 12 }}>The CHOZEN Brand Book</h2>
+          <div className="divider" />
+          <p style={{ fontSize: "0.9rem", color: "var(--text-light)", lineHeight: 1.7, marginBottom: 28 }}>
+            Every CHOZEN-branded project carries the full weight of a deeply intentional identity &mdash;
+            from regenerative ethos and sacred symbolism to voice, tone, and visual aesthetic.
+            Explore the complete brand framework.
+          </p>
+          <button onClick={() => setBookOpen(true)} style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 36px", borderRadius: 8, background: "var(--earth)", color: "var(--cream)", border: "none", cursor: "pointer", fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.08em", transition: "0.2s" }}>
+            Open Brand Book {"\u2192"}
+          </button>
+        </div>
       </section>
 
       {/* FEE SUMMARY */}
