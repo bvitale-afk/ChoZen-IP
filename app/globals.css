@@ -140,6 +140,12 @@ body { font-family: var(--font-body); color: var(--text); background: var(--warm
 .orgBox { background: white; border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border); margin-bottom: 32px; }
 .orgBox h3 { font-family: var(--font-display); font-size: 1.4rem; color: var(--earth); text-align: center; margin-bottom: 28px; }
 
+/* ── TABS ── */
+.tabs { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 40px; }
+.tabBtn { font-family: var(--font-body); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 24px; border: 1px solid var(--sand); background: transparent; color: var(--text-light); cursor: pointer; border-radius: 6px; transition: 0.2s; }
+.tabBtn:hover { border-color: var(--moss); color: var(--moss); }
+.tabBtn.active { background: var(--moss); color: white; border-color: var(--moss); }
+
 /* ── BRAND PILLARS ── */
 .pillarCard { background: white; border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); transition: 0.2s; }
 .pillarCard:hover { box-shadow: var(--shadow-md); }
