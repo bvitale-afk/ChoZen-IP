@@ -282,7 +282,7 @@ function IPBuilder() {
           <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>Your IP package estimate</div>
           <div style={{ background: "linear-gradient(135deg, var(--earth), #2A3420)", borderRadius: "var(--radius)", padding: "28px 32px", color: "white", marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
             <div>
-              <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--sage)", marginBottom: 4 }}>Estimated Annual IP Revenue</div>
+              <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--sage)", marginBottom: 4 }}>Estimated Contract Value</div>
               <div style={{ fontFamily: "var(--font-display)", fontSize: "2.4rem", fontWeight: 600 }}>{fmt(grandTotal)}</div>
               <div style={{ fontSize: "0.72rem", color: "var(--sand)", marginTop: 4 }}>{pickedItems.length} service{pickedItems.length !== 1 ? "s" : ""} selected across {Object.keys(resultsByVertical).length} vertical{Object.keys(resultsByVertical).length !== 1 ? "s" : ""}</div>
             </div>
@@ -324,6 +324,73 @@ function IPBuilder() {
 // BRAND BOOK MODAL
 // ═══════════════════════════════════════════════════════════════
 
+// SVG symbols traced from brand book
+function SymbolSVG({ id, size = 64 }) {
+  const s = size;
+  const c = s / 2;
+  const r = s * 0.44;
+  const stroke = "var(--earth)";
+  const sw = 1.5;
+  const common = { width: s, height: s, viewBox: `0 0 ${s} ${s}`, fill: "none", xmlns: "http://www.w3.org/2000/svg" };
+
+  // 1: CHOZEN — full logo: circle + X + wavy centerline + triangle details
+  if (id === "chozen") return (
+    <svg {...common}>
+      <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
+      <line x1={c - r * 0.71} y1={c - r * 0.71} x2={c + r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
+      <line x1={c + r * 0.71} y1={c - r * 0.71} x2={c - r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
+      <line x1={c - r} y1={c} x2={c + r} y2={c} stroke={stroke} strokeWidth={sw} />
+      <path d={`M ${c - r * 0.7} ${c} Q ${c - r * 0.35} ${c - r * 0.22} ${c} ${c} Q ${c + r * 0.35} ${c + r * 0.22} ${c + r * 0.7} ${c}`} stroke={stroke} strokeWidth={sw} />
+      <line x1={c - r * 0.71} y1={c + r * 0.71} x2={c} y2={c - r * 0.3} stroke={stroke} strokeWidth={sw * 0.6} strokeOpacity={0.4} />
+      <line x1={c + r * 0.71} y1={c + r * 0.71} x2={c} y2={c - r * 0.3} stroke={stroke} strokeWidth={sw * 0.6} strokeOpacity={0.4} />
+    </svg>
+  );
+
+  // 2: Water — circle + curved wave
+  if (id === "water") return (
+    <svg {...common}>
+      <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
+      <path d={`M ${c - r * 0.85} ${c} Q ${c - r * 0.42} ${c - r * 0.35} ${c} ${c} Q ${c + r * 0.42} ${c + r * 0.35} ${c + r * 0.85} ${c}`} stroke={stroke} strokeWidth={sw} />
+    </svg>
+  );
+
+  // 3: Unity — empty circle
+  if (id === "unity") return (
+    <svg {...common}>
+      <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
+    </svg>
+  );
+
+  // 4: Divine Feminine — circle + X + inner smaller circle
+  if (id === "divine") return (
+    <svg {...common}>
+      <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
+      <line x1={c - r * 0.71} y1={c - r * 0.71} x2={c + r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
+      <line x1={c + r * 0.71} y1={c - r * 0.71} x2={c - r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
+      <circle cx={c} cy={c} r={r * 0.35} stroke={stroke} strokeWidth={sw * 0.8} />
+    </svg>
+  );
+
+  // 5: Balance — circle + X (no inner circle)
+  if (id === "balance") return (
+    <svg {...common}>
+      <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
+      <line x1={c - r * 0.71} y1={c - r * 0.71} x2={c + r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
+      <line x1={c + r * 0.71} y1={c - r * 0.71} x2={c - r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
+    </svg>
+  );
+
+  // 6: Activism — hourglass / bowtie (no circle)
+  if (id === "activism") return (
+    <svg {...common}>
+      <polygon points={`${c - r * 0.6},${c - r * 0.65} ${c + r * 0.6},${c - r * 0.65} ${c},${c}`} stroke={stroke} strokeWidth={sw} fill="none" />
+      <polygon points={`${c - r * 0.6},${c + r * 0.65} ${c + r * 0.6},${c + r * 0.65} ${c},${c}`} stroke={stroke} strokeWidth={sw} fill="none" />
+    </svg>
+  );
+
+  return null;
+}
+
 const BOOK_PAGES = [
   { img: "/brand/cover.jpg", title: "Brand Book 2025" },
   { img: "/brand/vision.jpg", title: "Our Shared Vision", subtitle: "Rewilding Hearts & Minds in the Heart of Florida", text: "We gather thought leaders, changemakers, community builders and placemakers from around the world who seek to explore regenerative systems and implement climate solutions. By reconnecting with the land and fully immersing our guests in a regenerative lifestyle, we provide a unique culture and vibrant environment to inspire positive change & transformation for future generations." },
@@ -339,12 +406,12 @@ const BOOK_PAGES = [
   { img: "/brand/ethos1.jpg", title: "Ethos", lines: ["CHOZEN is a place to discover yourself in nature", "A place to experience deep serenity by living in harmony with the natural ecosystem", "Where we honor mother earth and the elements", "Create in dialogue with our planet", "Integrate in nature and experience deep, restorative wellness", "Reconnect with the cosmos: the stars, the moon, the sun, the sky", "Take action to protect humanity\u2019s future", "Commune with wildlife", "Give thanks to those who walked before us", "Walk the Chozen Path"] },
   { img: "/brand/ethos2.jpg", title: "Ethos \u2014 Nature + Zen", venn: true },
   { img: "/brand/symbols.jpg", title: "Chozen Symbols", symbols: [
-    { name: "CHOZEN", meaning: "The complete mark" },
-    { name: "Water / River", meaning: "Source of Life" },
-    { name: "Unity / Wholeness", meaning: "Infinity" },
-    { name: "Divine Feminine", meaning: "Divine Mother, Mother Nature" },
-    { name: "Balance", meaning: "So Above & So Below, Time is Now, Earth & Sky" },
-    { name: "Activism", meaning: "Action, Choice" },
+    { svgId: "chozen", name: "CHOZEN", meaning: "The complete mark" },
+    { svgId: "water", name: "Water / River", meaning: "Source of Life" },
+    { svgId: "unity", name: "Unity / Wholeness", meaning: "Infinity" },
+    { svgId: "divine", name: "Divine Feminine", meaning: "Divine Mother\nMother Nature" },
+    { svgId: "balance", name: "Balance", meaning: "So Above & So Below\nTime is Now\nEarth & Sky" },
+    { svgId: "activism", name: "Activism", meaning: "Action\nChoice" },
   ]},
   { img: "/brand/logo-explain.jpg", title: "Logo Explanation", text: "The ChoZen logo represents the unity of humanity and the planet, the marriage of the divine feminine and masculine, the balance of Yin and Yang, the duality of our two brain hemispheres, and the polarity of the Earth and Skies. An hourglass lives within the logo, a reminder of the preciousness of time and the urgency to restore harmony on Earth. The centerline represents the vitality of water, a constant, flowing force that is the source of all life. You can find all of the ChoZen letters embedded within the design." },
   { img: "/brand/logo-decon.jpg", title: "Logo Deconstruction" },
@@ -417,10 +484,11 @@ function BrandBookModal({ onClose }) {
           {p.venn && <div style={{ marginTop: 20, textAlign: "center" }}><img src={p.img} alt={p.title} style={{ maxWidth: "100%", borderRadius: 8 }} /></div>}
 
           {/* Symbols */}
-          {p.symbols && <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 16, marginTop: 20 }}>{p.symbols.map((s, i) => (
-            <div key={i} style={{ textAlign: "center", padding: 16, background: "var(--cream)", borderRadius: 8 }}>
-              <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "var(--earth)", marginBottom: 6 }}>{s.name}</div>
-              <div style={{ fontSize: "0.72rem", color: "var(--text-light)", lineHeight: 1.5 }}>{s.meaning}</div>
+          {p.symbols && <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 16, marginTop: 20 }}>{p.symbols.map((s, i) => (
+            <div key={i} style={{ textAlign: "center", padding: "20px 12px", background: "var(--cream)", borderRadius: 8 }}>
+              <div style={{ marginBottom: 12, display: "flex", justifyContent: "center" }}><SymbolSVG id={s.svgId} size={56} /></div>
+              <div style={{ fontWeight: 700, fontSize: "0.78rem", color: "var(--earth)", marginBottom: 6, letterSpacing: "0.04em" }}>{s.name}</div>
+              <div style={{ fontSize: "0.68rem", color: "var(--text-light)", lineHeight: 1.5, whiteSpace: "pre-line" }}>{s.meaning}</div>
             </div>
           ))}</div>}
 
