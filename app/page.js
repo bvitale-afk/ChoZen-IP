@@ -76,57 +76,34 @@ const MEMBERSHIP = {
   ],
 };
 
-const BUILDER = [
-  { key: "residences", name: "Residences", color: "#4A5D23", icon: "\uD83C\uDFE0",
-    fees: [
-      { label: "Brand License Fee", rate: "2% Gross Sales", pct: 0.02, appliesTo: "grossSales" },
-      { label: "Upfront Fee", rate: "$100,000", fixed: 100000 },
-      { label: "Brand Management Fee", rate: "2% Annual HOA", pct: 0.02, appliesTo: "annualHOA" },
-      { label: "Technical Services", rate: "0.5% Dev Cost", pct: 0.005, appliesTo: "devCost" },
-    ],
-    inputs: [
-      { key: "grossSales", label: "Projected Gross Sales", default: 50000000 },
-      { key: "annualHOA", label: "Total Annual HOA", default: 2000000 },
-      { key: "devCost", label: "Total Development Cost", default: 100000000 },
-    ],
-  },
-  { key: "hospitality", name: "Hospitality", color: "#3A6B7E", icon: "\uD83C\uDFE8",
-    fees: [
-      { label: "Brand License Fee", rate: "2% GOR", pct: 0.02, appliesTo: "gor" },
-      { label: "Upfront Fee", rate: "$100,000", fixed: 100000 },
-      { label: "Technical Services", rate: "0.5% Dev Cost", pct: 0.005, appliesTo: "devCost" },
-      { label: "Brand Audit", rate: "$20,000/year", fixed: 20000 },
-    ],
-    inputs: [
-      { key: "gor", label: "Gross Operating Revenue", default: 15000000 },
-      { key: "devCost", label: "Total Development Cost", default: 60000000 },
-    ],
-  },
-  { key: "retail", name: "Retail", color: "#B8963E", icon: "\uD83D\uDECD\uFE0F",
-    fees: [
-      { label: "Brand License Fee", rate: "3% Total Sales", pct: 0.03, appliesTo: "totalSales" },
-      { label: "Tech Services (Pre-Opening)", rate: "$40,000", fixed: 40000 },
-      { label: "OS&E for Hotel", rate: "$15,000", fixed: 15000 },
-      { label: "Tech Services (Ongoing/Yr)", rate: "$60,000/year", fixed: 60000 },
-    ],
-    inputs: [
-      { key: "totalSales", label: "Projected Annual Sales", default: 2000000 },
-    ],
-  },
-  { key: "programming", name: "Programming & Events", color: "#6B4A6B", icon: "\uD83C\uDFAA",
-    fees: [
-      { label: "Events Consulting", rate: "5% Event Budget", pct: 0.05, appliesTo: "eventBudget" },
-      { label: "Membership Advisement", rate: "5% Membership Sales", pct: 0.05, appliesTo: "memberSales" },
-      { label: "Marketing & PR", rate: "1% GOR", pct: 0.01, appliesTo: "gor" },
-      { label: "Community Building", rate: "1% Events Rev", pct: 0.01, appliesTo: "eventsRev" },
-    ],
-    inputs: [
-      { key: "eventBudget", label: "Annual Event Budget", default: 500000 },
-      { key: "memberSales", label: "Projected Membership Sales", default: 1000000 },
-      { key: "gor", label: "Gross Operating Revenue", default: 15000000 },
-      { key: "eventsRev", label: "Annual Events Revenue", default: 800000 },
-    ],
-  },
+// ── Granular builder items: every individual service the user can pick ──
+const MENU = [
+  { id: "res-brand", vertical: "Residences", color: "#4A5D23", item: "Brand / License", desc: "Trademark use, brand standards, market exclusivity", fee: "2% Gross Sales", pct: 0.02, input: "grossSales", inputLabel: "Projected Gross Sales", inputDefault: 50000000 },
+  { id: "res-tech", vertical: "Residences", color: "#4A5D23", item: "Technical Services", desc: "Design-review, architectural standards, pre-opening", fee: "0.5% Dev Cost", pct: 0.005, input: "resDevCost", inputLabel: "Total Development Cost", inputDefault: 100000000 },
+  { id: "res-mgmt", vertical: "Residences", color: "#4A5D23", item: "Brand Management", desc: "Inspections, audits, renovation approvals", fee: "2% Annual HOA", pct: 0.02, input: "annualHOA", inputLabel: "Total Annual HOA", inputDefault: 2000000 },
+  { id: "res-sale", vertical: "Residences", color: "#4A5D23", item: "For-Sale Branded Residences", desc: "Brokerage for branded residence sales", fee: "$100K Upfront", fixed: 100000 },
+  { id: "res-member", vertical: "Residences", color: "#4A5D23", item: "Memberships", desc: "Residential membership program", fee: "Project Dependent", fixed: 0 },
+
+  { id: "hosp-brand", vertical: "Hospitality", color: "#3A6B7E", item: "Hotels & Retreats", desc: "Brand licensing for hotels and retreat centers", fee: "2% GOR", pct: 0.02, input: "hospGOR", inputLabel: "Gross Operating Revenue", inputDefault: 15000000 },
+  { id: "hosp-tech", vertical: "Hospitality", color: "#3A6B7E", item: "Technical Services", desc: "Design-review, architectural & brand standards", fee: "0.5% Dev Cost", pct: 0.005, input: "hospDevCost", inputLabel: "Total Development Cost", inputDefault: 60000000 },
+  { id: "hosp-str", vertical: "Hospitality", color: "#3A6B7E", item: "Short-Term Rentals", desc: "Branded short-term rental operations", fee: "$100K Upfront", fixed: 100000 },
+  { id: "hosp-audit", vertical: "Hospitality", color: "#3A6B7E", item: "Experiential Brand Audit", desc: "Guest & employee interviews, bi-annual site visits", fee: "$20K/year", fixed: 20000 },
+  { id: "hosp-member", vertical: "Hospitality", color: "#3A6B7E", item: "Memberships", desc: "Hospitality membership program", fee: "Project Dependent", fixed: 0 },
+
+  { id: "ret-brand", vertical: "Retail", color: "#B8963E", item: "Brick & Mortar", desc: "Brand licensing for physical retail", fee: "3% Total Sales", pct: 0.03, input: "retSales", inputLabel: "Projected Annual Sales", inputDefault: 2000000 },
+  { id: "ret-concept", vertical: "Retail", color: "#B8963E", item: "Concepting & Consulting", desc: "Concept deck, product dev, layout/design", fee: "$40K Pre-Opening", fixed: 40000 },
+  { id: "ret-cpg", vertical: "Retail", color: "#B8963E", item: "Chozen CPG", desc: "OS&E selection for hotel + ongoing quarterly merch", fee: "$75K First Year", fixed: 75000 },
+
+  { id: "well-cust", vertical: "Wellness / Spa", color: "#8B6B4A", item: "Customer-Facing Wellness", desc: "Spa, thermal therapy, wellness experiences", fee: "Project Dependent", fixed: 0 },
+  { id: "well-it", vertical: "Wellness / Spa", color: "#8B6B4A", item: "Back-end IT", desc: "Booking, scheduling, and wellness tech systems", fee: "TBD", fixed: 0 },
+
+  { id: "tech-app", vertical: "Technology", color: "#5A5A6B", item: "Customer-facing App", desc: "Guest/member app, digital experience layer", fee: "TBD", fixed: 0 },
+  { id: "tech-it", vertical: "Technology", color: "#5A5A6B", item: "Back-end IT", desc: "Infrastructure, integrations, data platform", fee: "TBD", fixed: 0 },
+
+  { id: "prog-events", vertical: "Programming", color: "#6B4A6B", item: "Events Consulting", desc: "Seasonal events, equinoxes, wellness gatherings", fee: "5% Event Budget", pct: 0.05, input: "eventBudget", inputLabel: "Annual Event Budget", inputDefault: 500000 },
+  { id: "prog-member", vertical: "Programming", color: "#6B4A6B", item: "Membership Advisement", desc: "Multi-year membership strategy & pricing", fee: "5% Membership Sales", pct: 0.05, input: "memberSales", inputLabel: "Projected Membership Sales", inputDefault: 1000000 },
+  { id: "prog-mktg", vertical: "Programming", color: "#6B4A6B", item: "Marketing & PR", desc: "Quarterly reviews, monthly advisory sessions", fee: "1% GOR", pct: 0.01, input: "progGOR", inputLabel: "Gross Operating Revenue", inputDefault: 15000000 },
+  { id: "prog-community", vertical: "Programming", color: "#6B4A6B", item: "Community Building", desc: "Neighborhood dev, community events, onsite experiences", fee: "1% Events Rev", pct: 0.01, input: "eventsRev", inputLabel: "Annual Events Revenue", inputDefault: 800000 },
 ];
 
 const PILLARS = [
@@ -154,7 +131,7 @@ function Nav() {
     const fn = () => { setScrolled(window.scrollY > 40); let cur = ""; document.querySelectorAll("section[id]").forEach((s) => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; }); setActive(cur); };
     window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn);
   }, []);
-  const links = [{ href: "#ip", label: "IP Structure" }, { href: "#fee-summary", label: "Fee Summary" }, { href: "#fees", label: "Fee Schedule" }, { href: "#builder", label: "IP Builder" }, { href: "#membership", label: "Membership" }, { href: "#brand", label: "Brand" }];
+  const links = [{ href: "#ip", label: "IP Structure" }, { href: "#builder", label: "IP Builder" }, { href: "#fee-summary", label: "Fees" }, { href: "#fees", label: "Comp Set" }, { href: "#membership", label: "Membership" }, { href: "#brand", label: "Brand" }];
   return (
     <nav className={`nav ${scrolled ? "scrolled" : ""}`}>
       <div className="navInner">
@@ -164,10 +141,6 @@ function Nav() {
       </div>
     </nav>
   );
-}
-
-function EntityCard({ node }) {
-  return (<div className="ipCard"><h4>{node.name}</h4><div className="ipEntity">{node.entity}</div><div className="ipOwnership">{node.ownership || node.owner}</div><ul>{(node.services || node.items || []).map((s) => <li key={s}>{s}</li>)}</ul></div>);
 }
 
 function PillarCard({ p }) {
@@ -182,10 +155,7 @@ function PillarCard({ p }) {
         <div style={{ padding: "14px 28px", background: "linear-gradient(135deg, var(--moss), #6B8F3C)", color: "white", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>{"\u2713"} We Are</div>
         <div style={{ padding: "14px 28px", background: "linear-gradient(135deg, #6B4A4A, #8B3A3A)", color: "white", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>{"\u2715"} We Are Not</div>
       </div>
-      <div className="pillarBody">
-        <div className="pillarCol"><p>{p.yes}</p></div>
-        <div className="pillarCol"><p>{p.no}</p></div>
-      </div>
+      <div className="pillarBody"><div className="pillarCol"><p>{p.yes}</p></div><div className="pillarCol"><p>{p.no}</p></div></div>
       {p.tags.length > 0 && <div className="pillarTags">{p.tags.map((t) => <span key={t} className="pillarTag">{t}</span>)}</div>}
     </div>
   );
@@ -195,131 +165,144 @@ function BrandTabs() {
   const [tab, setTab] = useState("res-hosp");
   const resHosp = PILLARS.filter((p) => p.title !== "Sacred Retail \u2014 Casa Colibri");
   const retail = PILLARS.find((p) => p.title === "Sacred Retail \u2014 Casa Colibri");
-  return (
-    <>
-      <div className="tabs">
-        <button className={`tabBtn ${tab === "res-hosp" ? "active" : ""}`} onClick={() => setTab("res-hosp")}>Residences &amp; Hospitality</button>
-        <button className={`tabBtn ${tab === "retail" ? "active" : ""}`} onClick={() => setTab("retail")}>Sacred Retail</button>
-      </div>
-      {tab === "res-hosp" && resHosp.map((p, i) => <PillarCard key={i} p={p} />)}
-      {tab === "retail" && retail && <PillarCard p={retail} />}
-    </>
-  );
+  return (<>
+    <div className="tabs">
+      <button className={`tabBtn ${tab === "res-hosp" ? "active" : ""}`} onClick={() => setTab("res-hosp")}>Residences &amp; Hospitality</button>
+      <button className={`tabBtn ${tab === "retail" ? "active" : ""}`} onClick={() => setTab("retail")}>Sacred Retail</button>
+    </div>
+    {tab === "res-hosp" && resHosp.map((p, i) => <PillarCard key={i} p={p} />)}
+    {tab === "retail" && retail && <PillarCard p={retail} />}
+  </>);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// IP PACKAGE BUILDER
+// IP PACKAGE BUILDER (mix & match individual items)
 // ═══════════════════════════════════════════════════════════════
 
 function fmt(n) { return "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 }); }
 
 function IPBuilder() {
-  const [selected, setSelected] = useState({});
-  const [inputs, setInputs] = useState({});
+  const [picked, setPicked] = useState({});
+  const [vals, setVals] = useState({});
 
-  const toggle = (key) => {
-    setSelected((s) => {
-      const next = { ...s, [key]: !s[key] };
-      if (next[key]) {
-        const v = BUILDER.find((b) => b.key === key);
-        const defaults = {};
-        v.inputs.forEach((inp) => { defaults[key + "_" + inp.key] = inp.default; });
-        setInputs((prev) => ({ ...prev, ...defaults }));
+  const toggle = (id) => {
+    setPicked((p) => {
+      const next = { ...p, [id]: !p[id] };
+      if (next[id]) {
+        const item = MENU.find((m) => m.id === id);
+        if (item.input && !vals[item.input]) {
+          setVals((v) => ({ ...v, [item.input]: item.inputDefault }));
+        }
       }
       return next;
     });
   };
 
-  const setVal = (k, val) => {
-    const num = parseInt(val.replace(/[^0-9]/g, ""), 10) || 0;
-    setInputs((prev) => ({ ...prev, [k]: num }));
+  const setInput = (key, raw) => {
+    setVals((v) => ({ ...v, [key]: parseInt(raw.replace(/[^0-9]/g, ""), 10) || 0 }));
   };
 
-  const activeVerticals = BUILDER.filter((v) => selected[v.key]);
+  // Group menu by vertical
+  const verticals = [...new Set(MENU.map((m) => m.vertical))];
+  const pickedItems = MENU.filter((m) => picked[m.id]);
 
+  // Collect unique inputs needed
+  const neededInputs = {};
+  pickedItems.forEach((m) => {
+    if (m.input && !neededInputs[m.input]) neededInputs[m.input] = { key: m.input, label: m.inputLabel, default: m.inputDefault };
+  });
+
+  // Calculate totals
   let grandTotal = 0;
-  const verticalTotals = activeVerticals.map((v) => {
-    let total = 0;
-    const feeResults = v.fees.map((f) => {
-      let amount = 0;
-      if (f.fixed) { amount = f.fixed; }
-      else if (f.pct && f.appliesTo) { amount = (inputs[v.key + "_" + f.appliesTo] || 0) * f.pct; }
-      total += amount;
-      return { ...f, amount };
-    });
-    grandTotal += total;
-    return { ...v, feeResults, total };
+  const results = pickedItems.map((m) => {
+    let amount = 0;
+    if (m.fixed) amount = m.fixed;
+    else if (m.pct && m.input) amount = (vals[m.input] || 0) * m.pct;
+    grandTotal += amount;
+    return { ...m, amount };
+  });
+
+  // Group results by vertical
+  const resultsByVertical = {};
+  results.forEach((r) => {
+    if (!resultsByVertical[r.vertical]) resultsByVertical[r.vertical] = { items: [], total: 0, color: r.color };
+    resultsByVertical[r.vertical].items.push(r);
+    resultsByVertical[r.vertical].total += r.amount;
   });
 
   return (
     <div>
-      {/* Step 1: Select Verticals */}
+      {/* Menu — grouped by vertical */}
       <div style={{ marginBottom: 40 }}>
-        <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>Step 1 &mdash; Select Your Verticals</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
-          {BUILDER.map((v) => (
-            <button key={v.key} onClick={() => toggle(v.key)} style={{ padding: "18px 20px", borderRadius: "var(--radius)", border: selected[v.key] ? `2px solid ${v.color}` : "2px solid var(--border)", background: selected[v.key] ? `${v.color}10` : "white", cursor: "pointer", textAlign: "left", transition: "0.2s" }}>
-              <div style={{ fontSize: "1.2rem", marginBottom: 4 }}>{v.icon}</div>
-              <div style={{ fontSize: "0.85rem", fontWeight: 700, color: selected[v.key] ? v.color : "var(--earth)" }}>{v.name}</div>
-              <div style={{ fontSize: "0.68rem", color: "var(--text-light)", marginTop: 2 }}>{selected[v.key] ? "Selected \u2713" : "Click to add"}</div>
-            </button>
-          ))}
-        </div>
+        <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 20 }}>Select the services you want in your package</div>
+        {verticals.map((vName) => {
+          const items = MENU.filter((m) => m.vertical === vName);
+          const color = items[0].color;
+          return (
+            <div key={vName} style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", color, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ width: 10, height: 10, borderRadius: 2, background: color, display: "inline-block" }} />
+                {vName}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 8 }}>
+                {items.map((m) => (
+                  <button key={m.id} onClick={() => toggle(m.id)} style={{ padding: "14px 16px", borderRadius: 8, border: picked[m.id] ? `2px solid ${m.color}` : "1px solid var(--border)", background: picked[m.id] ? `${m.color}0D` : "white", cursor: "pointer", textAlign: "left", transition: "0.15s" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div style={{ fontSize: "0.82rem", fontWeight: 700, color: picked[m.id] ? m.color : "var(--earth)" }}>{m.item}</div>
+                      {picked[m.id] && <span style={{ fontSize: "0.7rem", color: m.color, fontWeight: 700 }}>{"\u2713"}</span>}
+                    </div>
+                    <div style={{ fontSize: "0.68rem", color: "var(--text-light)", marginTop: 2, lineHeight: 1.4 }}>{m.desc}</div>
+                    <div style={{ fontSize: "0.68rem", fontWeight: 700, color: m.color, marginTop: 6 }}>{m.fee}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Step 2: Configure Inputs */}
-      {activeVerticals.length > 0 && (
+      {/* Inputs — only show what's needed */}
+      {Object.keys(neededInputs).length > 0 && (
         <div style={{ marginBottom: 40 }}>
-          <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>Step 2 &mdash; Enter Your Project Numbers</div>
-          <div style={{ display: "grid", gridTemplateColumns: activeVerticals.length > 1 ? "1fr 1fr" : "1fr", gap: 16 }}>
-            {activeVerticals.map((v) => (
-              <div key={v.key} style={{ background: "white", borderRadius: "var(--radius)", border: "1px solid var(--border)", padding: 24, borderTop: `3px solid ${v.color}` }}>
-                <div style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--earth)", marginBottom: 16 }}>{v.icon} {v.name}</div>
-                {v.inputs.map((inp) => (
-                  <div key={inp.key} style={{ marginBottom: 12 }}>
-                    <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 600, color: "var(--text-light)", letterSpacing: "0.05em", marginBottom: 4 }}>{inp.label}</label>
-                    <input type="text" value={fmt(inputs[v.key + "_" + inp.key] || 0)} onChange={(e) => setVal(v.key + "_" + inp.key, e.target.value)} style={{ width: "100%", padding: "10px 14px", borderRadius: 6, border: "1px solid var(--border)", fontSize: "0.88rem", fontWeight: 600, color: "var(--earth)", fontFamily: "var(--font-body)", outline: "none" }} />
-                  </div>
-                ))}
+          <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>Enter your project numbers</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 12 }}>
+            {Object.values(neededInputs).map((inp) => (
+              <div key={inp.key} style={{ background: "white", borderRadius: 8, border: "1px solid var(--border)", padding: "16px 20px" }}>
+                <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 600, color: "var(--text-light)", letterSpacing: "0.05em", marginBottom: 6 }}>{inp.label}</label>
+                <input type="text" value={fmt(vals[inp.key] || 0)} onChange={(e) => setInput(inp.key, e.target.value)} style={{ width: "100%", padding: "10px 14px", borderRadius: 6, border: "1px solid var(--border)", fontSize: "0.88rem", fontWeight: 600, color: "var(--earth)", fontFamily: "var(--font-body)", outline: "none" }} />
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Step 3: Results */}
-      {activeVerticals.length > 0 && (
+      {/* Results */}
+      {pickedItems.length > 0 && (
         <div>
-          <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>Step 3 &mdash; Your IP Package Estimate</div>
-
-          {/* Grand total banner */}
+          <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>Your IP package estimate</div>
           <div style={{ background: "linear-gradient(135deg, var(--earth), #2A3420)", borderRadius: "var(--radius)", padding: "28px 32px", color: "white", marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
             <div>
               <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--sage)", marginBottom: 4 }}>Estimated Annual IP Revenue</div>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "2.4rem", fontWeight: 600, letterSpacing: "0.02em" }}>{fmt(grandTotal)}</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "2.4rem", fontWeight: 600 }}>{fmt(grandTotal)}</div>
+              <div style={{ fontSize: "0.72rem", color: "var(--sand)", marginTop: 4 }}>{pickedItems.length} service{pickedItems.length !== 1 ? "s" : ""} selected across {Object.keys(resultsByVertical).length} vertical{Object.keys(resultsByVertical).length !== 1 ? "s" : ""}</div>
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {verticalTotals.map((v) => (
-                <span key={v.key} style={{ padding: "6px 16px", borderRadius: 20, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", fontSize: "0.72rem", fontWeight: 600 }}>{v.name}: {fmt(v.total)}</span>
+              {Object.entries(resultsByVertical).map(([name, data]) => (
+                <span key={name} style={{ padding: "6px 16px", borderRadius: 20, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", fontSize: "0.72rem", fontWeight: 600 }}>{name}: {fmt(data.total)}</span>
               ))}
             </div>
           </div>
-
-          {/* Breakdown per vertical */}
-          {verticalTotals.map((v) => (
-            <div key={v.key} style={{ background: "white", borderRadius: "var(--radius)", border: "1px solid var(--border)", marginBottom: 16, overflow: "hidden" }}>
-              <div style={{ padding: "14px 20px", background: v.color, color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.05em" }}>{v.icon} {v.name}</span>
-                <span style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", fontWeight: 600 }}>{fmt(v.total)}</span>
+          {Object.entries(resultsByVertical).map(([name, data]) => (
+            <div key={name} style={{ background: "white", borderRadius: "var(--radius)", border: "1px solid var(--border)", marginBottom: 16, overflow: "hidden" }}>
+              <div style={{ padding: "14px 20px", background: data.color, color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontWeight: 700, fontSize: "0.82rem" }}>{name}</span>
+                <span style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", fontWeight: 600 }}>{fmt(data.total)}</span>
               </div>
               <div style={{ padding: "0 20px" }}>
-                {v.feeResults.map((f, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < v.feeResults.length - 1 ? "1px solid rgba(200,185,154,0.12)" : "none" }}>
-                    <div>
-                      <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--earth)" }}>{f.label}</div>
-                      <div style={{ fontSize: "0.7rem", color: "var(--text-light)" }}>{f.rate}</div>
-                    </div>
-                    <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--moss)" }}>{fmt(f.amount)}</div>
+                {data.items.map((f, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < data.items.length - 1 ? "1px solid rgba(200,185,154,0.12)" : "none" }}>
+                    <div><div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--earth)" }}>{f.item}</div><div style={{ fontSize: "0.7rem", color: "var(--text-light)" }}>{f.fee}</div></div>
+                    <div style={{ fontSize: "0.95rem", fontWeight: 700, color: f.amount > 0 ? "var(--moss)" : "var(--text-light)" }}>{f.amount > 0 ? fmt(f.amount) : "TBD"}</div>
                   </div>
                 ))}
               </div>
@@ -328,8 +311,10 @@ function IPBuilder() {
         </div>
       )}
 
-      {activeVerticals.length === 0 && (
-        <div style={{ textAlign: "center", padding: "48px 20px", color: "var(--text-light)", fontSize: "0.88rem" }}>Select one or more verticals above to build your IP package estimate.</div>
+      {pickedItems.length === 0 && (
+        <div style={{ textAlign: "center", padding: "48px 20px", color: "var(--text-light)", fontSize: "0.88rem", background: "white", borderRadius: "var(--radius)", border: "1px dashed var(--border)" }}>
+          Pick any combination of services above to build a custom IP package and see your estimated fee structure.
+        </div>
       )}
     </div>
   );
@@ -340,58 +325,45 @@ function IPBuilder() {
 // ═══════════════════════════════════════════════════════════════
 
 function OrgDiagram() {
-  const boxStyle = () => ({ background: "white", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "16px 20px", fontSize: "0.78rem", lineHeight: 1.6, color: "var(--text-mid)", position: "relative" });
-  const hdr = (bg) => ({ background: bg || "var(--earth)", color: "white", padding: "8px 16px", borderRadius: "var(--radius) var(--radius) 0 0", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", textAlign: "center" });
+  const bx = () => ({ background: "white", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "16px 20px", fontSize: "0.78rem", lineHeight: 1.6, color: "var(--text-mid)" });
+  const hd = (bg) => ({ background: bg || "var(--earth)", color: "white", padding: "8px 16px", borderRadius: "var(--radius) var(--radius) 0 0", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", textAlign: "center" });
   const sub = { fontSize: "0.65rem", color: "var(--text-light)", fontStyle: "italic", textAlign: "center", marginBottom: 8 };
   const own = { fontSize: "0.65rem", color: "var(--text-light)", borderTop: "1px solid var(--border)", marginTop: 10, paddingTop: 8 };
-  const badge = (n) => (<span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 4, background: "#C8463E", color: "white", fontSize: "0.6rem", fontWeight: 700 }}>{n}</span>);
-  const row = (l, r) => (<div style={{ display: "flex", justifyContent: "space-between" }}><span>{l}</span><span>{r}</span></div>);
+  const badge = (n) => (<span key={n} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 4, background: "#C8463E", color: "white", fontSize: "0.6rem", fontWeight: 700 }}>{n}</span>);
+  const rw = (l, r) => (<div style={{ display: "flex", justifyContent: "space-between" }}><span>{l}</span><span>{r}</span></div>);
 
   return (
     <div style={{ overflowX: "auto" }}>
       <div style={{ minWidth: 1100, padding: "0 20px" }}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 0 }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <div style={{ width: 260 }}>
-            <div style={hdr("#4A5D23")}>CHOZEN IP</div>
-            <div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
+            <div style={hd("#4A5D23")}>CHOZEN IP</div>
+            <div style={{ ...bx(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
               <div style={sub}>Delaware LLC</div>
               <div>Intellectual Property</div><div>Research/Development</div><div>Creative/Concepting</div><div>Green Living Certification</div>
-              <div style={own}>{row("NP:","")}{row("[LLC]","80%")}{row("Third Party","15%")}</div>
+              <div style={own}>{rw("NP:","")}{rw("[LLC]","80%")}{rw("Third Party","15%")}</div>
             </div>
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "12px 0" }}>
-          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
-          <div style={{ display: "flex", gap: 8 }}>{badge("V")}{badge("IV")}{badge("I")}{badge("VII")}{badge("III")}</div>
-          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
+          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} /><div style={{ display: "flex", gap: 8 }}>{badge("V")}{badge("IV")}{badge("I")}{badge("VII")}{badge("III")}</div><div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 16 }}>
-          {[
-            { n: "Metro Brokerage", s: ["Branded Residence Sales","Marketing Consulting","Tenant Curation"], o: [{l:"NP:",r:""},{l:"[LLC]",r:"100%"}] },
-            { n: "FOC DevCo", s: ["Branded Residences and Resort Development","Green Development Framework"], o: [{l:"NP:",r:""},{l:"[LLC]",r:"100%"}] },
-            { n: "CHOZEN CCRL Non-Profit", s: ["Education","Scholarships","Conservation"], o: [{l:"NP:",r:""},{l:"[LLC]",r:"100%"}] },
-            { n: "Mgmt Co", s: ["TBD"], o: [{l:"NP:",r:""},{l:"[LLC]",r:"75%"},{l:"[LLC]",r:"25%"}] },
-          ].map((e) => (
-            <div key={e.n}><div style={hdr("#5A6B5A")}>{e.n}</div><div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}><div style={sub}>Delaware LLC</div>{e.s.map((s) => <div key={s}>{s}</div>)}<div style={own}>{e.o.map((o,i) => <div key={i} style={{ display:"flex",justifyContent:"space-between" }}><span>{o.l}</span><span>{o.r}</span></div>)}</div></div></div>
+          {[{n:"Metro Brokerage",s:["Branded Residence Sales","Marketing Consulting","Tenant Curation"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"100%"}]},{n:"FOC DevCo",s:["Branded Residences and Resort Development","Green Development Framework"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"100%"}]},{n:"CHOZEN CCRL Non-Profit",s:["Education","Scholarships","Conservation"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"100%"}]},{n:"Mgmt Co",s:["TBD"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"75%"},{l:"[LLC]",r:"25%"}]}].map((e) => (
+            <div key={e.n}><div style={hd("#5A6B5A")}>{e.n}</div><div style={{...bx(),borderTop:"none",borderRadius:"0 0 var(--radius) var(--radius)"}}><div style={sub}>Delaware LLC</div>{e.s.map((s)=><div key={s}>{s}</div>)}<div style={own}>{e.o.map((o,i)=><div key={i} style={{display:"flex",justifyContent:"space-between"}}><span>{o.l}</span><span>{o.r}</span></div>)}</div></div></div>
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "12px 0" }}>
-          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
-          <div style={{ display: "flex", gap: 8 }}>{badge("III")}{badge("II")}</div>
-          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
+          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} /><div style={{ display: "flex", gap: 8 }}>{badge("III")}{badge("II")}</div><div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12 }}>
           {IP.verticals.map((v) => (
-            <div key={v.name}><div style={hdr(v.color)}>{v.name}</div><div style={{ ...boxStyle(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)", minHeight: 160 }}><div style={sub}>Delaware LLC</div>{v.services.map((s) => <div key={s}>{s}</div>)}<div style={own}>{row("NP:","")}{v.ownership === "80% LLC / 15% Third Party" ? <>{row("[LLC]","80%")}{row("Third Party","15%")}</> : row("[LLC]","100%")}</div></div></div>
+            <div key={v.name}><div style={hd(v.color)}>{v.name}</div><div style={{...bx(),borderTop:"none",borderRadius:"0 0 var(--radius) var(--radius)",minHeight:160}}><div style={sub}>Delaware LLC</div>{v.services.map((s)=><div key={s}>{s}</div>)}<div style={own}>{rw("NP:","")}{v.ownership==="80% LLC / 15% Third Party"?<>{rw("[LLC]","80%")}{rw("Third Party","15%")}</>:rw("[LLC]","100%")}</div></div></div>
           ))}
         </div>
         <div style={{ marginTop: 40, background: "white", borderRadius: "var(--radius)", border: "1px solid var(--border)", padding: 24, maxWidth: 440 }}>
           <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "var(--earth)", marginBottom: 16, borderBottom: "2px solid var(--earth)", paddingBottom: 8 }}>Fee Structure</div>
-          {FEE_PILLS.map((f) => (
-            <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "6px 0", borderBottom: "1px solid rgba(200,185,154,0.12)" }}>
-              {badge(f.id)}<span style={{ flex: 1, fontSize: "0.78rem", color: "var(--text-mid)" }}>{f.label}:</span><span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--earth)" }}>{f.value}</span>
-            </div>
-          ))}
+          {FEE_PILLS.map((f) => (<div key={f.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "6px 0", borderBottom: "1px solid rgba(200,185,154,0.12)" }}>{badge(f.id)}<span style={{ flex: 1, fontSize: "0.78rem", color: "var(--text-mid)" }}>{f.label}:</span><span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--earth)" }}>{f.value}</span></div>))}
           <div style={{ marginTop: 12, fontSize: "0.68rem", color: "var(--text-light)", fontStyle: "italic", lineHeight: 1.5 }}>
             <div>*Residences Technical Services: Design; Guest Experiences; Branding; Marketing; PR</div>
             <div style={{ marginTop: 4 }}>**Programming Consulting: Ongoing Neighborhood and Community Development; Residents&apos; Experience; Community Events; Marketing &amp; PR Advisement</div>
@@ -410,20 +382,96 @@ export default function Home() {
   return (
     <>
       <Nav />
-      <section className="hero" id="hero"><div className="heroContent"><p className="heroEyebrow">Center for Regenerative Living</p><h1 className="heroTitle">CHOZEN</h1><p className="heroSub">IP Offering &amp; Brand Framework</p><div className="heroLine" /><div className="heroScroll"><a href="#ip">Explore</a></div></div></section>
 
-      <section className="section" id="ip">
-        <div className="sectionHeader"><p className="sectionEyebrow">Intellectual Property</p><h2 className="sectionTitle">CHOZEN IP Offering</h2><div className="divider" /><p className="sectionDesc">The IP entity owns and licenses the CHOZEN brand across six revenue verticals, supported by brokerage, development, non-profit, and management arms.</p></div>
-        <OrgDiagram />
+      {/* HERO */}
+      <section className="hero" id="hero">
+        <div className="heroContent">
+          <p className="heroEyebrow">Center for Regenerative Living</p>
+          <h1 className="heroTitle">CHOZEN</h1>
+          <p className="heroSub">IP Offering &amp; Brand Framework</p>
+          <div className="heroLine" />
+          <div className="heroScroll"><a href="#ip">Explore</a></div>
+        </div>
       </section>
 
+      {/* INTRO */}
+      <section className="section" style={{ paddingBottom: 40, textAlign: "center" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+          <p style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.1rem, 2vw, 1.4rem)", color: "var(--earth)", lineHeight: 1.7, marginBottom: 16 }}>
+            CHOZEN is a licensable intellectual property platform built around regenerative living.
+            It packages brand, design, technology, and programming into a flexible IP that developers,
+            hospitality operators, and investors can license across six distinct verticals.
+          </p>
+          <p style={{ fontSize: "0.88rem", color: "var(--text-light)", lineHeight: 1.7 }}>
+            Each vertical can be licensed independently or combined to create a fully integrated
+            regenerative development. Below, you&apos;ll find the complete IP structure, fee benchmarks
+            against the competitive set, and an interactive builder to explore what a custom package might look like.
+          </p>
+        </div>
+      </section>
+
+      {/* IP STRUCTURE */}
+      <section className="sectionAlt" id="ip">
+        <div className="sectionInner">
+          <div className="sectionHeader">
+            <p className="sectionEyebrow">Intellectual Property</p>
+            <h2 className="sectionTitle">CHOZEN IP Offering</h2>
+            <div className="divider" />
+            <p className="sectionDesc">
+              The diagram below maps how intellectual property flows from the central CHOZEN IP entity
+              through supporting organizations and into six licensable revenue verticals. Each connection
+              is annotated with its corresponding fee type (I&ndash;VII).
+            </p>
+          </div>
+          <OrgDiagram />
+        </div>
+      </section>
+
+      {/* IP BUILDER — right after structure */}
+      <section className="section" id="builder">
+        <div className="sectionHeader">
+          <p className="sectionEyebrow">Interactive Tool</p>
+          <h2 className="sectionTitle">Build Your IP Package</h2>
+          <div className="divider" />
+          <p className="sectionDesc">
+            Mix and match individual services from any vertical to design a custom IP package.
+            Select the pieces that fit your project &mdash; a branded residence with retail and events consulting,
+            a standalone hospitality license, or a full-stack regenerative development. The tool
+            calculates estimated fees in real time as you build.
+          </p>
+        </div>
+        <IPBuilder />
+      </section>
+
+      {/* FEE SUMMARY */}
       <section className="sectionAlt" id="fee-summary">
-        <div className="sectionInner"><div className="sectionHeader"><p className="sectionEyebrow">Revenue Model</p><h2 className="sectionTitle">Fee Structure at a Glance</h2><div className="divider" /><p className="sectionDesc">Seven fee streams flow through the CHOZEN IP entity.</p></div>
-        <div className="feePills">{FEE_PILLS.map((f) => <div key={f.id} className="feePill"><div className="pillId">{f.id}</div><div className="pillValue">{f.value}</div><div className="pillLabel">{f.label}</div><div className="pillDesc">{f.desc}</div></div>)}</div></div>
+        <div className="sectionInner">
+          <div className="sectionHeader">
+            <p className="sectionEyebrow">Revenue Model</p>
+            <h2 className="sectionTitle">Fee Structure at a Glance</h2>
+            <div className="divider" />
+            <p className="sectionDesc">
+              Seven fee streams flow through the CHOZEN IP entity. The rates below represent
+              CHOZEN&apos;s recommended positioning &mdash; significantly below industry averages while
+              delivering a differentiated regenerative brand.
+            </p>
+          </div>
+          <div className="feePills">{FEE_PILLS.map((f) => <div key={f.id} className="feePill"><div className="pillId">{f.id}</div><div className="pillValue">{f.value}</div><div className="pillLabel">{f.label}</div><div className="pillDesc">{f.desc}</div></div>)}</div>
+        </div>
       </section>
 
+      {/* FEE SCHEDULE */}
       <section className="section" id="fees">
-        <div className="sectionHeader"><p className="sectionEyebrow">Competitive Benchmarking</p><h2 className="sectionTitle">IP &amp; Consulting Fee Schedule</h2><div className="divider" /><p className="sectionDesc">CHOZEN&apos;s recommended fees vs. industry standards and the competitive set.</p></div>
+        <div className="sectionHeader">
+          <p className="sectionEyebrow">Competitive Benchmarking</p>
+          <h2 className="sectionTitle">IP &amp; Consulting Fee Schedule</h2>
+          <div className="divider" />
+          <p className="sectionDesc">
+            How CHOZEN&apos;s fees compare to industry standards and the competitive set.
+            CHOZEN consistently positions at or below the low end of each range, creating a
+            compelling value proposition for development partners.
+          </p>
+        </div>
         {FEES.map((s) => (
           <div key={s.category} className="feeSection">
             <h3 className="feeSectionTitle">{s.category}</h3>
@@ -435,16 +483,9 @@ export default function Home() {
         ))}
       </section>
 
-      {/* IP PACKAGE BUILDER */}
-      <section className="sectionAlt" id="builder">
+      {/* MEMBERSHIP */}
+      <section className="sectionAlt" id="membership">
         <div className="sectionInner">
-          <div className="sectionHeader"><p className="sectionEyebrow">Interactive Tool</p><h2 className="sectionTitle">Build Your IP Package</h2><div className="divider" /><p className="sectionDesc">Select verticals, enter your project numbers, and see an estimated IP fee breakdown in real time.</p></div>
-          <IPBuilder />
-        </div>
-      </section>
-
-      <section className="section" id="membership">
-        <div style={{ maxWidth: 1320, margin: "0 auto" }}>
           <div className="sectionHeader"><p className="sectionEyebrow">Membership Benchmarking</p><h2 className="sectionTitle">Membership Comp Set</h2><div className="divider" /><p className="sectionDesc">Pricing landscape across comparable lifestyle, wellness, and private club brands.</p></div>
           <div style={{ background: "linear-gradient(135deg, var(--earth), #2A3420)", borderRadius: "var(--radius)", padding: "24px 28px", color: "white", marginBottom: 24 }}>
             <h4 style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", marginBottom: 8 }}>CHOZEN Membership</h4>
@@ -456,8 +497,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sectionAlt" id="brand">
-        <div className="sectionInner"><div className="sectionHeader"><p className="sectionEyebrow">Brand Identity</p><h2 className="sectionTitle">We Are vs. We Are Not</h2><div className="divider" /><p className="sectionDesc">CHOZEN&apos;s brand pillars define our regenerative ethos &mdash; a clear declaration of what we stand for and what we reject.</p></div><BrandTabs /></div>
+      {/* BRAND */}
+      <section className="section" id="brand">
+        <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+          <div className="sectionHeader"><p className="sectionEyebrow">Brand Identity</p><h2 className="sectionTitle">We Are vs. We Are Not</h2><div className="divider" /><p className="sectionDesc">CHOZEN&apos;s brand pillars define our regenerative ethos &mdash; a clear declaration of what we stand for and what we reject.</p></div>
+          <BrandTabs />
+        </div>
       </section>
 
       <footer className="footer"><div className="footerLogo">CHOZEN</div><p>Center for Regenerative Living &mdash; IP &amp; Brand Guidelines 2025</p></footer>
