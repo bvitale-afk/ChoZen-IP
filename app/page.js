@@ -135,25 +135,41 @@ function Nav() {
   );
 }
 
-function Pillar({ p }) {
-  const [open, setOpen] = useState(false);
+function PillarCard({ p }) {
   return (
-    <div className="pillarCard">
-      <div className="pillarTitleBar" onClick={() => setOpen(!open)}>
-        <span className="pillarIcon">{p.icon}</span>
-        <span className="pillarName">{p.title}</span>
-        <span className={`pillarToggle ${open ? "open" : ""}`}>{"\u25BE"}</span>
+    <div className="pillarCard" style={{ marginBottom: 24 }}>
+      <div style={{ padding: "20px 28px", background: "var(--cream)", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.3rem", color: "var(--earth)", display: "flex", alignItems: "center", gap: 14 }}>
+          <span className="pillarIcon">{p.icon}</span>
+          {p.title}
+        </div>
       </div>
-      {open && (
-        <>
-          <div className="pillarBody">
-            <div className="pillarCol"><div className="pillarColLabel yes">{"\u2713"} {p.yesLabel}</div><p>{p.yes}</p></div>
-            <div className="pillarCol"><div className="pillarColLabel no">{"\u2715"} {p.noLabel}</div><p>{p.no}</p></div>
-          </div>
-          {p.tags.length > 0 && <div className="pillarTags">{p.tags.map((t) => <span key={t} className="pillarTag">{t}</span>)}</div>}
-        </>
-      )}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ padding: "14px 28px", background: "linear-gradient(135deg, var(--moss), #6B8F3C)", color: "white", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>{"\u2713"} We Are</div>
+        <div style={{ padding: "14px 28px", background: "linear-gradient(135deg, #6B4A4A, #8B3A3A)", color: "white", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}>{"\u2715"} We Are Not</div>
+      </div>
+      <div className="pillarBody">
+        <div className="pillarCol"><p>{p.yes}</p></div>
+        <div className="pillarCol"><p>{p.no}</p></div>
+      </div>
+      {p.tags.length > 0 && <div className="pillarTags">{p.tags.map((t) => <span key={t} className="pillarTag">{t}</span>)}</div>}
     </div>
+  );
+}
+
+function BrandTabs() {
+  const [tab, setTab] = useState("res-hosp");
+  const resHospPillars = PILLARS.filter((p) => p.title !== "Sacred Retail \u2014 Casa Colibri");
+  const retailPillar = PILLARS.find((p) => p.title === "Sacred Retail \u2014 Casa Colibri");
+  return (
+    <>
+      <div className="tabs">
+        <button className={`tabBtn ${tab === "res-hosp" ? "active" : ""}`} onClick={() => setTab("res-hosp")}>Residences &amp; Hospitality</button>
+        <button className={`tabBtn ${tab === "retail" ? "active" : ""}`} onClick={() => setTab("retail")}>Sacred Retail</button>
+      </div>
+      {tab === "res-hosp" && resHospPillars.map((p, i) => <PillarCard key={i} p={p} />)}
+      {tab === "retail" && retailPillar && <PillarCard p={retailPillar} />}
+    </>
   );
 }
 
@@ -422,31 +438,47 @@ export default function Home() {
             <div className="divider" />
             <p className="sectionDesc">Pricing landscape across comparable lifestyle, wellness, and private club brands.</p>
           </div>
-          <div className="memberGrid">
-            <div className="memberCard memberHighlight"><h4>CHOZEN Membership</h4><p>{MEMBERSHIP.note}</p></div>
-            {MEMBERSHIP.comps.map((m) => (
-              <div key={m.name} className="memberCard">
-                <h4>{m.name}</h4>
-                <div className="memberModel">{m.model}</div>
-                {m.init !== "\u2014" && <><div className="memberLabel">Initiation</div><div className="memberDetail">{m.init}</div></>}
-                <div className="memberLabel">Annual / Rate</div><div className="memberDetail">{m.annual}</div>
-                {m.all !== "N/A" && <><div className="memberLabel">All Properties</div><div className="memberDetail">{m.all}</div></>}
-              </div>
-            ))}
+          <div style={{ background: "linear-gradient(135deg, var(--earth), #2A3420)", borderRadius: "var(--radius)", padding: "24px 28px", color: "white", marginBottom: 24 }}>
+            <h4 style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", marginBottom: 8 }}>CHOZEN Membership</h4>
+            <p style={{ fontSize: "0.82rem", lineHeight: 1.6, color: "rgba(255,255,255,0.75)" }}>{MEMBERSHIP.note}</p>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table className="feeTable">
+              <thead>
+                <tr>
+                  <th>Brand</th>
+                  <th>Model</th>
+                  <th>Initiation</th>
+                  <th>Annual / Rate</th>
+                  <th>All Properties</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MEMBERSHIP.comps.map((m) => (
+                  <tr key={m.name}>
+                    <td className="feeType">{m.name}</td>
+                    <td><span className="compChip">{m.model}</span></td>
+                    <td style={{ color: m.init === "\u2014" ? "var(--text-light)" : "var(--text-mid)" }}>{m.init}</td>
+                    <td style={{ fontWeight: 600, color: "var(--moss)" }}>{m.annual}</td>
+                    <td style={{ color: m.all === "N/A" ? "var(--text-light)" : "var(--text-mid)" }}>{m.all}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      {/* BRAND PILLARS */}
+      {/* BRAND PILLARS — tabbed */}
       <section className="sectionAlt" id="brand">
         <div className="sectionInner">
           <div className="sectionHeader">
             <p className="sectionEyebrow">Brand Identity</p>
             <h2 className="sectionTitle">We Are vs. We Are Not</h2>
             <div className="divider" />
-            <p className="sectionDesc">CHOZEN&apos;s brand pillars across residences, hospitality, and retail. Click to expand.</p>
+            <p className="sectionDesc">CHOZEN&apos;s brand pillars define our regenerative ethos &mdash; a clear declaration of what we stand for and what we reject.</p>
           </div>
-          {PILLARS.map((p, i) => <Pillar key={i} p={p} />)}
+          <BrandTabs />
         </div>
       </section>
 
