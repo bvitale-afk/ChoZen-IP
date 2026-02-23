@@ -1,0 +1,188 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --earth: #1E1A14;
+  --earth-mid: #2C2416;
+  --moss: #4A5D23;
+  --moss-light: #6B8F3C;
+  --sage: #8FA87E;
+  --sand: #C8B99A;
+  --cream: #F5F0E8;
+  --warm-white: #FAF8F4;
+  --gold: #B8963E;
+  --river: #3A6B7E;
+  --charcoal: #3A3632;
+  --text: #1E1A14;
+  --text-mid: #4A4540;
+  --text-light: #7A756F;
+  --border: rgba(200, 185, 154, 0.25);
+  --shadow-sm: 0 1px 3px rgba(30, 26, 20, 0.04);
+  --shadow-md: 0 4px 20px rgba(30, 26, 20, 0.06);
+  --shadow-lg: 0 12px 40px rgba(30, 26, 20, 0.08);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "DM Sans", -apple-system, sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); color: var(--text); background: var(--warm-white); -webkit-font-smoothing: antialiased; }
+
+/* ── NAV ── */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(250, 248, 244, 0.9); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
+.nav.scrolled { box-shadow: var(--shadow-md); }
+.navInner { max-width: 1320px; margin: 0 auto; padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+.navLogo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 300; letter-spacing: 0.3em; color: var(--earth); text-decoration: none; }
+.navLinks { display: flex; gap: 4px; }
+.navLinks a { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: 0.2s; }
+.navLinks a:hover, .navLinks a.active { color: var(--earth); background: rgba(74, 93, 35, 0.06); }
+.navToggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+.navToggle span { display: block; width: 20px; height: 1.5px; background: var(--earth); margin: 5px 0; }
+
+/* ── HERO ── */
+.hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(165deg, #1A1610 0%, var(--earth) 50%, #1E2A18 100%); position: relative; overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 50%, rgba(74, 93, 35, 0.12) 0%, transparent 60%), radial-gradient(ellipse at 75% 30%, rgba(58, 107, 126, 0.08) 0%, transparent 50%); }
+.heroContent { position: relative; text-align: center; padding: 40px; }
+.heroEyebrow { font-size: 0.65rem; letter-spacing: 0.5em; text-transform: uppercase; color: var(--sage); margin-bottom: 28px; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
+.heroTitle { font-family: var(--font-display); font-weight: 300; font-size: clamp(3.5rem, 9vw, 8rem); color: var(--cream); letter-spacing: 0.18em; line-height: 1; opacity: 0; animation: fadeUp 0.8s 0.4s forwards; }
+.heroSub { font-family: var(--font-display); font-weight: 300; font-style: italic; font-size: clamp(1rem, 2vw, 1.35rem); color: var(--sand); margin-top: 20px; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; }
+.heroLine { width: 48px; height: 1px; background: var(--gold); margin: 36px auto; opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
+.heroScroll { opacity: 0; animation: fadeUp 0.8s 1s forwards; }
+.heroScroll a { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--sage); text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.heroScroll a::after { content: ""; width: 1px; height: 36px; background: var(--sage); animation: pulse 2s infinite; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* ── LAYOUT ── */
+.section { padding: 100px 32px; max-width: 1320px; margin: 0 auto; }
+.sectionAlt { background: var(--cream); }
+.sectionInner { max-width: 1320px; margin: 0 auto; padding: 100px 32px; }
+.sectionHeader { text-align: center; margin-bottom: 64px; }
+.sectionEyebrow { font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--moss); margin-bottom: 12px; font-weight: 600; }
+.sectionTitle { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: var(--earth); }
+.sectionDesc { font-size: 0.9rem; color: var(--text-light); line-height: 1.7; max-width: 620px; margin: 16px auto 0; }
+.divider { width: 36px; height: 1px; background: var(--gold); margin: 20px auto; }
+
+/* ── IP STRUCTURE DIAGRAM ── */
+.ipCore { background: linear-gradient(135deg, var(--earth), #2A3420); border-radius: var(--radius-lg); padding: 40px; color: white; text-align: center; margin-bottom: 24px; }
+.ipCore h3 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; letter-spacing: 0.1em; }
+.ipCore .ipEntity { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--sage); margin-top: 4px; }
+.ipCore .ipOwnership { font-size: 0.78rem; color: var(--sand); margin-top: 8px; }
+.ipCapabilities { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+.ipCap { font-size: 0.7rem; font-weight: 600; padding: 6px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: var(--cream); letter-spacing: 0.05em; }
+
+.ipGrid { display: grid; gap: 16px; }
+.ipGrid2 { grid-template-columns: 1fr 1fr; }
+.ipGrid3 { grid-template-columns: 1fr 1fr 1fr; }
+.ipGrid6 { grid-template-columns: repeat(6, 1fr); }
+
+.ipCard { background: white; border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); transition: 0.2s; }
+.ipCard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ipCard h4 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--earth); margin-bottom: 4px; }
+.ipCard .ipEntity { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+.ipCard .ipOwnership { font-size: 0.72rem; color: var(--moss); font-weight: 600; margin-top: 4px; }
+.ipCard ul { list-style: none; margin-top: 12px; padding: 0; }
+.ipCard ul li { font-size: 0.78rem; padding: 5px 0; color: var(--text-mid); border-bottom: 1px solid rgba(200,185,154,0.12); }
+.ipCard ul li:last-child { border: none; }
+
+.verticalCard { background: white; border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); border-top: 3px solid var(--moss); transition: 0.2s; }
+.verticalCard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.verticalCard h4 { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; color: var(--earth); margin-bottom: 10px; }
+.verticalCard ul { list-style: none; padding: 0; }
+.verticalCard ul li { font-size: 0.75rem; padding: 4px 0; color: var(--text-mid); }
+.verticalCard .vertNote { font-size: 0.68rem; color: var(--text-light); margin-top: 8px; font-style: italic; line-height: 1.5; }
+
+.ipArrow { text-align: center; padding: 12px 0; color: var(--sand); font-size: 1.2rem; }
+.ipLabel { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin: 32px 0 16px; text-align: center; }
+
+/* ── FEE SUMMARY PILLS ── */
+.feePills { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 48px; }
+.feePill { background: white; border-radius: var(--radius); padding: 20px 16px; text-align: center; border: 1px solid var(--border); }
+.feePill .pillId { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em; color: var(--moss); }
+.feePill .pillValue { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: var(--earth); margin: 4px 0; }
+.feePill .pillLabel { font-size: 0.72rem; font-weight: 600; color: var(--text-mid); }
+.feePill .pillDesc { font-size: 0.68rem; color: var(--text-light); margin-top: 4px; }
+
+/* ── FEE SCHEDULE TABLES ── */
+.feeSection { margin-bottom: 56px; }
+.feeSectionTitle { font-family: var(--font-display); font-weight: 500; font-size: 1.5rem; color: var(--earth); margin-bottom: 8px; }
+.compSetBar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.compChip { font-size: 0.65rem; font-weight: 600; padding: 4px 12px; background: rgba(74,93,35,0.06); color: var(--moss); border-radius: 20px; letter-spacing: 0.03em; }
+
+.feeTable { width: 100%; border-collapse: collapse; background: white; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.feeTable thead th { background: var(--earth); color: var(--cream); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 14px 16px; text-align: left; }
+.feeTable tbody tr { border-bottom: 1px solid rgba(200,185,154,0.12); }
+.feeTable tbody tr:hover { background: rgba(74,93,35,0.02); }
+.feeTable td { padding: 16px; vertical-align: top; font-size: 0.82rem; line-height: 1.5; }
+.feeTable .feeType { font-weight: 700; color: var(--earth); min-width: 160px; }
+.feeTable .chozenFee { color: var(--moss); font-weight: 700; font-size: 0.88rem; }
+.feeTable .industryFee { color: var(--text-light); }
+.feeTable .feeOffering { color: var(--text-mid); font-size: 0.78rem; max-width: 300px; }
+
+.compRow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.compTag { font-size: 0.68rem; padding: 3px 10px; background: var(--cream); border-radius: 12px; color: var(--text-mid); }
+.compTag strong { color: var(--earth); }
+
+/* ── MEMBERSHIP ── */
+.memberGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.memberCard { background: white; border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); text-align: center; transition: 0.2s; }
+.memberCard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.memberCard h4 { font-family: var(--font-display); font-size: 1rem; color: var(--earth); margin-bottom: 10px; }
+.memberCard .memberModel { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--moss); font-weight: 700; margin-bottom: 8px; }
+.memberDetail { font-size: 0.75rem; color: var(--text-mid); line-height: 1.5; }
+.memberLabel { font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); font-weight: 700; margin-top: 8px; }
+.memberHighlight { grid-column: 1 / -1; background: linear-gradient(135deg, var(--earth), #2A3420); color: white; text-align: left; border: none; }
+.memberHighlight h4 { color: var(--cream); font-size: 1.2rem; }
+.memberHighlight p { color: rgba(255,255,255,0.75); font-size: 0.82rem; line-height: 1.6; }
+
+/* ── ORG CHART (Current) ── */
+.orgBox { background: white; border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border); margin-bottom: 32px; }
+.orgBox h3 { font-family: var(--font-display); font-size: 1.4rem; color: var(--earth); text-align: center; margin-bottom: 28px; }
+
+/* ── BRAND PILLARS ── */
+.pillarCard { background: white; border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); transition: 0.2s; }
+.pillarCard:hover { box-shadow: var(--shadow-md); }
+.pillarTitleBar { padding: 20px 28px; background: var(--cream); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; cursor: pointer; }
+.pillarIcon { width: 32px; height: 32px; border-radius: 50%; background: var(--moss); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+.pillarName { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; color: var(--earth); flex: 1; }
+.pillarToggle { font-size: 1.2rem; color: var(--text-light); transition: 0.3s; }
+.pillarToggle.open { transform: rotate(180deg); }
+.pillarBody { display: grid; grid-template-columns: 1fr 1fr; }
+.pillarCol { padding: 24px 28px; }
+.pillarCol:first-child { border-right: 1px solid var(--border); background: rgba(74,93,35,0.015); }
+.pillarCol:last-child { background: rgba(139,58,58,0.015); }
+.pillarColLabel { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+.pillarColLabel.yes { color: var(--moss); }
+.pillarColLabel.no { color: #8B3A3A; }
+.pillarCol p { font-size: 0.82rem; line-height: 1.7; color: var(--text-mid); }
+.pillarTags { display: flex; flex-wrap: wrap; gap: 5px; padding: 12px 28px 20px; }
+.pillarTag { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; background: rgba(74,93,35,0.06); color: var(--moss); border-radius: 16px; }
+
+/* ── SOURCES ── */
+.sourcesList { background: white; border-radius: var(--radius); padding: 32px; border: 1px solid var(--border); }
+.sourcesList ol { padding-left: 20px; }
+.sourcesList li { font-size: 0.82rem; color: var(--text-light); line-height: 1.7; padding: 6px 0; border-bottom: 1px solid rgba(200,185,154,0.08); }
+.sourcesList li:last-child { border: none; }
+
+/* ── FOOTER ── */
+.footer { background: var(--earth); padding: 48px 32px; text-align: center; }
+.footerLogo { font-family: var(--font-display); font-weight: 300; font-size: 1.6rem; letter-spacing: 0.3em; color: var(--cream); margin-bottom: 8px; }
+.footer p { font-size: 0.72rem; color: var(--sand); opacity: 0.5; letter-spacing: 0.08em; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .ipGrid6 { grid-template-columns: repeat(3, 1fr); }
+  .ipGrid3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .section, .sectionInner { padding: 64px 20px; }
+  .navLinks { display: none; position: fixed; top: 64px; left: 0; right: 0; background: var(--warm-white); flex-direction: column; padding: 16px; border-bottom: 1px solid var(--border); }
+  .navLinks.open { display: flex; }
+  .navToggle { display: block; }
+  .ipGrid2, .ipGrid3, .ipGrid6 { grid-template-columns: 1fr; }
+  .pillarBody { grid-template-columns: 1fr; }
+  .pillarCol:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+  .feeTable { font-size: 0.75rem; }
+  .feeTable td, .feeTable th { padding: 10px 12px; }
+}
