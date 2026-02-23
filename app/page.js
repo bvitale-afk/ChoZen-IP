@@ -131,7 +131,7 @@ function Nav() {
     const fn = () => { setScrolled(window.scrollY > 40); let cur = ""; document.querySelectorAll("section[id]").forEach((s) => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; }); setActive(cur); };
     window.addEventListener("scroll", fn); return () => window.removeEventListener("scroll", fn);
   }, []);
-  const links = [{ href: "#ip", label: "IP Structure" }, { href: "#builder", label: "IP Builder" }, { href: "#fee-summary", label: "Fees" }, { href: "#fees", label: "Comp Set" }, { href: "#membership", label: "Membership" }, { href: "#brand", label: "Brand" }];
+  const links = [{ href: "#builder", label: "IP Builder" }, { href: "#fee-summary", label: "Fees" }, { href: "#fees", label: "Fee Schedule" }, { href: "#brand", label: "Brand" }];
   return (
     <nav className={`nav ${scrolled ? "scrolled" : ""}`}>
       <div className="navInner">
@@ -321,60 +321,6 @@ function IPBuilder() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ORG DIAGRAM
-// ═══════════════════════════════════════════════════════════════
-
-function OrgDiagram() {
-  const bx = () => ({ background: "white", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "16px 20px", fontSize: "0.78rem", lineHeight: 1.6, color: "var(--text-mid)" });
-  const hd = (bg) => ({ background: bg || "var(--earth)", color: "white", padding: "8px 16px", borderRadius: "var(--radius) var(--radius) 0 0", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", textAlign: "center" });
-  const sub = { fontSize: "0.65rem", color: "var(--text-light)", fontStyle: "italic", textAlign: "center", marginBottom: 8 };
-  const own = { fontSize: "0.65rem", color: "var(--text-light)", borderTop: "1px solid var(--border)", marginTop: 10, paddingTop: 8 };
-  const badge = (n) => (<span key={n} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 4, background: "#C8463E", color: "white", fontSize: "0.6rem", fontWeight: 700 }}>{n}</span>);
-  const rw = (l, r) => (<div style={{ display: "flex", justifyContent: "space-between" }}><span>{l}</span><span>{r}</span></div>);
-
-  return (
-    <div style={{ overflowX: "auto" }}>
-      <div style={{ minWidth: 1100, padding: "0 20px" }}>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div style={{ width: 260 }}>
-            <div style={hd("#4A5D23")}>CHOZEN IP</div>
-            <div style={{ ...bx(), borderTop: "none", borderRadius: "0 0 var(--radius) var(--radius)" }}>
-              <div style={sub}>Delaware LLC</div>
-              <div>Intellectual Property</div><div>Research/Development</div><div>Creative/Concepting</div><div>Green Living Certification</div>
-              <div style={own}>{rw("NP:","")}{rw("[LLC]","80%")}{rw("Third Party","15%")}</div>
-            </div>
-          </div>
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "12px 0" }}>
-          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} /><div style={{ display: "flex", gap: 8 }}>{badge("V")}{badge("IV")}{badge("I")}{badge("VII")}{badge("III")}</div><div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 16 }}>
-          {[{n:"Metro Brokerage",s:["Branded Residence Sales","Marketing Consulting","Tenant Curation"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"100%"}]},{n:"FOC DevCo",s:["Branded Residences and Resort Development","Green Development Framework"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"100%"}]},{n:"CHOZEN CCRL Non-Profit",s:["Education","Scholarships","Conservation"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"100%"}]},{n:"Mgmt Co",s:["TBD"],o:[{l:"NP:",r:""},{l:"[LLC]",r:"75%"},{l:"[LLC]",r:"25%"}]}].map((e) => (
-            <div key={e.n}><div style={hd("#5A6B5A")}>{e.n}</div><div style={{...bx(),borderTop:"none",borderRadius:"0 0 var(--radius) var(--radius)"}}><div style={sub}>Delaware LLC</div>{e.s.map((s)=><div key={s}>{s}</div>)}<div style={own}>{e.o.map((o,i)=><div key={i} style={{display:"flex",justifyContent:"space-between"}}><span>{o.l}</span><span>{o.r}</span></div>)}</div></div></div>
-          ))}
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, padding: "12px 0" }}>
-          <div style={{ flex: 1, height: 1, background: "var(--sand)" }} /><div style={{ display: "flex", gap: 8 }}>{badge("III")}{badge("II")}</div><div style={{ flex: 1, height: 1, background: "var(--sand)" }} />
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12 }}>
-          {IP.verticals.map((v) => (
-            <div key={v.name}><div style={hd(v.color)}>{v.name}</div><div style={{...bx(),borderTop:"none",borderRadius:"0 0 var(--radius) var(--radius)",minHeight:160}}><div style={sub}>Delaware LLC</div>{v.services.map((s)=><div key={s}>{s}</div>)}<div style={own}>{rw("NP:","")}{v.ownership==="80% LLC / 15% Third Party"?<>{rw("[LLC]","80%")}{rw("Third Party","15%")}</>:rw("[LLC]","100%")}</div></div></div>
-          ))}
-        </div>
-        <div style={{ marginTop: 40, background: "white", borderRadius: "var(--radius)", border: "1px solid var(--border)", padding: 24, maxWidth: 440 }}>
-          <div style={{ fontWeight: 700, fontSize: "0.82rem", color: "var(--earth)", marginBottom: 16, borderBottom: "2px solid var(--earth)", paddingBottom: 8 }}>Fee Structure</div>
-          {FEE_PILLS.map((f) => (<div key={f.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "6px 0", borderBottom: "1px solid rgba(200,185,154,0.12)" }}>{badge(f.id)}<span style={{ flex: 1, fontSize: "0.78rem", color: "var(--text-mid)" }}>{f.label}:</span><span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--earth)" }}>{f.value}</span></div>))}
-          <div style={{ marginTop: 12, fontSize: "0.68rem", color: "var(--text-light)", fontStyle: "italic", lineHeight: 1.5 }}>
-            <div>*Residences Technical Services: Design; Guest Experiences; Branding; Marketing; PR</div>
-            <div style={{ marginTop: 4 }}>**Programming Consulting: Ongoing Neighborhood and Community Development; Residents&apos; Experience; Community Events; Marketing &amp; PR Advisement</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════
 // PAGE
 // ═══════════════════════════════════════════════════════════════
 
@@ -390,7 +336,7 @@ export default function Home() {
           <h1 className="heroTitle">CHOZEN</h1>
           <p className="heroSub">IP Offering &amp; Brand Framework</p>
           <div className="heroLine" />
-          <div className="heroScroll"><a href="#ip">Explore</a></div>
+          <div className="heroScroll"><a href="#builder">Explore</a></div>
         </div>
       </section>
 
@@ -404,30 +350,13 @@ export default function Home() {
           </p>
           <p style={{ fontSize: "0.88rem", color: "var(--text-light)", lineHeight: 1.7 }}>
             Each vertical can be licensed independently or combined to create a fully integrated
-            regenerative development. Below, you&apos;ll find the complete IP structure, fee benchmarks
-            against the competitive set, and an interactive builder to explore what a custom package might look like.
+            regenerative development. Below, you&apos;ll find an interactive builder to explore what a custom
+            package might look like, along with detailed fee benchmarks and brand guidelines.
           </p>
         </div>
       </section>
 
-      {/* IP STRUCTURE */}
-      <section className="sectionAlt" id="ip">
-        <div className="sectionInner">
-          <div className="sectionHeader">
-            <p className="sectionEyebrow">Intellectual Property</p>
-            <h2 className="sectionTitle">CHOZEN IP Offering</h2>
-            <div className="divider" />
-            <p className="sectionDesc">
-              The diagram below maps how intellectual property flows from the central CHOZEN IP entity
-              through supporting organizations and into six licensable revenue verticals. Each connection
-              is annotated with its corresponding fee type (I&ndash;VII).
-            </p>
-          </div>
-          <OrgDiagram />
-        </div>
-      </section>
-
-      {/* IP BUILDER — right after structure */}
+      {/* IP BUILDER */}
       <section className="section" id="builder">
         <div className="sectionHeader">
           <p className="sectionEyebrow">Interactive Tool</p>
@@ -463,38 +392,22 @@ export default function Home() {
       {/* FEE SCHEDULE */}
       <section className="section" id="fees">
         <div className="sectionHeader">
-          <p className="sectionEyebrow">Competitive Benchmarking</p>
+          <p className="sectionEyebrow">Fee Details</p>
           <h2 className="sectionTitle">IP &amp; Consulting Fee Schedule</h2>
           <div className="divider" />
           <p className="sectionDesc">
-            How CHOZEN&apos;s fees compare to industry standards and the competitive set.
-            CHOZEN consistently positions at or below the low end of each range, creating a
-            compelling value proposition for development partners.
+            A detailed breakdown of CHOZEN&apos;s recommended fees by vertical, including what&apos;s
+            covered under each fee type.
           </p>
         </div>
         {FEES.map((s) => (
           <div key={s.category} className="feeSection">
             <h3 className="feeSectionTitle">{s.category}</h3>
-            <div className="compSetBar">{s.compSet.map((c) => <span key={c} className="compChip">{c}</span>)}</div>
-            <div style={{ overflowX: "auto" }}><table className="feeTable"><thead><tr><th>Fee Type</th><th>CHOZEN</th><th>Industry</th><th>What&apos;s Included</th><th>Comp Set</th></tr></thead><tbody>{s.rows.map((r) => (
-              <tr key={r.type}><td className="feeType">{r.type}</td><td className="chozenFee">{r.chozen}</td><td className="industryFee">{r.industry}</td><td className="feeOffering">{r.offering}</td><td>{r.comps.length > 0 && <div className="compRow">{r.comps.map((c) => <span key={c.n} className="compTag"><strong>{c.n}:</strong> {c.f}</span>)}</div>}</td></tr>
+            <div style={{ overflowX: "auto" }}><table className="feeTable"><thead><tr><th>Fee Type</th><th>CHOZEN Fee</th><th>What&apos;s Included</th></tr></thead><tbody>{s.rows.map((r) => (
+              <tr key={r.type}><td className="feeType">{r.type}</td><td className="chozenFee">{r.chozen}</td><td className="feeOffering">{r.offering}</td></tr>
             ))}</tbody></table></div>
           </div>
         ))}
-      </section>
-
-      {/* MEMBERSHIP */}
-      <section className="sectionAlt" id="membership">
-        <div className="sectionInner">
-          <div className="sectionHeader"><p className="sectionEyebrow">Membership Benchmarking</p><h2 className="sectionTitle">Membership Comp Set</h2><div className="divider" /><p className="sectionDesc">Pricing landscape across comparable lifestyle, wellness, and private club brands.</p></div>
-          <div style={{ background: "linear-gradient(135deg, var(--earth), #2A3420)", borderRadius: "var(--radius)", padding: "24px 28px", color: "white", marginBottom: 24 }}>
-            <h4 style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", marginBottom: 8 }}>CHOZEN Membership</h4>
-            <p style={{ fontSize: "0.82rem", lineHeight: 1.6, color: "rgba(255,255,255,0.75)" }}>{MEMBERSHIP.note}</p>
-          </div>
-          <div style={{ overflowX: "auto" }}><table className="feeTable"><thead><tr><th>Brand</th><th>Model</th><th>Initiation</th><th>Annual / Rate</th><th>All Properties</th></tr></thead><tbody>{MEMBERSHIP.comps.map((m) => (
-            <tr key={m.name}><td className="feeType">{m.name}</td><td><span className="compChip">{m.model}</span></td><td style={{ color: m.init === "\u2014" ? "var(--text-light)" : "var(--text-mid)" }}>{m.init}</td><td style={{ fontWeight: 600, color: "var(--moss)" }}>{m.annual}</td><td style={{ color: m.all === "N/A" ? "var(--text-light)" : "var(--text-mid)" }}>{m.all}</td></tr>
-          ))}</tbody></table></div>
-        </div>
       </section>
 
       {/* BRAND */}
