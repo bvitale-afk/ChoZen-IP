@@ -580,23 +580,6 @@ export default function Home() {
         <IPBuilder />
       </section>
 
-      {/* BRAND BOOK */}
-      <section className="sectionAlt" style={{ padding: "64px 32px" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
-          <p className="sectionEyebrow">Brand Identity</p>
-          <h2 className="sectionTitle" style={{ marginBottom: 12 }}>The CHOZEN Brand Book</h2>
-          <div className="divider" />
-          <p style={{ fontSize: "0.9rem", color: "var(--text-light)", lineHeight: 1.7, marginBottom: 28 }}>
-            Every CHOZEN-branded project carries the full weight of a deeply intentional identity &mdash;
-            from regenerative ethos and sacred symbolism to voice, tone, and visual aesthetic.
-            Explore the complete brand framework.
-          </p>
-          <button onClick={() => setBookOpen(true)} style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 36px", borderRadius: 8, background: "var(--earth)", color: "var(--cream)", border: "none", cursor: "pointer", fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.08em", transition: "0.2s" }}>
-            Open Brand Book {"\u2192"}
-          </button>
-        </div>
-      </section>
-
       {/* FEE SUMMARY */}
       <section className="sectionAlt" id="fee-summary">
         <div className="sectionInner">
@@ -638,7 +621,13 @@ export default function Home() {
       {/* BRAND */}
       <section className="section" id="brand">
         <div style={{ maxWidth: 1320, margin: "0 auto" }}>
-          <div className="sectionHeader"><p className="sectionEyebrow">Brand Identity</p><h2 className="sectionTitle">We Are vs. We Are Not</h2><div className="divider" /><p className="sectionDesc">CHOZEN&apos;s brand pillars define our regenerative ethos &mdash; a clear declaration of what we stand for and what we reject.</p></div>
+          <div className="sectionHeader"><p className="sectionEyebrow">Brand Identity</p><h2 className="sectionTitle">The CHOZEN Brand Book</h2><div className="divider" /><p className="sectionDesc">Every CHOZEN-branded project carries the full weight of a deeply intentional identity &mdash; from regenerative ethos and sacred symbolism to voice, tone, and visual aesthetic.</p></div>
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <button onClick={() => setBookOpen(true)} style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 36px", borderRadius: 8, background: "var(--earth)", color: "var(--cream)", border: "none", cursor: "pointer", fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.08em", transition: "0.2s" }}>
+              Explore Brand Book {"\u2192"}
+            </button>
+          </div>
+          <div className="sectionHeader" style={{ marginBottom: 40 }}><h2 className="sectionTitle">We Are vs. We Are Not</h2><div className="divider" /><p className="sectionDesc">CHOZEN&apos;s brand pillars define our regenerative ethos &mdash; a clear declaration of what we stand for and what we reject.</p></div>
           <BrandTabs />
         </div>
       </section>
