@@ -93,7 +93,7 @@ const FINANCIALS = {
     { label: "Equity Multiple", value: "3.60x", hl: true },
   ]},
   hospitality: { title: "ChoZen Hospitality", rows: [
-    { label: "Beds (2025\u20132032)", value: "36 \u2192 120" },
+    { label: "Beds (2026\u20132033)", value: "36 \u2192 120" },
     { label: "Revenue Growth", value: "$2M \u2192 $10M" },
     { label: "Revenue Streams", value: "Retreats + Retail + Wellness + Membership" },
     { label: "Estimated Exit Value", value: "$50M", hl: true },
@@ -125,7 +125,7 @@ const PILLARS_BRAND = [
 
 // ── Brand Book ──
 const BOOK_PAGES = [
-  { title: "Brand Book 2025" },
+  { title: "Brand Book 2026" },
   { title: "Our Shared Vision", subtitle: "Rewilding Hearts & Minds in the Heart of Florida", text: "We gather thought leaders, changemakers, community builders and placemakers from around the world who seek to explore regenerative systems and implement climate solutions." },
   { title: "Principles of the Chozen Path", items: [
     { bold: "Reunite with your Inner Self", text: "Develop a conscious awareness of your mind, body, emotions and senses" },
@@ -153,6 +153,7 @@ function Nav() {
   }, []);
   const links = [
     { href: "#story", label: "Story" },
+    { href: "#ip", label: "The IP" },
     { href: "#brand", label: "Brand" },
     { href: "#florida", label: "Florida" },
     { href: "#locations", label: "Locations" },
@@ -189,10 +190,31 @@ function FadeIn({ children, delay = 0, className = "" }) {
   return <div ref={ref} className={className} style={{ opacity: vis ? 1 : 0, transform: vis ? "translateY(0)" : "translateY(40px)", transition: `opacity 0.8s ${delay}s, transform 0.8s ${delay}s` }}>{children}</div>;
 }
 
+function useParallax(speed = 0.3) {
+  const ref = useRef(null);
+  const [offset, setOffset] = useState(0);
+  useEffect(() => {
+    const fn = () => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight;
+      if (visible) {
+        setOffset((rect.top / window.innerHeight) * speed * 100);
+      }
+    };
+    window.addEventListener("scroll", fn, { passive: true });
+    fn();
+    return () => window.removeEventListener("scroll", fn);
+  }, [speed]);
+  return { ref, offset };
+}
+
 function PhotoBreak({ img, title, subtitle, height = "60vh", overlay = 0.45 }) {
+  const { ref, offset } = useParallax(0.35);
   return (
-    <div className="photoBreak" style={{ height }}>
-      <img src={img} alt="" className="photoBreakImg" />
+    <div className="photoBreak" style={{ height }} ref={ref}>
+      <img src={img} alt="" className="photoBreakImg" style={{ transform: `translateY(${offset}px) scale(1.15)` }} />
       <div className="photoBreakOverlay" style={{ background: `rgba(26,22,16,${overlay})` }} />
       {(title || subtitle) && (
         <div className="photoBreakContent">
@@ -277,6 +299,8 @@ function WaitlistForm() {
 export default function Home() {
   const [bookOpen, setBookOpen] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
+  const heroParallax = useParallax(0.25);
+  const storyParallax = useParallax(0.2);
 
   return (
     <>
@@ -285,10 +309,13 @@ export default function Home() {
 
       {/* ═══ HERO ═══ */}
       <section className="hero" id="hero">
-        <img src={`${IMG}/bioregional-hub.jpg`} alt="" className="heroBgImg" />
+        <video className="heroBgVideo" autoPlay muted loop playsInline poster={`${IMG}/bioregional-hub.jpg`}>
+          <source src="https://yhbrmdh0w360ty1c.public.blob.vercel-storage.com/Videos/CHOZEN%20CCRL%20HEADER.mp4" type="video/mp4" />
+        </video>
         <div className="heroOverlay" />
         <div className="heroContent">
-          <p className="heroEyebrow">Future of Cities &bull; 2025</p>
+          <img src={`${IMG}/chozen-stamp.png`} alt="" className="heroStamp" />
+          <p className="heroEyebrow">Future of Cities &bull; 2026</p>
           <h1 className="heroTitle">CHOZEN</h1>
           <p className="heroSub">A Camp for the Humanity of the Future</p>
           <p className="heroTagline">Where Nature is the Ceremony</p>
@@ -332,8 +359,8 @@ export default function Home() {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <div className="storyHero">
-              <img src={`${IMG}/bioregional-hub2.jpg`} alt="Bioregional Hub" />
+            <div className="storyHero" ref={storyParallax.ref}>
+              <img src={`${IMG}/bioregional-hub2.jpg`} alt="Bioregional Hub" style={{ transform: `translateY(${storyParallax.offset}px) scale(1.12)` }} />
               <div className="storyHeroContent">
                 <h3>Bioregional Hubs</h3>
                 <p>Our bioregional hubs apply ecosystems thinking to re-village real estate, weaving together climate-conscious design, circular economies, and community-driven innovation.</p>
@@ -373,8 +400,69 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ PHOTO BREAK: Nature ═══ */}
-      <PhotoBreak img={`${IMG}/sebastian-river.jpg`} title="Nature is Medicine. Food is Medicine. Community is Medicine." height="70vh" />
+      {/* ═══ THE IP ═══ */}
+      <section className="ipSection" id="ip">
+        <div className="ipBg">
+          <img src={`${IMG}/sebastian-river.jpg`} alt="" />
+          <div className="ipBgOverlay" />
+        </div>
+        <div className="wrap" style={{ position: "relative", zIndex: 1 }}>
+          <FadeIn>
+            <div className="ipHeader">
+              <img src={`${IMG}/chozen-stamp.png`} alt="" className="ipStamp" />
+              <p className="ipEyebrow">The IP</p>
+              <h2 className="ipTitle">Nature is Medicine.<br />Food is Medicine.<br />Community is Medicine.</h2>
+              <div className="hdivider" style={{ background: "var(--gold)" }} />
+            </div>
+          </FadeIn>
+
+          <div className="ipGrid">
+            <FadeIn delay={0.1}>
+              <div className="ipCard">
+                <div className="ipCardImg"><img src={`${IMG}/chozen-farm.jpg`} alt="ChoZen Farm" /></div>
+                <div className="ipCardBody">
+                  <h4>ChoZen Farm</h4>
+                  <p>Farm-to-table meals, farm store, edible landscapes, agricultural neighborhoods, food forests, and permaculture education. Regenerative onsite agriculture rooted in native biodiversity.</p>
+                </div>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <div className="ipCard">
+                <div className="ipCardImg"><img src={`${IMG}/spa.jpg`} alt="Wellness" /></div>
+                <div className="ipCardBody">
+                  <h4>Regenerative Wellness</h4>
+                  <p>Spring-fed mineral pools, thermal therapy, regenerative wellness spa, temple to nature, and individualized wellness retreats guided by world-class practitioners.</p>
+                </div>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.2}>
+              <div className="ipCard">
+                <div className="ipCardImg"><img src={`${IMG}/community.jpg`} alt="Community" /></div>
+                <div className="ipCardBody">
+                  <h4>Community Revillaging</h4>
+                  <p>Close-knit communities of 50&ndash;150 people optimized for human connection. Seasonal events, wellness gatherings, meditation, breathwork, and shared rituals.</p>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+
+          <FadeIn delay={0.25}>
+            <div className="ipLicensing">
+              <div className="ipLicensingInner">
+                <h3>Global Licensing</h3>
+                <p>The ChoZen IP extends beyond any single location. Brand, programming, workshops, products, and the membership platform are licensed globally &mdash; creating recurring revenue across every new bioregional hub.</p>
+                <div className="ipLicensingTags">
+                  <span>Brand Licensing</span>
+                  <span>Programming</span>
+                  <span>Workshops</span>
+                  <span>Products</span>
+                  <span>Membership Platform</span>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
 
       {/* ═══ BRAND ═══ */}
       <section className="sec secAlt" id="brand">
@@ -425,7 +513,7 @@ export default function Home() {
       </section>
 
       {/* ═══ PHOTO BREAK: ChoZen Path ═══ */}
-      <PhotoBreak img={`${IMG}/chozen-path.jpg`} title="Walk the ChoZen Path" subtitle="Expansion 2025" height="55vh" />
+      <PhotoBreak img={`${IMG}/chozen-path.jpg`} title="Walk the ChoZen Path" subtitle="Expansion 2026" height="55vh" />
 
       {/* ═══ FLORIDA ═══ */}
       <section className="sec" id="florida">
@@ -619,7 +707,7 @@ export default function Home() {
         <img src={`${IMG}/chozen-stamp.png`} alt="" className="footerStamp" />
         <div className="footerLogo">CHOZEN</div>
         <p>Center for Regenerative Living &bull; Future of Cities</p>
-        <p>Investment & Brand Deck &mdash; 2025</p>
+        <p>Investment & Brand Deck &mdash; 2026</p>
         <p className="footerDisclaimer">This material is for informational purposes only and does not constitute an offer to sell or a solicitation of an offer to buy any securities.</p>
       </footer>
     </>
