@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from "react";
 // DATA — DECK CONTENT (Updated from Investment Deck March 2025)
 // ═══════════════════════════════════════════════════════════════
 
+const IMG = "https://lnx8jv0uf25jotc7.private.blob.vercel-storage.com/Images";
+
 const STATS = [
   { number: "92", label: "Subtropical Acres" },
   { number: "55", label: "For-Sale Residences" },
@@ -18,18 +20,21 @@ const TESTIMONIALS = [
     name: "Dan Buettner",
     role: "Expert on Longevity & Well-Being",
     detail: "Creator of the Blue Zones Project",
+    img: `${IMG}/dan-butner.jpg`,
   },
   {
     quote: "ChoZen is a sanctuary for wellness and nature lovers.",
     name: "USA Today",
     role: "National Publication",
     detail: "",
+    img: `${IMG}/usa-today.jpg`,
   },
   {
     quote: "ChoZen is the jewel in Florida\u2019s crown.",
     name: "Nat Kelly",
     role: "Actor & Environmental Activist",
     detail: "",
+    img: `${IMG}/nat-kelly.jpg`,
   },
 ];
 
@@ -38,31 +43,37 @@ const PILLARS = [
     icon: "\u{1F33F}",
     title: "Wellness",
     desc: "Regenerative wellness spa, spring-fed mineral pools, thermal therapy, and individualized wellness retreats",
+    img: `${IMG}/spa.jpg`,
   },
   {
     icon: "\u{1F33E}",
     title: "Agriculture",
     desc: "Regenerative onsite farming, food forests, edible landscapes, farm-to-table meals, and a farm store",
+    img: `${IMG}/chozen-farm.jpg`,
   },
   {
     icon: "\u{1F3DB}",
     title: "Hospitality",
     desc: "250 rooms of luxury ecoglamping, earth-to-table dining, and world-class regenerative experiences",
+    img: `${IMG}/chozen-hospitality.jpg`,
   },
   {
     icon: "\u{1F30E}",
     title: "Nature",
     desc: "Set within the 22,000-acre St. Sebastian River Preserve \u2014 North America\u2019s most biodiverse lagoon system",
+    img: `${IMG}/nature.jpg`,
   },
   {
     icon: "\u{1F525}",
     title: "Ancestral Wisdom",
     desc: "Honoring indigenous knowledge, sacred practices, and the guidance of those who walked before us",
+    img: `${IMG}/temple-to-nature.jpg`,
   },
   {
     icon: "\u{1F91D}",
     title: "Community",
     desc: "Optimizing for human connection through revillaging \u2014 close-knit communities of 50\u2013150 people with shared purpose",
+    img: `${IMG}/community.jpg`,
   },
 ];
 
@@ -71,21 +82,25 @@ const BRAND_OFFERS = [
     title: "Membership Community",
     desc: "55 exclusive homes with ChoZen Retreat Center access, programming, and member benefits across all locations.",
     icon: "\u25C8",
+    img: `${IMG}/chozen-village.jpg`,
   },
   {
     title: "Retreats & Hospitality",
     desc: "250 rooms of luxury ecoglamping, individualized wellness retreats, earth-to-table dining, and regenerative experiences.",
     icon: "\u25C7",
+    img: `${IMG}/chozen-retreats.jpg`,
   },
   {
     title: "ChoZen Farm",
     desc: "Farm-to-table meals, farm store, edible landscapes, agricultural neighborhoods, food forests, and permaculture education.",
     icon: "\u25B3",
+    img: `${IMG}/chozen-farm2.jpg`,
   },
   {
     title: "ChoZen IP",
     desc: "Licensing opportunities for global expansion \u2014 brand, programming, workshops, and products licensed to new locations worldwide.",
     icon: "\u25CB",
+    img: `${IMG}/biophilic-design.jpg`,
   },
 ];
 
@@ -93,26 +108,32 @@ const FLORIDA_FEATURES = [
   {
     label: "92 Subtropical Acres",
     desc: "Founded in 2014, sitting on stunning wetlands with 3 miles of subtropical trails. Includes The Sanctuary, The Estuary, Harvest House, and The Preserve.",
+    img: `${IMG}/sebastian-river.jpg`,
   },
   {
     label: "ChoZen Village",
     desc: "55 homes, cottages, and tree houses ($700K\u2013$6M+). Edible landscapes, food forests, farmlettes \u2014 a regenerative naturehood.",
+    img: `${IMG}/chozen-village2.jpg`,
   },
   {
     label: "250 Eco-Luxury Rooms",
     desc: "Luxury ecoglamping accommodations with $60\u2013100K yearly RevPAR. Individualized wellness retreats and earth-to-table dining.",
+    img: `${IMG}/luxury-glamping.jpg`,
   },
   {
     label: "Regenerative Farm",
     desc: "Onsite organic agriculture with syntropic farming, permaculture hub, and nourishing gardens throughout the property.",
+    img: `${IMG}/permaculture-hub.jpg`,
   },
   {
     label: "World-Class Wellness",
     desc: "Regenerative wellness spa, spring-fed mineral pools, temple to nature, outdoor fitness, and gathering spaces.",
+    img: `${IMG}/outdoor-wellness.jpg`,
   },
   {
     label: "Wildlife & Conservation",
     desc: "Adjacent to the 22,000-acre St. Sebastian River Preserve. Connected to the Indian River Lagoon and Florida Wildlife Corridor.",
+    img: `${IMG}/nature.jpg`,
   },
 ];
 
@@ -208,12 +229,12 @@ const MARKET_DATA = [
 ];
 
 const PARTNERSHIPS = [
-  "Blue Zones",
-  "Future of Cities",
-  "IDEAS For Us",
-  "Chopra Foundation",
-  "Wildpath",
-  "Fleet Farming",
+  { name: "Blue Zones", img: `${IMG}/blue-zones.jpg` },
+  { name: "Future of Cities", img: `${IMG}/future-of-cities-logo.jpg` },
+  { name: "IDEAS For Us", img: `${IMG}/ideas-for-us-logo.jpg` },
+  { name: "Chopra Foundation", img: null },
+  { name: "Wildpath", img: `${IMG}/wildpath-logo.jpg` },
+  { name: "Fleet Farming", img: `${IMG}/fleet-farming.jpg` },
 ];
 
 const COFOUNDERS = [
@@ -221,11 +242,13 @@ const COFOUNDERS = [
     name: "Tony Cho",
     bio: "A visionary leader in regenerative placemaking. CEO of Cho Ventures, founder of Metro1 Commercial, Future of Cities, and the PHX JAX Arts & Innovation District. Co-founder of ChoZen Eco-Retreat. Original placemaker of Wynwood and ULI Young Leader of the Year (2011). Dedicated to environmental conservation through partnerships with Wildpath and Path of the Panther.",
     orgs: ["Future of Cities", "Metro1", "PHX JAX", "Magic City Innovation District"],
+    img: `${IMG}/tony-cho.jpg`,
   },
   {
     name: "Ximena Cho",
     bio: "Philanthropist and environmental advocate. Co-founder of Future of Cities and ChoZen Retreat. Established the Cho Family Foundation in 2020, supporting the Chopra Foundation, Amazon Watch, and Path of the Panther. Guided by social capitalism principles, investing in purpose-driven ventures.",
     orgs: ["Future of Cities", "Cho Family Foundation", "ChoZen Retreat"],
+    img: `${IMG}/ximena-cho.jpg`,
   },
 ];
 
@@ -542,6 +565,9 @@ export default function Home() {
 
       {/* ═══ HERO ═══ */}
       <section className="hero" id="hero">
+        <div className="heroBg">
+          <img src={`${IMG}/bioregional-hub.jpg`} alt="" />
+        </div>
         <div className="heroContent">
           <p className="heroEyebrow">Future of Cities &bull; Investment &amp; Brand Deck &bull; 2025</p>
           <h1 className="heroTitle">CHOZEN</h1>
@@ -565,6 +591,9 @@ export default function Home() {
           <div className="testimonialGrid">
             {TESTIMONIALS.map((t, i) => (
               <div key={i} className="testimonialCard">
+                <div className="testimonialImg">
+                  <img src={t.img} alt={t.name} />
+                </div>
                 <div className="testimonialQuote">&ldquo;{t.quote}&rdquo;</div>
                 <div className="testimonialDivider" />
                 <div className="testimonialName">{t.name}</div>
@@ -640,7 +669,9 @@ export default function Home() {
             <div className="pillarGrid">
               {PILLARS.map((p, i) => (
                 <div key={i} className="pillarGridCard">
-                  <div className="pillarGridIcon">{p.icon}</div>
+                  <div className="pillarGridImg">
+                    <img src={p.img} alt={p.title} />
+                  </div>
                   <h4>{p.title}</h4>
                   <p>{p.desc}</p>
                 </div>
@@ -660,7 +691,9 @@ export default function Home() {
               <div className="offersGrid">
                 {BRAND_OFFERS.map((o, i) => (
                   <div key={i} className="offerCard">
-                    <div className="offerIcon">{o.icon}</div>
+                    <div className="offerImg">
+                      <img src={o.img} alt={o.title} />
+                    </div>
                     <h4>{o.title}</h4>
                     <p>{o.desc}</p>
                   </div>
@@ -726,9 +759,35 @@ export default function Home() {
           <div className="floridaGrid">
             {FLORIDA_FEATURES.map((f, i) => (
               <div key={i} className="floridaCard">
+                <div className="floridaCardImg">
+                  <img src={f.img} alt={f.label} />
+                </div>
                 <div className="floridaCardNum">{String(i + 1).padStart(2, "0")}</div>
                 <h4>{f.label}</h4>
                 <p>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* Amenities Photo Grid */}
+        <FadeIn delay={0.1}>
+          <div className="amenitiesGrid">
+            {[
+              { img: `${IMG}/outdoor-wellness.jpg`, label: "Outdoor Wellness" },
+              { img: `${IMG}/outdoor-fitness.jpg`, label: "Outdoor Fitness" },
+              { img: `${IMG}/gathering-spaces.jpg`, label: "Gathering Spaces" },
+              { img: `${IMG}/community-gardens.jpg`, label: "Community Gardens" },
+              { img: `${IMG}/community-firepit.jpg`, label: "Community Fire Pit" },
+              { img: `${IMG}/natural-pool.jpg`, label: "Natural Pool" },
+              { img: `${IMG}/temple-to-nature.jpg`, label: "Temple to Nature" },
+              { img: `${IMG}/permaculture-hub.jpg`, label: "Permaculture Hub" },
+              { img: `${IMG}/luxury-glamping.jpg`, label: "Luxury Glamping" },
+              { img: `${IMG}/immersive-art.jpg`, label: "Immersive Art" },
+            ].map((a, i) => (
+              <div key={i} className="amenityItem">
+                <img src={a.img} alt={a.label} />
+                <span>{a.label}</span>
               </div>
             ))}
           </div>
@@ -813,7 +872,9 @@ export default function Home() {
             </h3>
             <div className="partnersGrid">
               {PARTNERSHIPS.map((p, i) => (
-                <div key={i} className="partnerCard">{p}</div>
+                <div key={i} className="partnerCard">
+                  {p.img ? <img src={p.img} alt={p.name} className="partnerLogo" /> : <span>{p.name}</span>}
+                </div>
               ))}
             </div>
           </div>
@@ -912,6 +973,9 @@ export default function Home() {
           <div className="teamGrid">
             {COFOUNDERS.map((c, i) => (
               <div key={i} className="teamCard">
+                <div className="teamImgWrap">
+                  <img src={c.img} alt={c.name} className="teamImg" />
+                </div>
                 <h3 className="teamName">{c.name}</h3>
                 <p className="teamBio">{c.bio}</p>
                 <div className="teamOrgs">
