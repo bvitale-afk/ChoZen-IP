@@ -417,23 +417,23 @@ export default function Home() {
           <FadeIn delay={0.1}>
             <div className="commGrid">
               <div className="commCard">
-                <div className="commIcon">&#127758;</div>
+                <div className="commIcon"><img src={`${IMG}/dan-butner.jpg`} alt="Blue Zones" /></div>
                 <h4>Blue Zones Recognized</h4>
                 <p>Dan Buettner, creator of the Blue Zones Project, called ChoZen &ldquo;a blueprint for a blue zone.&rdquo;</p>
               </div>
               <div className="commCard">
-                <div className="commIcon">&#127793;</div>
+                <div className="commIcon"><img src={`${IMG}/temple-to-nature.jpg`} alt="Indigenous Wisdom" /></div>
                 <h4>Indigenous Wisdom</h4>
                 <p>Mapu and indigenous leaders guide ancestral practices, sacred ceremonies, and ecological stewardship rooted in millennia of knowledge.</p>
               </div>
               <div className="commCard">
-                <div className="commIcon">&#128218;</div>
+                <div className="commIcon"><img src={`${IMG}/tony-cho.jpg`} alt="Thought Leaders" /></div>
                 <h4>Thought Leaders</h4>
                 <p>Founders of Future of Cities, Chopra Foundation advisors, environmental activists, and culture makers who are building the new world together.</p>
               </div>
               <div className="commCard">
-                <div className="commIcon">&#127917;</div>
-                <h4>Events & Gatherings</h4>
+                <div className="commIcon"><img src={`${IMG}/gathering-spaces.jpg`} alt="Events" /></div>
+                <h4>Events &amp; Gatherings</h4>
                 <p>Thousands served across summits, retreats, wellness gatherings, and seasonal celebrations. Every event deepens the bonds of community.</p>
               </div>
             </div>
