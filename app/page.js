@@ -36,12 +36,10 @@ const PILLARS = [
 ];
 
 const EXPANSION = [
-  { title: "ChoZen Village", desc: "55 exclusive homes, cottages, and tree houses. Edible landscapes, food forests, farmlettes.", sub: "$139M Home Sales \u00b7 $700K\u2013$6M+", img: `${IMG}/chozen-village4.jpg` },
-  { title: "ChoZen Retreats", desc: "250 rooms of luxury ecoglamping. Individualized wellness retreats and earth-to-table dining.", sub: "$60\u2013100K Yearly RevPAR \u00b7 $9.1M ARR", img: `${IMG}/chozen-retreats.jpg` },
-  { title: "Wellness", desc: "Regenerative wellness spa, spring-fed mineral pools, temple to nature, makers village.", sub: "World-Class Amenities", img: `${IMG}/fire-pit.jpg` },
+  { title: "Wellness Spa", desc: "Regenerative wellness spa, spring-fed mineral pools, temple to nature, thermal therapy circuits.", sub: "World-Class Amenities", img: `${IMG}/fire-pit.jpg` },
   { title: "ChoZen Farm", desc: "Farm-to-table meals, farm store, edible landscapes, agricultural neighborhoods, food forests.", sub: "Regenerative Agriculture", img: `${IMG}/chozen-farm.jpg` },
-  { title: "Membership", desc: "55 exclusive homes with ChoZen Retreat Center access, programming, and member benefits.", sub: "Community Access", img: `${IMG}/chozen-village5.jpg` },
-  { title: "ChoZen IP", desc: "Licensing opportunities for global expansion \u2014 brand, programming, workshops, and products.", sub: "Global Licensing", img: `${IMG}/biophilic-design.jpg` },
+  { title: "Biophilic Design", desc: "Bamboo architecture, local materials, high-performance building systems rooted in nature.", sub: "Architecture & Design", img: `${IMG}/biophilic-design.jpg` },
+  { title: "Nature Preserve", desc: "Set within the 22,000-acre St. Sebastian River Preserve. Wildpath and Path of the Panther corridors.", sub: "Conservation & Ecology", img: `${IMG}/nature.jpg` },
 ];
 
 const AMENITIES = [
@@ -322,8 +320,8 @@ export default function Home() {
           <img src={`${IMG}/chozen-stamp.png`} alt="" className="heroStamp" />
           <p className="heroEyebrow">Future of Cities &bull; 2026</p>
           <h1 className="heroTitle">CHOZEN</h1>
-          <p className="heroSub">The Alternative to a Golf Community</p>
-          <p className="heroTagline">A camp for the humanity of the future &mdash; where nature is the ceremony</p>
+          <p className="heroSub">A Camp for the Humanity of the Future</p>
+          <p className="heroTagline">Where Nature is the Ceremony</p>
           <div className="heroLine" />
           <div className="heroCtas">
             <a href="#story" className="btn btnPrimary">Explore the Vision</a>
@@ -349,6 +347,26 @@ export default function Home() {
               </FadeIn>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══ BLUE ZONES ═══ */}
+      <section className="blueZones">
+        <div className="wrap">
+          <FadeIn>
+            <div className="bzLayout">
+              <div className="bzContent">
+                <h2 className="bzTitle">Blue Zones</h2>
+                <p className="bzQuote">&ldquo;ChoZen is a blueprint for a blue zone.&rdquo;</p>
+                <p className="bzDef">Blue Zones are regions around the world where people consistently live longer, healthier lives, often reaching 90 or even 100 years old with fewer chronic illnesses.</p>
+                <p className="bzText">Dan Buettner, along with a team from National Geographic and leading longevity researchers, identified the Blue Zones in 2004. Their research reveals that small, consistent habits &mdash; like eating well, staying active, nurturing social connections, and reducing stress &mdash; can lead to longer, happier lives.</p>
+              </div>
+              <div className="bzImage">
+                <img src={`${IMG}/dan-butner.jpg`} alt="Dan Buettner" />
+                <div className="bzCaption">Dan Buettner<br /><span>Creator of the Blue Zones Project</span></div>
+              </div>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -459,8 +477,49 @@ export default function Home() {
             </div>
           </FadeIn>
 
+          {/* Residential Development */}
+          <FadeIn delay={0.08}>
+            <div className="ipFeature">
+              <div className="ipFeatureImg"><img src={`${IMG}/chozen-village4.jpg`} alt="ChoZen Village" /></div>
+              <div className="ipFeatureBody">
+                <p className="ipFeatureEyebrow">Residential Development</p>
+                <h3>ChoZen Village</h3>
+                <p className="ipFeatureTagline">Regenerative Nature Hood</p>
+                <p>Harmonious, eco-friendly living spaces created to nurture your well-being. 55 homes, cottages and tree houses priced from $700K&ndash;$6M+.</p>
+                <div className="ipFeatureTags">
+                  <span>Edible Landscapes</span>
+                  <span>Food Forests</span>
+                  <span>Farmlettes</span>
+                  <span>Sustainable Homes</span>
+                  <span>Community Focused</span>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* Hospitality Development */}
+          <FadeIn delay={0.12}>
+            <div className="ipFeature ipFeatureReverse">
+              <div className="ipFeatureImg"><img src={`${IMG}/chozen-hospitality.jpg`} alt="ChoZen Retreats" /></div>
+              <div className="ipFeatureBody">
+                <p className="ipFeatureEyebrow">Hospitality Development</p>
+                <h3>ChoZen Retreats</h3>
+                <p className="ipFeatureTagline">250 Rooms &bull; Earth-to-Table</p>
+                <p>Thoughtfully designed retreats that blend comfort and sustainability to inspire rest and rejuvenation. Luxury ecoglamping with world-class wellness programming.</p>
+                <div className="ipFeatureTags">
+                  <span>Luxury Ecoglamping</span>
+                  <span>World-Class Wellness</span>
+                  <span>Regenerative Experiences</span>
+                  <span>Community Focused</span>
+                  <span>Earth-to-Table</span>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* IP Pillars Grid */}
           <div className="ipGrid">
-            <FadeIn delay={0.1}>
+            <FadeIn delay={0.16}>
               <div className="ipCard">
                 <div className="ipCardImg"><img src={`${IMG}/chozen-farm.jpg`} alt="ChoZen Farm" /></div>
                 <div className="ipCardBody">
@@ -469,7 +528,7 @@ export default function Home() {
                 </div>
               </div>
             </FadeIn>
-            <FadeIn delay={0.15}>
+            <FadeIn delay={0.2}>
               <div className="ipCard">
                 <div className="ipCardImg"><img src={`${IMG}/spa.jpg`} alt="Wellness" /></div>
                 <div className="ipCardBody">
@@ -478,18 +537,18 @@ export default function Home() {
                 </div>
               </div>
             </FadeIn>
-            <FadeIn delay={0.2}>
+            <FadeIn delay={0.24}>
               <div className="ipCard">
                 <div className="ipCardImg"><img src={`${IMG}/community.jpg`} alt="Community" /></div>
                 <div className="ipCardBody">
-                  <h4>Community Revillaging</h4>
-                  <p>Close-knit communities of 50&ndash;150 people optimized for human connection. Seasonal events, wellness gatherings, meditation, breathwork, and shared rituals.</p>
+                  <h4>Community &amp; Membership</h4>
+                  <p>Close-knit communities of 50&ndash;150 people optimized for human connection. Exclusive membership with retreat center access, programming, seasonal events, and shared rituals.</p>
                 </div>
               </div>
             </FadeIn>
           </div>
 
-          <FadeIn delay={0.25}>
+          <FadeIn delay={0.28}>
             <div className="ipLicensing">
               <div className="ipLicensingInner">
                 <h3>The ChoZen IP &mdash; Beyond Any Single Location</h3>
@@ -497,11 +556,11 @@ export default function Home() {
                 <div className="ipLicensingTags">
                   <span>Membership Platform</span>
                   <span>Online Content</span>
-                  <span>Summits & Seminars</span>
+                  <span>Summits &amp; Seminars</span>
                   <span>Special Events</span>
                   <span>Brand Licensing</span>
                   <span>Programming</span>
-                  <span>Workshops & Products</span>
+                  <span>Workshops &amp; Products</span>
                 </div>
               </div>
             </div>
@@ -575,7 +634,7 @@ export default function Home() {
           <FadeIn>
             <div className="expansionGrid">
               {EXPANSION.map((e, i) => (
-                <div key={i} className={`expCard ${i === 0 ? "expCardFeatured" : ""}`}>
+                <div key={i} className="expCard">
                   <img src={e.img} alt={e.title} className="expImg" />
                   <div className="expOverlay" />
                   <div className="expContent">
