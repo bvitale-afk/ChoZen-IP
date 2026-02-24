@@ -33,7 +33,7 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .heroOverlay{position:absolute;inset:0;background:linear-gradient(165deg,rgba(26,22,16,0.82),rgba(30,42,24,0.75))}
 .heroContent{position:relative;z-index:1;text-align:center;padding:40px 24px;max-width:800px}
 .heroEyebrow{font-size:0.6rem;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);margin-bottom:40px;font-weight:600;opacity:0;animation:fadeUp .8s .3s forwards}
-.heroTitle{font-family:var(--font-display);font-weight:300;font-size:clamp(4rem,12vw,10rem);color:var(--cream);letter-spacing:0.25em;margin-right:-0.25em;line-height:0.9;opacity:0;animation:fadeUp .8s .5s forwards}
+.heroTitle{font-family:var(--font-display);font-weight:300;font-size:clamp(4rem,12vw,10rem);color:var(--cream);letter-spacing:0.25em;text-indent:0.25em;line-height:0.9;opacity:0;animation:fadeUp .8s .5s forwards}
 .heroSub{font-family:var(--font-display);font-style:italic;font-size:clamp(1.1rem,2.5vw,1.6rem);color:var(--sand);margin-top:24px;opacity:0;animation:fadeUp .8s .7s forwards}
 .heroTagline{font-family:var(--font-display);font-size:0.95rem;color:rgba(200,185,154,0.6);margin-top:8px;font-style:italic;opacity:0;animation:fadeUp .8s .8s forwards}
 .heroLine{width:48px;height:1px;background:var(--gold);margin:36px auto;opacity:0;animation:fadeUp .8s .9s forwards}
