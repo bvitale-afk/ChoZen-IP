@@ -319,7 +319,7 @@ export default function Home() {
         <div className="heroContent">
           <img src={`${IMG}/chozen-stamp.png`} alt="" className="heroStamp" />
           <p className="heroEyebrow">Future of Cities &bull; 2026</p>
-          <h1 className="heroTitle">CHOZEN</h1>
+          <h1 className="heroTitle"><span>CHOZE</span><span>N</span></h1>
           <p className="heroSub">A Camp for the Humanity of the Future</p>
           <p className="heroTagline">Where Nature is the Ceremony</p>
           <div className="heroLine" />
