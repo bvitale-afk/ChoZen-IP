@@ -350,26 +350,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ BLUE ZONES ═══ */}
-      <section className="blueZones">
-        <div className="wrap">
-          <FadeIn>
-            <div className="bzLayout">
-              <div className="bzContent">
-                <h2 className="bzTitle">Blue Zones</h2>
-                <p className="bzQuote">&ldquo;ChoZen is a blueprint for a blue zone.&rdquo;</p>
-                <p className="bzDef">Blue Zones are regions around the world where people consistently live longer, healthier lives, often reaching 90 or even 100 years old with fewer chronic illnesses.</p>
-                <p className="bzText">Dan Buettner, along with a team from National Geographic and leading longevity researchers, identified the Blue Zones in 2004. Their research reveals that small, consistent habits &mdash; like eating well, staying active, nurturing social connections, and reducing stress &mdash; can lead to longer, happier lives.</p>
-              </div>
-              <div className="bzImage">
-                <img src={`${IMG}/dan-butner.jpg`} alt="Dan Buettner" />
-                <div className="bzCaption">Dan Buettner<br /><span>Creator of the Blue Zones Project</span></div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
       {/* ═══ STORY ═══ */}
       <section className="sec" id="story">
         <div className="wrap">
@@ -765,6 +745,26 @@ export default function Home() {
 
       {/* ═══ PHOTO BREAK: Community ═══ */}
       <PhotoBreak img={`${IMG}/community.jpg`} title="We Are Co-Creating a Community That Will Inspire Future Generations" height="65vh" overlay={0.5} />
+
+      {/* ═══ BLUE ZONES ═══ */}
+      <section className="blueZones">
+        <div className="wrap">
+          <FadeIn>
+            <div className="bzLayout">
+              <div className="bzContent">
+                <h2 className="bzTitle">Blue Zones</h2>
+                <p className="bzQuote">&ldquo;ChoZen is a blueprint for a blue zone.&rdquo;</p>
+                <p className="bzDef">Blue Zones are regions around the world where people consistently live longer, healthier lives, often reaching 90 or even 100 years old with fewer chronic illnesses.</p>
+                <p className="bzText">Dan Buettner, along with a team from National Geographic and leading longevity researchers, identified the Blue Zones in 2004. Their research reveals that small, consistent habits &mdash; like eating well, staying active, nurturing social connections, and reducing stress &mdash; can lead to longer, happier lives.</p>
+              </div>
+              <div className="bzImage">
+                <img src={`${IMG}/dan-butner.jpg`} alt="Dan Buettner" />
+                <div className="bzCaption">Dan Buettner<br /><span>Creator of the Blue Zones Project</span></div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
 
       {/* ═══ INVEST ═══ */}
       <section className="sec secDark" id="invest">
