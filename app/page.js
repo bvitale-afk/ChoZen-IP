@@ -12,10 +12,12 @@ const IMG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/images";
 // ═══════════════════════════════════════════════════════════════
 
 const STATS = [
+  { number: "11+", label: "Years in Florida" },
+  { number: "1000s", label: "Community Members Served" },
   { number: "92", label: "Subtropical Acres" },
   { number: "55", label: "For-Sale Residences" },
   { number: "250", label: "Eco-Luxury Rooms" },
-  { number: "4", label: "Global Locations" },
+  { number: "4+", label: "Global Locations in Pipeline" },
 ];
 
 const TESTIMONIALS = [
@@ -56,10 +58,11 @@ const AMENITIES = [
 ];
 
 const FUTURE_LOCATIONS = [
-  { city: "Orlando", country: "Florida, USA", desc: "Urban resilience and ecological restoration in a growing metropolis.", features: ["Urban Regeneration", "Metro Hub"] },
-  { city: "Medell\u00EDn", country: "Colombia", desc: "Community-driven innovation in a city of transformation.", features: ["Branded Residences", "Artist Village", "Ancestral Wisdom"] },
-  { city: "Azores", country: "Portugal", desc: "Island resilience through sustainable living and circular economies.", features: ["Golden Visa Fund", "Circular Economies"] },
-  { city: "Bahia", country: "Brazil", desc: "Coastal regeneration and cultural preservation in rich biodiversity.", features: ["Coastal Regeneration", "Biodiversity"] },
+  { city: "Medell\u00EDn", country: "Colombia", desc: "The real MVP of the model. Branded residential with an agricultural naturehood. Not just expats \u2014 locals cross-pollinating with internationals, building the communities of tomorrow. Maker\u2019s village, artist village, ancestral wisdom, plant medicine where legal.", features: ["Branded Residences", "Agricultural Naturehood", "Maker\u2019s Village", "Ancestral Wisdom"], status: "Active" },
+  { city: "Azores", country: "Portugal", desc: "Island resilience through sustainable living and circular economies. European gateway with Portugal+ Golden Visa Fund alignment.", features: ["Golden Visa Fund", "Circular Economies"], status: "Pipeline" },
+  { city: "Bahia", country: "Brazil", desc: "Coastal regeneration and cultural preservation in rich biodiversity.", features: ["Coastal Regeneration", "Biodiversity"], status: "Pipeline" },
+  { city: "Atlanta", country: "Georgia, USA", desc: "Emerging opportunity. Inbound interest for a southeastern US bioregional hub.", features: ["Inbound Interest", "Urban Regeneration"], status: "Exploratory" },
+  { city: "Florian\u00F3polis", country: "Brazil", desc: "Inbound partnership opportunity. Island ecology meets regenerative community.", features: ["Inbound Partnership", "Island Ecology"], status: "Exploratory" },
 ];
 
 const MARKET_DATA = [
@@ -153,6 +156,7 @@ function Nav() {
   }, []);
   const links = [
     { href: "#story", label: "Story" },
+    { href: "#community", label: "Community" },
     { href: "#ip", label: "The IP" },
     { href: "#brand", label: "Brand" },
     { href: "#florida", label: "Florida" },
@@ -279,15 +283,16 @@ function WaitlistForm() {
       <div className="wfField"><label>I&apos;m Interested In</label>
         <select value={form.interest} onChange={e => setForm({...form, interest: e.target.value})}>
           <option value="">Select one...</option>
-          <option value="community">Community Membership</option>
           <option value="florida">Sebastian, FL &mdash; Lot Reservation</option>
+          <option value="medellin">Medell&iacute;n, Colombia &mdash; Lot Reservation</option>
+          <option value="community">Community Membership</option>
           <option value="brand-invest">Brand / IP Investment</option>
           <option value="site-invest">Site-Specific Development</option>
           <option value="other">General Inquiry</option>
         </select>
       </div>
-      <button className="btn btnPrimary btnLg" onClick={() => setDone(true)}>Join the Waitlist &rarr;</button>
-      <p className="wfDisclaimer">No commitment required. Investment access requires NDA + vetting.</p>
+      <button className="btn btnPrimary btnLg" onClick={() => setDone(true)}>Apply for Access &rarr;</button>
+      <p className="wfDisclaimer">Qualified investors and future residents. Investment access requires NDA + vetting.</p>
     </div>
   );
 }
@@ -317,12 +322,12 @@ export default function Home() {
           <img src={`${IMG}/chozen-stamp.png`} alt="" className="heroStamp" />
           <p className="heroEyebrow">Future of Cities &bull; 2026</p>
           <h1 className="heroTitle">CHOZEN</h1>
-          <p className="heroSub">A Camp for the Humanity of the Future</p>
-          <p className="heroTagline">Where Nature is the Ceremony</p>
+          <p className="heroSub">The Alternative to a Golf Community</p>
+          <p className="heroTagline">A camp for the humanity of the future &mdash; where nature is the ceremony</p>
           <div className="heroLine" />
           <div className="heroCtas">
             <a href="#story" className="btn btnPrimary">Explore the Vision</a>
-            <a href="#waitlist" className="btn btnGhost">Join the Waitlist</a>
+            <a href="#waitlist" className="btn btnGhost">Apply for Access</a>
           </div>
         </div>
         <div className="heroScroll"><span /></div>
@@ -352,7 +357,7 @@ export default function Home() {
         <div className="wrap">
           <FadeIn>
             <div className="secHead">
-              <p className="eyebrow">Regenerative Placemaking</p>
+              <p className="eyebrow">A Demonstration Project of the Future of Cities</p>
               <h2>The ChoZen Story</h2>
               <div className="hdivider" />
             </div>
@@ -373,16 +378,16 @@ export default function Home() {
           <div className="storyCards">
             <FadeIn delay={0.15}>
               <div className="storyCard">
-                <div className="scLabel">The Challenge</div>
-                <h4>Nature in Crisis</h4>
-                <p>Vanishing wetlands, declining species, water scarcity. Rising costs, gentrification, instability. A holistic path forward through bioregional restoration.</p>
+                <div className="scLabel">The Origin</div>
+                <h4>11+ Years in Florida</h4>
+                <p>What began as a community of changemakers in Sebastian has evolved into a nature, wellness, and hospitality brand &mdash; with a built-in community of thousands and a global vision. A demonstration project of the Future of Cities.</p>
               </div>
             </FadeIn>
             <FadeIn delay={0.25}>
               <div className="storyCard">
-                <div className="scLabel">The Solution</div>
-                <h4>Revillaging</h4>
-                <p>Optimizing for human connection. Close-knit communities of 50&ndash;150 people &mdash; large enough for diverse skills, small enough for deep relationships.</p>
+                <div className="scLabel">The Framework</div>
+                <h4>Generation Regeneration</h4>
+                <p>Rooted in the book and framework by Tony Cho. Regenerative placemaking in action &mdash; optimizing for human connection through close-knit communities of 50&ndash;150 people. The alternative to a golf community.</p>
               </div>
             </FadeIn>
           </div>
@@ -395,6 +400,44 @@ export default function Home() {
                   <div className="statLbl">{s.label}</div>
                 </div>
               ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ═══ COMMUNITY HIGHLIGHTS ═══ */}
+      <section className="communityHighlights" id="community">
+        <div className="wrap">
+          <FadeIn>
+            <div className="secHead" style={{ textAlign: "center" }}>
+              <p className="eyebrow">Built-In Community</p>
+              <h2>It&apos;s Not Just a Place &mdash; It&apos;s Who&apos;s There</h2>
+              <div className="hdivider" />
+              <p className="secDesc">Anyone can build a flashy development. What sets ChoZen apart is the community &mdash; changemakers, indigenous leaders, world-class practitioners, and visionaries who have gathered here over 11+ years.</p>
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <div className="commGrid">
+              <div className="commCard">
+                <div className="commIcon">&#127758;</div>
+                <h4>Blue Zones Recognized</h4>
+                <p>Dan Buettner, creator of the Blue Zones Project, called ChoZen &ldquo;a blueprint for a blue zone.&rdquo;</p>
+              </div>
+              <div className="commCard">
+                <div className="commIcon">&#127793;</div>
+                <h4>Indigenous Wisdom</h4>
+                <p>Mapu and indigenous leaders guide ancestral practices, sacred ceremonies, and ecological stewardship rooted in millennia of knowledge.</p>
+              </div>
+              <div className="commCard">
+                <div className="commIcon">&#128218;</div>
+                <h4>Thought Leaders</h4>
+                <p>Founders of Future of Cities, Chopra Foundation advisors, environmental activists, and culture makers who are building the new world together.</p>
+              </div>
+              <div className="commCard">
+                <div className="commIcon">&#127917;</div>
+                <h4>Events & Gatherings</h4>
+                <p>Thousands served across summits, retreats, wellness gatherings, and seasonal celebrations. Every event deepens the bonds of community.</p>
+              </div>
             </div>
           </FadeIn>
         </div>
@@ -449,14 +492,16 @@ export default function Home() {
           <FadeIn delay={0.25}>
             <div className="ipLicensing">
               <div className="ipLicensingInner">
-                <h3>Global Licensing</h3>
-                <p>The ChoZen IP extends beyond any single location. Brand, programming, workshops, products, and the membership platform are licensed globally &mdash; creating recurring revenue across every new bioregional hub.</p>
+                <h3>The ChoZen IP &mdash; Beyond Any Single Location</h3>
+                <p>Invest in the ChoZen brand and you get exposure to an exclusive community of changemakers and like-minded people building the new world together. The IP generates revenue through membership, online content, summits, seminars, special events around the world, and brand licensing across every new bioregional hub.</p>
                 <div className="ipLicensingTags">
+                  <span>Membership Platform</span>
+                  <span>Online Content</span>
+                  <span>Summits & Seminars</span>
+                  <span>Special Events</span>
                   <span>Brand Licensing</span>
                   <span>Programming</span>
-                  <span>Workshops</span>
-                  <span>Products</span>
-                  <span>Membership Platform</span>
+                  <span>Workshops & Products</span>
                 </div>
               </div>
             </div>
@@ -469,7 +514,7 @@ export default function Home() {
         <div className="wrap">
           <FadeIn>
             <div className="secHead">
-              <p className="eyebrow">Brand & IP</p>
+              <p className="eyebrow">Brand Identity</p>
               <h2>A Lifestyle Brand for Regenerative Living</h2>
               <div className="hdivider" />
             </div>
@@ -561,6 +606,7 @@ export default function Home() {
             <div className="missionCallout">
               <img src={`${IMG}/chozen-stamp.png`} alt="" className="missionStamp" />
               <h3>ChoZen Center for Regenerative Living</h3>
+              <p className="nonprofitTag">Adjacent 501(c)(3) Nonprofit</p>
               <p>Regenerate land and biodiversity. Revitalize local economies. Elevate human well-being. Advance wildlife conservation through partnerships with Wildpath and Path of the Panther.</p>
             </div>
           </FadeIn>
@@ -573,12 +619,12 @@ export default function Home() {
       {/* ═══ LOCATIONS ═══ */}
       <section className="sec secAlt" id="locations">
         <div className="wrap">
-          <FadeIn><div className="secHead"><p className="eyebrow">Global Pipeline</p><h2>Future Growth</h2><div className="hdivider" /><p className="secDesc">Expanding regenerative hubs, each shaped by its land, culture, and people.</p></div></FadeIn>
+          <FadeIn><div className="secHead"><p className="eyebrow">Global Expansion</p><h2>Beyond Florida</h2><div className="hdivider" /><p className="secDesc">People are reaching out. From Colombia to Portugal to Brazil &mdash; each hub shaped by its land, culture, and people. Inbound demand is growing.</p></div></FadeIn>
           <FadeIn>
             <div className="locGrid">
               {FUTURE_LOCATIONS.map((loc, i) => (
-                <div key={i} className="locCard">
-                  <div className="locStatus">Pipeline</div>
+                <div key={i} className={`locCard ${i === 0 ? "locCardFeatured" : ""}`}>
+                  <div className={`locStatus ${loc.status === "Active" ? "locStatusActive" : loc.status === "Exploratory" ? "locStatusExplore" : ""}`}>{loc.status}</div>
                   <h3>{loc.city}</h3>
                   <div className="locCountry">{loc.country}</div>
                   <p>{loc.desc}</p>
@@ -693,9 +739,9 @@ export default function Home() {
           <FadeIn>
             <div className="secHead">
               <p className="eyebrow">Get Involved</p>
-              <h2>Join the ChoZen Path</h2>
+              <h2>Apply to Join the ChoZen Path</h2>
               <div className="hdivider" />
-              <p className="secDesc">Whether you&apos;re a future resident, community member, or investor &mdash; your journey starts here.</p>
+              <p className="secDesc">Future residents, community members, and investors &mdash; your journey starts here. Secure your spot in a community that will inspire future generations.</p>
             </div>
           </FadeIn>
           <FadeIn><WaitlistForm /></FadeIn>
