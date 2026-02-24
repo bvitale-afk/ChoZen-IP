@@ -548,20 +548,59 @@ export default function Home() {
             </FadeIn>
           </div>
 
+          {/* What You Get */}
           <FadeIn delay={0.28}>
-            <div className="ipLicensing">
-              <div className="ipLicensingInner">
-                <h3>The ChoZen IP &mdash; Beyond Any Single Location</h3>
-                <p>Invest in the ChoZen brand and you get exposure to an exclusive community of changemakers and like-minded people building the new world together. The IP generates revenue through membership, online content, summits, seminars, special events around the world, and brand licensing across every new bioregional hub.</p>
-                <div className="ipLicensingTags">
-                  <span>Membership Platform</span>
-                  <span>Online Content</span>
-                  <span>Summits &amp; Seminars</span>
-                  <span>Special Events</span>
-                  <span>Brand Licensing</span>
-                  <span>Programming</span>
-                  <span>Workshops &amp; Products</span>
+            <div className="ipWhatYouGet">
+              <div className="ipWygHeader">
+                <p className="ipFeatureEyebrow">License the ChoZen IP</p>
+                <h3>What You Get</h3>
+                <p className="ipWygSub">When you partner with ChoZen to create a new bioregional hub, you receive a turnkey brand and operating system &mdash; proven in Florida, designed to replicate globally.</p>
+              </div>
+              <div className="ipWygGrid">
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Brand &amp; Trademark</h4>
+                  <p>Full rights to the ChoZen name, visual identity, stamp, and brand guidelines. Your development carries the recognition and trust of an established regenerative lifestyle brand.</p>
                 </div>
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Design Playbook</h4>
+                  <p>Biophilic architecture standards, site planning principles, bamboo and local material specs, and conservation land-use ratios. The blueprint for every ChoZen community.</p>
+                </div>
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Programming &amp; Curriculum</h4>
+                  <p>Wellness retreats, farm-to-table dining operations, permaculture education, breathwork, meditation, seasonal ceremonies, and community event playbooks &mdash; ready to deploy.</p>
+                </div>
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Membership Platform</h4>
+                  <p>Access to the ChoZen member network and technology platform. Residents and guests at your location join a global community of changemakers across all hubs.</p>
+                </div>
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Operational Playbooks</h4>
+                  <p>SOPs for hospitality, farm operations, wellness spa management, community governance, and event production. Built from 11+ years of running ChoZen in Florida.</p>
+                </div>
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Built-In Demand</h4>
+                  <p>A waitlist of qualified residents and investors already interested in future locations. Your hub launches with a community, not from scratch.</p>
+                </div>
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Content &amp; Marketing</h4>
+                  <p>Online content library, social media templates, campaign frameworks, and co-branded marketing assets. The storytelling engine that sells the dream.</p>
+                </div>
+                <div className="ipWygCard">
+                  <div className="ipWygIcon">&#9670;</div>
+                  <h4>Network &amp; Partnerships</h4>
+                  <p>Introductions to Blue Zones, Chopra Foundation, Wildpath, IDEAS For Us, and the broader Future of Cities ecosystem. Relationships that give your project instant credibility.</p>
+                </div>
+              </div>
+              <div className="ipWygFooter">
+                <p>Each partnership is bespoke. The first locations will be structured as joint ventures &mdash; true partnerships where we build together.</p>
+                <a href="#waitlist" className="btn btnGold">Inquire About Licensing &rarr;</a>
               </div>
             </div>
           </FadeIn>
