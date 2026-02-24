@@ -52,6 +52,16 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .photoBreakSub{font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:16px}
 .photoBreakTitle{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.8rem);font-weight:400;color:var(--cream);line-height:1.3;font-style:italic}
 
+/* ─── COMMUNITY HIGHLIGHTS ─── */
+.communityHighlights{padding:100px 0;background:var(--cream)}
+.commGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:16px}
+.commCard{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;text-align:center;transition:0.2s}
+.commCard:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
+.commIcon{font-size:2rem;margin-bottom:16px}
+.commCard h4{font-family:var(--font-display);font-size:1rem;margin-bottom:10px;color:var(--earth)}
+.commCard p{font-size:0.78rem;line-height:1.7;color:var(--text)}
+.nonprofitTag{display:inline-block;font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:4px 14px;border-radius:20px;background:rgba(74,93,35,0.08);color:var(--moss);margin-bottom:12px}
+
 /* ─── THE IP SECTION ─── */
 .ipSection{position:relative;padding:120px 0;overflow:hidden}
 .ipBg{position:absolute;inset:0}
@@ -120,7 +130,7 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .scLabel{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--moss);font-weight:700;margin-bottom:8px}
 .storyCard h4{font-family:var(--font-display);font-size:1.3rem;color:var(--earth);margin-bottom:10px}
 .storyCard p{font-size:0.85rem;line-height:1.7;color:var(--text-mid)}
-.statsRow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.statsRow{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
 .stat{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:32px 20px;text-align:center;transition:0.2s}
 .stat:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
 .statNum{font-family:var(--font-display);font-size:2.6rem;font-weight:600;color:var(--moss);line-height:1}
@@ -180,8 +190,11 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 /* ─── LOCATIONS ─── */
 .locGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
 .locCard{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px;transition:0.2s}
+.locCardFeatured{border-color:var(--moss);border-width:2px;background:rgba(74,93,35,0.02)}
 .locCard:hover{box-shadow:var(--shadow)}
 .locStatus{display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:5px 14px;border-radius:20px;background:rgba(74,93,35,0.08);color:var(--moss);margin-bottom:16px}
+.locStatusActive{background:rgba(74,93,35,0.15);color:#3a5215;border:1px solid rgba(74,93,35,0.3)}
+.locStatusExplore{background:rgba(184,150,62,0.08);color:var(--gold);border:1px solid rgba(184,150,62,0.2)}
 .locCard h3{font-family:var(--font-display);font-size:1.7rem;color:var(--earth);line-height:1.2}
 .locCountry{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);font-weight:600;margin:4px 0 16px}
 .locCard p{font-size:0.85rem;line-height:1.7;color:var(--text-mid);margin-bottom:16px}
@@ -273,11 +286,13 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 @media(max-width:1024px){
   .testGrid,.storyCards,.investGrid,.teamGrid,.locGrid{grid-template-columns:1fr}
   .pillarGrid{grid-template-columns:repeat(2,1fr)}
-  .statsRow,.marketGrid{grid-template-columns:repeat(2,1fr)}
+  .statsRow{grid-template-columns:repeat(3,1fr)}
+  .marketGrid{grid-template-columns:repeat(2,1fr)}
   .expansionGrid{grid-template-columns:1fr 1fr;grid-auto-rows:240px}
   .expCardFeatured{grid-column:1/3}
   .amenGrid{grid-template-columns:repeat(3,1fr)}
   .ipGrid{grid-template-columns:1fr 1fr}
+  .commGrid{grid-template-columns:repeat(2,1fr)}
   .partnerGrid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:768px){
@@ -290,6 +305,7 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
   .expCardFeatured{grid-column:auto}
   .amenGrid{grid-template-columns:repeat(2,1fr)}
   .ipGrid{grid-template-columns:1fr}
+  .commGrid{grid-template-columns:1fr}
   .partnerGrid{grid-template-columns:repeat(2,1fr)}
   .waBody{grid-template-columns:1fr}.waYes{border-right:none;border-bottom:1px solid var(--border)}
   .storyHeroContent{padding:160px 28px 32px}
