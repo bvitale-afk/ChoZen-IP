@@ -2,31 +2,34 @@
 import { useState, useEffect, useRef } from "react";
 
 // ═══════════════════════════════════════════════════════════════
-// DATA — DECK CONTENT
+// DATA — DECK CONTENT (Updated from Investment Deck March 2025)
 // ═══════════════════════════════════════════════════════════════
 
 const STATS = [
-  { number: "11+", label: "Years in Florida" },
-  { number: "1000s", label: "Community Members Served" },
-  { number: "6", label: "Brand Verticals" },
-  { number: "3+", label: "Locations in Pipeline" },
+  { number: "92", label: "Subtropical Acres" },
+  { number: "55", label: "For-Sale Residences" },
+  { number: "250", label: "Eco-Luxury Accommodations" },
+  { number: "4", label: "Global Locations in Pipeline" },
 ];
 
-const COMMUNITY_HIGHLIGHTS = [
+const TESTIMONIALS = [
   {
+    quote: "ChoZen is a blueprint for a blue zone.",
     name: "Dan Buettner",
-    role: "Blue Zones Founder",
-    detail: "Keynote speaker and collaborator on longevity research",
+    role: "Expert on Longevity & Well-Being",
+    detail: "Creator of the Blue Zones Project",
   },
   {
-    name: "Mapu",
-    role: "Indigenous Leader",
-    detail: "Ancestral wisdom and sacred ceremonies",
+    quote: "ChoZen is a sanctuary for wellness and nature lovers.",
+    name: "USA Today",
+    role: "National Publication",
+    detail: "",
   },
   {
-    name: "Himena",
-    role: "Indigenous Leader",
-    detail: "Plant medicine and traditional healing knowledge",
+    quote: "ChoZen is the jewel in Florida\u2019s crown.",
+    name: "Nat Kelly",
+    role: "Actor & Environmental Activist",
+    detail: "",
   },
 ];
 
@@ -34,22 +37,22 @@ const PILLARS = [
   {
     icon: "\u{1F33F}",
     title: "Wellness",
-    desc: "Holistic wellbeing through nature-based rhythms, thermal therapy, and regenerative healing modalities",
+    desc: "Regenerative wellness spa, spring-fed mineral pools, thermal therapy, and individualized wellness retreats",
   },
   {
     icon: "\u{1F33E}",
     title: "Agriculture",
-    desc: "Regenerative onsite farming, food as medicine, and syntropic agroforestry systems",
+    desc: "Regenerative onsite farming, food forests, edible landscapes, farm-to-table meals, and a farm store",
   },
   {
     icon: "\u{1F3DB}",
     title: "Hospitality",
-    desc: "Branded retreats, hotels, and short-term rentals rooted in conscious community",
+    desc: "250 rooms of luxury ecoglamping, earth-to-table dining, and world-class regenerative experiences",
   },
   {
     icon: "\u{1F30E}",
     title: "Nature",
-    desc: "Conservation, rewilding, and deep immersion in untamed land and wildlife corridors",
+    desc: "Set within the 22,000-acre St. Sebastian River Preserve \u2014 North America\u2019s most biodiverse lagoon system",
   },
   {
     icon: "\u{1F525}",
@@ -59,93 +62,88 @@ const PILLARS = [
   {
     icon: "\u{1F91D}",
     title: "Community",
-    desc: "A curated network of culture makers, changemakers, and regenerative builders worldwide",
+    desc: "Optimizing for human connection through revillaging \u2014 close-knit communities of 50\u2013150 people with shared purpose",
   },
 ];
 
 const BRAND_OFFERS = [
   {
     title: "Membership Community",
-    desc: "An exclusive network of like-minded builders, wellness seekers, and culture makers. Tiered access to events, content, and location benefits.",
+    desc: "55 exclusive homes with ChoZen Retreat Center access, programming, and member benefits across all locations.",
     icon: "\u25C8",
   },
   {
-    title: "Online Content",
-    desc: "Digital platform featuring regenerative living education, practitioner access, wellness programming, and community forums.",
+    title: "Retreats & Hospitality",
+    desc: "250 rooms of luxury ecoglamping, individualized wellness retreats, earth-to-table dining, and regenerative experiences.",
     icon: "\u25C7",
   },
   {
-    title: "Summits & Seminars",
-    desc: "Curated gatherings worldwide \u2014 from intimate retreats to large-scale regenerative summits with global thought leaders.",
+    title: "ChoZen Farm",
+    desc: "Farm-to-table meals, farm store, edible landscapes, agricultural neighborhoods, food forests, and permaculture education.",
     icon: "\u25B3",
   },
   {
-    title: "Special Events",
-    desc: "Seasonal celebrations, equinox ceremonies, wellness gatherings, artist residencies, and community rituals.",
+    title: "ChoZen IP",
+    desc: "Licensing opportunities for global expansion \u2014 brand, programming, workshops, and products licensed to new locations worldwide.",
     icon: "\u25CB",
   },
 ];
 
 const FLORIDA_FEATURES = [
   {
-    label: "ChoZen Village",
-    desc: "A regenerative neighborhood with branded residences, shared agricultural land, and communal wellness spaces",
+    label: "92 Subtropical Acres",
+    desc: "Founded in 2014, sitting on stunning wetlands with 3 miles of subtropical trails. Includes The Sanctuary, The Estuary, Harvest House, and The Preserve.",
   },
   {
-    label: "Retreat Center",
-    desc: "Immersive wellness retreats featuring breathwork, meditation, plant-based cuisine, and nature excursions",
+    label: "ChoZen Village",
+    desc: "55 homes, cottages, and tree houses ($700K\u2013$6M+). Edible landscapes, food forests, farmlettes \u2014 a regenerative naturehood.",
+  },
+  {
+    label: "250 Eco-Luxury Rooms",
+    desc: "Luxury ecoglamping accommodations with $60\u2013100K yearly RevPAR. Individualized wellness retreats and earth-to-table dining.",
   },
   {
     label: "Regenerative Farm",
-    desc: "Onsite organic agriculture \u2014 syntropic farming, permaculture, and native biodiversity",
+    desc: "Onsite organic agriculture with syntropic farming, permaculture hub, and nourishing gardens throughout the property.",
   },
   {
-    label: "CCRL Nonprofit",
-    desc: "ChoZen Center for Regenerative Living \u2014 education, scholarships, and conservation programs",
+    label: "World-Class Wellness",
+    desc: "Regenerative wellness spa, spring-fed mineral pools, temple to nature, outdoor fitness, and gathering spaces.",
   },
   {
-    label: "Blue Zones Connection",
-    desc: "Aligned with Blue Zones longevity principles \u2014 community, movement, purpose, and whole food access",
-  },
-  {
-    label: "Events & Programming",
-    desc: "11+ years of community events \u2014 thousands served across wellness, culture, and regenerative education",
+    label: "Wildlife & Conservation",
+    desc: "Adjacent to the 22,000-acre St. Sebastian River Preserve. Connected to the Indian River Lagoon and Florida Wildlife Corridor.",
   },
 ];
 
 const FUTURE_LOCATIONS = [
   {
+    city: "Orlando",
+    country: "Florida, USA",
+    status: "Pipeline",
+    desc: "Urban resilience and ecological restoration in a growing metropolis. Expanding the bioregional hub model into metro Florida.",
+    features: ["Urban Regeneration", "Ecological Restoration", "Metro Hub"],
+  },
+  {
     city: "Medell\u00EDn",
     country: "Colombia",
-    status: "Active Development",
-    desc: "Branded residential + agricultural naturehood. Cross-pollination of locals and internationals, ancestral wisdom, plant medicine (where legal), and a maker\u2019s/artist village concept.",
-    features: [
-      "Branded Residences",
-      "Agricultural Naturehood",
-      "Artist Village",
-      "Ancestral Wisdom Center",
-    ],
+    status: "Pipeline",
+    desc: "Community-driven innovation in a city of transformation. Cross-pollination of locals and internationals, ancestral wisdom, and maker\u2019s village concept.",
+    features: ["Branded Residences", "Agricultural Naturehood", "Artist Village", "Ancestral Wisdom"],
   },
   {
-    city: "Florian\u00F3polis",
+    city: "Azores",
+    country: "Portugal",
+    status: "Pipeline",
+    desc: "Island resilience through sustainable living and circular economies. European gateway with Portugal+ Golden Visa Fund alignment.",
+    features: ["Island Resilience", "Circular Economies", "Golden Visa Fund"],
+  },
+  {
+    city: "Bahia",
     country: "Brazil",
     status: "Pipeline",
-    desc: "Coastal regenerative community with world-class surf culture, wellness tourism, and conservation-first development.",
-    features: ["Coastal Living", "Wellness Tourism", "Conservation"],
-  },
-  {
-    city: "Portugal",
-    country: "Europe",
-    status: "Pipeline",
-    desc: "European gateway for the ChoZen brand \u2014 agrarian heritage, wellness culture, and regenerative agriculture in the Mediterranean climate.",
-    features: ["European Hub", "Agri-Tourism", "Regenerative Agriculture"],
-  },
-  {
-    city: "Atlanta",
-    country: "USA",
-    status: "Pipeline",
-    desc: "Urban regenerative placemaking in one of America\u2019s fastest-growing cultural capitals.",
-    features: ["Urban Regeneration", "Cultural Hub", "Community Building"],
+    desc: "Coastal regeneration and cultural preservation in rich biodiversity. Place-based solutions integrating local ecology and community.",
+    features: ["Coastal Regeneration", "Cultural Preservation", "Biodiversity"],
   },
 ];
 
@@ -168,15 +166,66 @@ const INVESTMENT_LAYERS = [
     layer: "Layer 2",
     title: "Site-Specific Development",
     subtitle: "JV Partnership per Location",
-    desc: "Invest in specific locations \u2014 lot and home acquisition, joint venture partnership opportunities. Florida first, then Colombia and beyond.",
+    desc: "Invest in specific locations \u2014 lot and home acquisition, joint venture partnership opportunities. Sebastian FL first, then global expansion.",
     items: [
-      "Lot / home acquisition",
-      "JV partnership per site",
-      "Florida (active)",
-      "Colombia (in development)",
+      "$139M projected home sales",
+      "$54.9M gross profit / 3.60x equity multiple",
+      "$50M estimated hospitality exit value",
+      "$9.1M ARR in 8 years",
       "Future pipeline locations",
     ],
     color: "#3A6B7E",
+  },
+];
+
+const FINANCIALS = {
+  village: {
+    title: "ChoZen Village",
+    rows: [
+      { label: "Home Sales Gross Revenue", value: "$139,260,000" },
+      { label: "Net Revenue", value: "$125,334,000" },
+      { label: "Total Development Costs", value: "$79,422,592" },
+      { label: "Gross Profit", value: "$54,911,408", highlight: true },
+      { label: "Equity Multiple", value: "3.60x", highlight: true },
+    ],
+  },
+  hospitality: {
+    title: "ChoZen Hospitality",
+    rows: [
+      { label: "Beds (2025\u20132032)", value: "36 \u2192 120" },
+      { label: "Revenue Growth", value: "$2M \u2192 $10M" },
+      { label: "Revenue Streams", value: "Retreats + Retail + Wellness + Membership" },
+      { label: "Estimated Exit Value", value: "$50M", highlight: true },
+    ],
+  },
+};
+
+const MARKET_DATA = [
+  { label: "Global Wellness Real Estate", value: "$863.9B", sub: "20.70% CAGR by 2028" },
+  { label: "Mental Wellness Market", value: "$87.1B", sub: "2022" },
+  { label: "Wellness Tourism Market", value: "$255.9B", sub: "2022" },
+  { label: "Anti-Aging Industry", value: "$83B", sub: "2024" },
+];
+
+const PARTNERSHIPS = [
+  "Blue Zones",
+  "Future of Cities",
+  "IDEAS For Us",
+  "Chopra Foundation",
+  "Wildpath",
+  "Fleet Farming",
+];
+
+const COFOUNDERS = [
+  {
+    name: "Tony Cho",
+    bio: "A visionary leader in regenerative placemaking. CEO of Cho Ventures, founder of Metro1 Commercial, Future of Cities, and the PHX JAX Arts & Innovation District. Co-founder of ChoZen Eco-Retreat. Original placemaker of Wynwood and ULI Young Leader of the Year (2011). Dedicated to environmental conservation through partnerships with Wildpath and Path of the Panther.",
+    orgs: ["Future of Cities", "Metro1", "PHX JAX", "Magic City Innovation District"],
+  },
+  {
+    name: "Ximena Cho",
+    bio: "Philanthropist and environmental advocate. Co-founder of Future of Cities and ChoZen Retreat. Established the Cho Family Foundation in 2020, supporting the Chopra Foundation, Amazon Watch, and Path of the Panther. Guided by social capitalism principles, investing in purpose-driven ventures.",
+    orgs: ["Future of Cities", "Cho Family Foundation", "ChoZen Retreat"],
   },
 ];
 
@@ -194,13 +243,6 @@ const PILLARS_BRAND = [
     yes: "Performance, longevity, and regenerative healing through advanced wellness technology and practitioner access.",
     no: "No superficial wellness tactics or unqualified practitioners.",
     tags: ["Nature-Based Rhythms", "Thermal Therapy", "Longevity"],
-  },
-  {
-    icon: "\u{1F33F}",
-    title: "Every Day Whole Food Access",
-    yes: "Nutritious, whole meals from locally sourced, regenerative ingredients.",
-    no: "No global corporate food distributors. No factory-farmed proteins.",
-    tags: ["Curated Grocer", "Local Retailers", "Low Waste", "Caf\u00E9"],
   },
   {
     icon: "\u{1F33F}",
@@ -225,10 +267,10 @@ const PILLARS_BRAND = [
   },
   {
     icon: "\u{1F3D7}",
-    title: "Regenerative Design",
-    yes: "Regenerative Placemaking standards. High-performance building systems, renewable energy, sustainable materials.",
+    title: "Regenerative & Biophilic Design",
+    yes: "Regenerative Placemaking standards. Biophilic architecture using bamboo, local materials, and high-performance building systems.",
     no: "No low-performance systems, harmful materials, or depleting practices.",
-    tags: ["Biophilia", "Local Materials", "Net Zero", "Water Quality"],
+    tags: ["Biophilia", "Local Materials", "Net Zero", "Bamboo Architecture"],
   },
   {
     icon: "\u267B\uFE0F",
@@ -249,159 +291,28 @@ const PILLARS_BRAND = [
 // ── Brand Book Pages ──
 
 const BOOK_PAGES = [
-  {
-    img: "/brand/cover.jpg",
-    title: "Brand Book 2025",
-  },
-  {
-    img: "/brand/vision.jpg",
-    title: "Our Shared Vision",
-    subtitle: "Rewilding Hearts & Minds in the Heart of Florida",
-    text: "We gather thought leaders, changemakers, community builders and placemakers from around the world who seek to explore regenerative systems and implement climate solutions. By reconnecting with the land and fully immersing our guests in a regenerative lifestyle, we provide a unique culture and vibrant environment to inspire positive change & transformation for future generations.",
-  },
-  {
-    img: "/brand/principles.jpg",
-    title: "Principles of the Chozen Path",
-    items: [
-      {
-        bold: "Reunite with your Inner Self",
-        text: "Develop a conscious awareness of your mind, body, emotions and senses",
-      },
-      {
-        bold: "Reconnect with Nature",
-        text: "Live in acknowledgment that we are not above or separate from Nature, but part of its larger ecosystem of all life on this planet",
-      },
-      {
-        bold: "Honor the Sacred",
-        text: "Follow the guidance of all life forms, as well as our ancestors to honor their spirit and connect with their wisdom",
-      },
-      {
-        bold: "Assemble with Community",
-        text: "Gather with thought leaders, changemakers and community builders focused on raising consciousness to harness our collective momentum",
-      },
-      {
-        bold: "Embrace Regenerative Systems",
-        text: "Act in accordance with our shared ethos for a sustainable future by helping to co-create regenerative systems for a climate positive world",
-      },
-      {
-        bold: "Empower the Future",
-        text: "Actively participate in the co-creation of our future to restore humanity and our planet\u2019s health",
-      },
-    ],
-  },
-  {
-    img: "/brand/mission.jpg",
-    title: "Our Mission",
-    subtitle: "Nature is Medicine. Food is Medicine. Community is Medicine.",
-    text: "Our mission is to inspire action to protect mother nature and all of her inhabitants. Through immersive & educational experiences, adventures & excursions we are transforming the way we retreat. We co-create, coexist and come together to celebrate and restore ecological balance while preserving wildlife and our natural environment.",
-  },
-  {
-    img: "/brand/ethos1.jpg",
-    title: "Ethos",
-    lines: [
-      "CHOZEN is a place to discover yourself in nature",
-      "A place to experience deep serenity by living in harmony with the natural ecosystem",
-      "Where we honor mother earth and the elements",
-      "Create in dialogue with our planet",
-      "Integrate in nature and experience deep, restorative wellness",
-      "Reconnect with the cosmos: the stars, the moon, the sun, the sky",
-      "Take action to protect humanity\u2019s future",
-      "Commune with wildlife",
-      "Give thanks to those who walked before us",
-      "Walk the Chozen Path",
-    ],
-  },
-  {
-    img: "/brand/ethos2.jpg",
-    title: "Ethos \u2014 Nature + Zen",
-    venn: true,
-  },
-  {
-    img: "/brand/symbols.jpg",
-    title: "Chozen Symbols",
-    symbols: [
-      { svgId: "chozen", name: "CHOZEN", meaning: "The complete mark" },
-      { svgId: "water", name: "Water / River", meaning: "Source of Life" },
-      { svgId: "unity", name: "Unity / Wholeness", meaning: "Infinity" },
-      {
-        svgId: "divine",
-        name: "Divine Feminine",
-        meaning: "Divine Mother\nMother Nature",
-      },
-      {
-        svgId: "balance",
-        name: "Balance",
-        meaning: "So Above & So Below\nTime is Now\nEarth & Sky",
-      },
-      { svgId: "activism", name: "Activism", meaning: "Action\nChoice" },
-    ],
-  },
-  {
-    img: "/brand/logo-explain.jpg",
-    title: "Logo Explanation",
-    text: "The ChoZen logo represents the unity of humanity and the planet, the marriage of the divine feminine and masculine, the balance of Yin and Yang, the duality of our two brain hemispheres, and the polarity of the Earth and Skies. An hourglass lives within the logo, a reminder of the preciousness of time and the urgency to restore harmony on Earth. The centerline represents the vitality of water, a constant, flowing force that is the source of all life.",
-  },
-  {
-    img: "/brand/logo-decon.jpg",
-    title: "Logo Deconstruction",
-  },
-  {
-    img: "/brand/voice-tone.jpg",
-    title: "Voice & Tone",
-    voice: [
-      {
-        bold: "Empowered",
-        text: "We use positive words that are aspirational and inspired to embody our passionate ethos",
-      },
-      {
-        bold: "Balance of Feminine + Masculine",
-        text: "We play between soft and direct language to show the equal balance of our poetic yet affirmative voice",
-      },
-      {
-        bold: "Sacred & Soulful",
-        text: "We use language that ignites awakening, self-expression and transformation",
-      },
-      {
-        bold: "Active",
-        text: "We speak in the active voice in statements pertaining to activism and action",
-      },
-      {
-        bold: "Authentic",
-        text: "We value honesty and transparency in conveying our message",
-      },
-      {
-        bold: "Natural",
-        text: "We educate on the human-nature connection through language that is poetic yet scientific",
-      },
-    ],
-    tone: [
-      {
-        bold: "Warm",
-        text: "We write like we would to a friend to make them feel welcomed in an intimate, safe environment",
-      },
-      {
-        bold: "Soft",
-        text: "We use a soft tone in collateral that takes the form of poetry to transport our readers and guests",
-      },
-      {
-        bold: "Socially Aware",
-        text: "We ensure that our message is culturally aware and sensitive to all topics",
-      },
-    ],
-    toneNot: [
-      "Dogmatic or overly spiritual",
-      "Too technical",
-      "Too formal",
-      "Negative or corporate",
-      "Self-helpy",
-    ],
-  },
-  {
-    img: "/brand/aesthetic.jpg",
-    title: "Brand Aesthetic",
-    subtitle: "A Camp for the Humanity of the Future Where Nature is the Ceremony",
-    text: "The ChoZen visual identity is a sophisticated, intentional, organic and wild portfolio of the ChoZen Lifestyle. Designed to evoke the feeling of being ChoZen \u2014 immersed in beauty, nature, and conscious community.",
-  },
+  { img: "/brand/cover.jpg", title: "Brand Book 2025" },
+  { img: "/brand/vision.jpg", title: "Our Shared Vision", subtitle: "Rewilding Hearts & Minds in the Heart of Florida", text: "We gather thought leaders, changemakers, community builders and placemakers from around the world who seek to explore regenerative systems and implement climate solutions." },
+  { img: "/brand/principles.jpg", title: "Principles of the Chozen Path", items: [
+    { bold: "Reunite with your Inner Self", text: "Develop a conscious awareness of your mind, body, emotions and senses" },
+    { bold: "Reconnect with Nature", text: "Live in acknowledgment that we are not above or separate from Nature" },
+    { bold: "Honor the Sacred", text: "Follow the guidance of all life forms and our ancestors" },
+    { bold: "Assemble with Community", text: "Gather with thought leaders and community builders" },
+    { bold: "Embrace Regenerative Systems", text: "Act in accordance with our shared ethos for a sustainable future" },
+    { bold: "Empower the Future", text: "Actively participate in the co-creation of our future" },
+  ]},
+  { img: "/brand/mission.jpg", title: "Our Mission", subtitle: "Nature is Medicine. Food is Medicine. Community is Medicine.", text: "Our mission is to inspire action to protect mother nature and all of her inhabitants." },
+  { img: "/brand/ethos1.jpg", title: "Ethos", lines: ["CHOZEN is a place to discover yourself in nature", "A place to experience deep serenity", "Where we honor mother earth and the elements", "Create in dialogue with our planet", "Take action to protect humanity\u2019s future", "Walk the Chozen Path"] },
+  { img: "/brand/voice-tone.jpg", title: "Voice & Tone", voice: [
+    { bold: "Empowered", text: "Positive words that are aspirational and inspired" },
+    { bold: "Sacred & Soulful", text: "Language that ignites awakening and transformation" },
+    { bold: "Authentic", text: "Honesty and transparency in conveying our message" },
+    { bold: "Natural", text: "Poetic yet scientific language about the human-nature connection" },
+  ], tone: [
+    { bold: "Warm", text: "We write like we would to a friend" },
+    { bold: "Soft", text: "Poetry to transport our readers and guests" },
+    { bold: "Socially Aware", text: "Culturally aware and sensitive to all topics" },
+  ], toneNot: ["Dogmatic or overly spiritual", "Too technical", "Too formal", "Negative or corporate", "Self-helpy"] },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -409,92 +320,10 @@ const BOOK_PAGES = [
 // ═══════════════════════════════════════════════════════════════
 
 function SymbolSVG({ id, size = 64 }) {
-  const s = size;
-  const c = s / 2;
-  const r = s * 0.44;
-  const stroke = "var(--earth)";
-  const sw = 1.5;
-  const common = {
-    width: s,
-    height: s,
-    viewBox: `0 0 ${s} ${s}`,
-    fill: "none",
-    xmlns: "http://www.w3.org/2000/svg",
-  };
-
-  if (id === "chozen")
-    return (
-      <svg {...common}>
-        <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
-        <line x1={c - r * 0.71} y1={c - r * 0.71} x2={c + r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
-        <line x1={c + r * 0.71} y1={c - r * 0.71} x2={c - r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
-        <line x1={c - r} y1={c} x2={c + r} y2={c} stroke={stroke} strokeWidth={sw} />
-        <path
-          d={`M ${c - r * 0.7} ${c} Q ${c - r * 0.35} ${c - r * 0.22} ${c} ${c} Q ${c + r * 0.35} ${c + r * 0.22} ${c + r * 0.7} ${c}`}
-          stroke={stroke}
-          strokeWidth={sw}
-        />
-        <line x1={c - r * 0.71} y1={c + r * 0.71} x2={c} y2={c - r * 0.3} stroke={stroke} strokeWidth={sw * 0.6} strokeOpacity={0.4} />
-        <line x1={c + r * 0.71} y1={c + r * 0.71} x2={c} y2={c - r * 0.3} stroke={stroke} strokeWidth={sw * 0.6} strokeOpacity={0.4} />
-      </svg>
-    );
-
-  if (id === "water")
-    return (
-      <svg {...common}>
-        <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
-        <path
-          d={`M ${c - r * 0.85} ${c} Q ${c - r * 0.42} ${c - r * 0.35} ${c} ${c} Q ${c + r * 0.42} ${c + r * 0.35} ${c + r * 0.85} ${c}`}
-          stroke={stroke}
-          strokeWidth={sw}
-        />
-      </svg>
-    );
-
-  if (id === "unity")
-    return (
-      <svg {...common}>
-        <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
-      </svg>
-    );
-
-  if (id === "divine")
-    return (
-      <svg {...common}>
-        <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
-        <line x1={c - r * 0.71} y1={c - r * 0.71} x2={c + r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
-        <line x1={c + r * 0.71} y1={c - r * 0.71} x2={c - r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
-        <circle cx={c} cy={c} r={r * 0.35} stroke={stroke} strokeWidth={sw * 0.8} />
-      </svg>
-    );
-
-  if (id === "balance")
-    return (
-      <svg {...common}>
-        <circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} />
-        <line x1={c - r * 0.71} y1={c - r * 0.71} x2={c + r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
-        <line x1={c + r * 0.71} y1={c - r * 0.71} x2={c - r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} />
-      </svg>
-    );
-
-  if (id === "activism")
-    return (
-      <svg {...common}>
-        <polygon
-          points={`${c - r * 0.6},${c - r * 0.65} ${c + r * 0.6},${c - r * 0.65} ${c},${c}`}
-          stroke={stroke}
-          strokeWidth={sw}
-          fill="none"
-        />
-        <polygon
-          points={`${c - r * 0.6},${c + r * 0.65} ${c + r * 0.6},${c + r * 0.65} ${c},${c}`}
-          stroke={stroke}
-          strokeWidth={sw}
-          fill="none"
-        />
-      </svg>
-    );
-
+  const s = size, c = s / 2, r = s * 0.44;
+  const stroke = "var(--earth)", sw = 1.5;
+  const common = { width: s, height: s, viewBox: `0 0 ${s} ${s}`, fill: "none", xmlns: "http://www.w3.org/2000/svg" };
+  if (id === "chozen") return (<svg {...common}><circle cx={c} cy={c} r={r} stroke={stroke} strokeWidth={sw} /><line x1={c - r * 0.71} y1={c - r * 0.71} x2={c + r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} /><line x1={c + r * 0.71} y1={c - r * 0.71} x2={c - r * 0.71} y2={c + r * 0.71} stroke={stroke} strokeWidth={sw} /><line x1={c - r} y1={c} x2={c + r} y2={c} stroke={stroke} strokeWidth={sw} /><path d={`M ${c - r * 0.7} ${c} Q ${c - r * 0.35} ${c - r * 0.22} ${c} ${c} Q ${c + r * 0.35} ${c + r * 0.22} ${c + r * 0.7} ${c}`} stroke={stroke} strokeWidth={sw} /></svg>);
   return null;
 }
 
@@ -523,18 +352,17 @@ function Nav() {
   const links = [
     { href: "#story", label: "Story" },
     { href: "#brand", label: "Brand" },
-    { href: "#offerings", label: "Offerings" },
     { href: "#florida", label: "Florida" },
     { href: "#locations", label: "Locations" },
+    { href: "#market", label: "Market" },
     { href: "#invest", label: "Invest" },
+    { href: "#team", label: "Team" },
   ];
 
   return (
     <nav className={`nav ${scrolled ? "scrolled" : ""}`}>
       <div className="navInner">
-        <a href="#" className="navLogo">
-          CHOZEN
-        </a>
+        <a href="#" className="navLogo">CHOZEN</a>
         <div className={`navLinks ${open ? "open" : ""}`}>
           {links.map((l) => (
             <a
@@ -547,14 +375,8 @@ function Nav() {
             </a>
           ))}
         </div>
-        <button
-          className="navToggle"
-          onClick={() => setOpen(!open)}
-          aria-label="Menu"
-        >
-          <span />
-          <span />
-          <span />
+        <button className="navToggle" onClick={() => setOpen(!open)} aria-label="Menu">
+          <span /><span /><span />
         </button>
       </div>
     </nav>
@@ -580,12 +402,7 @@ function FadeIn({ children, delay = 0, className = "" }) {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
       { threshold: 0.15 }
     );
     obs.observe(el);
@@ -607,8 +424,6 @@ function FadeIn({ children, delay = 0, className = "" }) {
   );
 }
 
-// ── Brand Book Modal ──
-
 function BrandBookModal({ onClose }) {
   const [page, setPage] = useState(0);
   const p = BOOK_PAGES[page];
@@ -622,418 +437,60 @@ function BrandBookModal({ onClose }) {
     };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
   }, [page, onClose, total]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 1000,
-        background: "rgba(30,26,20,0.85)",
-        backdropFilter: "blur(8px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20,
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: "var(--warm-white)",
-          borderRadius: 16,
-          maxWidth: 900,
-          width: "100%",
-          maxHeight: "90vh",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "16px 24px",
-            borderBottom: "1px solid var(--border)",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "1.1rem",
-              color: "var(--earth)",
-            }}
-          >
-            Brand Book
-          </span>
+    <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(30,26,20,0.85)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={onClose}>
+      <div style={{ background: "var(--warm-white)", borderRadius: 16, maxWidth: 900, width: "100%", maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column" }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid var(--border)" }}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--earth)" }}>Brand Book</span>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: "0.7rem", color: "var(--text-light)" }}>
-              {page + 1} / {total}
-            </span>
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                fontSize: "1.4rem",
-                cursor: "pointer",
-                color: "var(--text-light)",
-                padding: "4px 8px",
-              }}
-              onClick={onClose}
-            >
-              {"\u2715"}
-            </button>
+            <span style={{ fontSize: "0.7rem", color: "var(--text-light)" }}>{page + 1} / {total}</span>
+            <button style={{ background: "none", border: "none", fontSize: "1.4rem", cursor: "pointer", color: "var(--text-light)", padding: "4px 8px" }} onClick={onClose}>{"\u2715"}</button>
           </div>
         </div>
-
-        {/* Body */}
         <div style={{ flex: 1, overflow: "auto", padding: "32px 40px" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
-              fontWeight: 400,
-              color: "var(--earth)",
-              marginBottom: p.subtitle || p.text ? 12 : 0,
-            }}
-          >
-            {p.title}
-          </h2>
-
-          {p.subtitle && (
-            <p
-              style={{
-                fontSize: "0.78rem",
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "var(--text-light)",
-                marginBottom: 16,
-              }}
-            >
-              {p.subtitle}
-            </p>
-          )}
-
-          {p.text && (
-            <p
-              style={{
-                fontSize: "0.9rem",
-                lineHeight: 1.75,
-                color: "var(--text-mid)",
-                maxWidth: 680,
-              }}
-            >
-              {p.text}
-            </p>
-          )}
-
-          {p.items && (
-            <div style={{ marginTop: 16 }}>
-              {p.items.map((item, i) => (
-                <div
-                  key={i}
-                  style={{
-                    padding: "14px 0",
-                    borderBottom: "1px solid var(--border)",
-                  }}
-                >
-                  <span style={{ fontWeight: 700, color: "var(--earth)" }}>
-                    {item.bold}
-                  </span>
-                  <span style={{ color: "var(--text-mid)" }}>
-                    {" "}
-                    &mdash; {item.text}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {p.lines && (
-            <div style={{ marginTop: 20, textAlign: "center" }}>
-              {p.lines.map((l, i) => (
-                <p
-                  key={i}
-                  style={{
-                    fontSize: "0.85rem",
-                    letterSpacing: "0.06em",
-                    color: "var(--text-mid)",
-                    padding: "6px 0",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  . . .{l}. . .
-                </p>
-              ))}
-            </div>
-          )}
-
-          {p.venn && (
-            <div style={{ marginTop: 20, textAlign: "center" }}>
-              <img
-                src={p.img}
-                alt={p.title}
-                style={{ maxWidth: "100%", borderRadius: 8 }}
-              />
-            </div>
-          )}
-
-          {p.symbols && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
-                gap: 16,
-                marginTop: 20,
-              }}
-            >
-              {p.symbols.map((s, i) => (
-                <div
-                  key={i}
-                  style={{
-                    textAlign: "center",
-                    padding: "20px 12px",
-                    background: "var(--cream)",
-                    borderRadius: 8,
-                  }}
-                >
-                  <div
-                    style={{
-                      marginBottom: 12,
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <SymbolSVG id={s.svgId} size={56} />
-                  </div>
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      fontSize: "0.78rem",
-                      color: "var(--earth)",
-                      marginBottom: 6,
-                    }}
-                  >
-                    {s.name}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.68rem",
-                      color: "var(--text-light)",
-                      lineHeight: 1.5,
-                      whiteSpace: "pre-line",
-                    }}
-                  >
-                    {s.meaning}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 400, color: "var(--earth)", marginBottom: 12 }}>{p.title}</h2>
+          {p.subtitle && <p style={{ fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-light)", marginBottom: 16 }}>{p.subtitle}</p>}
+          {p.text && <p style={{ fontSize: "0.9rem", lineHeight: 1.75, color: "var(--text-mid)", maxWidth: 680 }}>{p.text}</p>}
+          {p.items && <div style={{ marginTop: 16 }}>{p.items.map((item, i) => (<div key={i} style={{ padding: "14px 0", borderBottom: "1px solid var(--border)" }}><span style={{ fontWeight: 700, color: "var(--earth)" }}>{item.bold}</span><span style={{ color: "var(--text-mid)" }}> &mdash; {item.text}</span></div>))}</div>}
+          {p.lines && <div style={{ marginTop: 20, textAlign: "center" }}>{p.lines.map((l, i) => (<p key={i} style={{ fontSize: "0.85rem", letterSpacing: "0.06em", color: "var(--text-mid)", padding: "6px 0", lineHeight: 1.6 }}>. . .{l}. . .</p>))}</div>}
           {p.voice && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 32,
-                marginTop: 20,
-              }}
-            >
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, marginTop: 20 }}>
               <div>
-                <h3
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "1.4rem",
-                    color: "var(--earth)",
-                    marginBottom: 16,
-                  }}
-                >
-                  Voice
-                </h3>
-                {p.voice.map((v, i) => (
-                  <div key={i} style={{ marginBottom: 14 }}>
-                    <span style={{ fontWeight: 700, color: "var(--earth)" }}>
-                      {v.bold}:
-                    </span>{" "}
-                    <span
-                      style={{ color: "var(--text-mid)", fontSize: "0.85rem" }}
-                    >
-                      {v.text}
-                    </span>
-                  </div>
-                ))}
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", color: "var(--earth)", marginBottom: 16 }}>Voice</h3>
+                {p.voice.map((v, i) => (<div key={i} style={{ marginBottom: 14 }}><span style={{ fontWeight: 700, color: "var(--earth)" }}>{v.bold}:</span> <span style={{ color: "var(--text-mid)", fontSize: "0.85rem" }}>{v.text}</span></div>))}
               </div>
               <div>
-                <h3
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "1.4rem",
-                    color: "var(--earth)",
-                    marginBottom: 16,
-                  }}
-                >
-                  Tone
-                </h3>
-                {p.tone.map((t, i) => (
-                  <div key={i} style={{ marginBottom: 14 }}>
-                    <span style={{ fontWeight: 700, color: "var(--earth)" }}>
-                      {t.bold}:
-                    </span>{" "}
-                    <span
-                      style={{ color: "var(--text-mid)", fontSize: "0.85rem" }}
-                    >
-                      {t.text}
-                    </span>
-                  </div>
-                ))}
-                <div
-                  style={{
-                    marginTop: 20,
-                    padding: 16,
-                    background: "rgba(139,58,58,0.04)",
-                    borderRadius: 8,
-                    border: "1px solid rgba(139,58,58,0.1)",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      fontSize: "0.78rem",
-                      color: "#8B3A3A",
-                      marginBottom: 8,
-                    }}
-                  >
-                    Our voice and tone is not:
-                  </div>
-                  {p.toneNot.map((n, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        fontSize: "0.78rem",
-                        color: "var(--text-mid)",
-                        padding: "3px 0",
-                      }}
-                    >
-                      {"\u2715"} {n}
-                    </div>
-                  ))}
-                </div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", color: "var(--earth)", marginBottom: 16 }}>Tone</h3>
+                {p.tone.map((t, i) => (<div key={i} style={{ marginBottom: 14 }}><span style={{ fontWeight: 700, color: "var(--earth)" }}>{t.bold}:</span> <span style={{ color: "var(--text-mid)", fontSize: "0.85rem" }}>{t.text}</span></div>))}
+                {p.toneNot && <div style={{ marginTop: 20, padding: 16, background: "rgba(139,58,58,0.04)", borderRadius: 8, border: "1px solid rgba(139,58,58,0.1)" }}><div style={{ fontWeight: 700, fontSize: "0.78rem", color: "#8B3A3A", marginBottom: 8 }}>Our voice and tone is not:</div>{p.toneNot.map((n, i) => <div key={i} style={{ fontSize: "0.78rem", color: "var(--text-mid)", padding: "3px 0" }}>{"\u2715"} {n}</div>)}</div>}
               </div>
             </div>
           )}
-
-          {/* Fallback image pages */}
-          {!p.text &&
-            !p.items &&
-            !p.lines &&
-            !p.venn &&
-            !p.symbols &&
-            !p.voice &&
-            page !== 0 && (
-              <div style={{ marginTop: 16 }}>
-                <img
-                  src={p.img}
-                  alt={p.title}
-                  style={{ maxWidth: "100%", borderRadius: 8 }}
-                />
-              </div>
-            )}
-
-          {page === 0 && (
-            <div style={{ marginTop: 24, textAlign: "center" }}>
-              <img
-                src={p.img}
-                alt="Brand Book Cover"
-                style={{ maxWidth: "100%", borderRadius: 8 }}
-              />
-            </div>
-          )}
+          {page === 0 && <div style={{ marginTop: 24, textAlign: "center" }}><img src={p.img} alt="Brand Book Cover" style={{ maxWidth: "100%", borderRadius: 8 }} /></div>}
         </div>
-
-        {/* Footer Nav */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "16px 24px",
-            borderTop: "1px solid var(--border)",
-          }}
-        >
-          <button
-            onClick={() => page > 0 && setPage(page - 1)}
-            disabled={page === 0}
-            className="bookNavBtn"
-          >
-            {"\u2190"} Previous
-          </button>
-          <div style={{ display: "flex", gap: 4 }}>
-            {BOOK_PAGES.map((_, i) => (
-              <span
-                key={i}
-                onClick={() => setPage(i)}
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  background: i === page ? "var(--moss)" : "var(--border)",
-                  cursor: "pointer",
-                  transition: "0.2s",
-                }}
-              />
-            ))}
-          </div>
-          <button
-            onClick={() => page < total - 1 && setPage(page + 1)}
-            disabled={page === total - 1}
-            className="bookNavBtn"
-          >
-            Next {"\u2192"}
-          </button>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", borderTop: "1px solid var(--border)" }}>
+          <button onClick={() => page > 0 && setPage(page - 1)} disabled={page === 0} className="bookNavBtn">{"\u2190"} Previous</button>
+          <div style={{ display: "flex", gap: 4 }}>{BOOK_PAGES.map((_, i) => <span key={i} onClick={() => setPage(i)} style={{ width: 8, height: 8, borderRadius: "50%", background: i === page ? "var(--moss)" : "var(--border)", cursor: "pointer", transition: "0.2s" }} />)}</div>
+          <button onClick={() => page < total - 1 && setPage(page + 1)} disabled={page === total - 1} className="bookNavBtn">Next {"\u2192"}</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Waitlist Form ──
-
 function WaitlistForm() {
   const [form, setForm] = useState({ name: "", email: "", interest: "" });
   const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = () => {
-    setSubmitted(true);
-  };
 
   if (submitted) {
     return (
       <div className="waitlistSuccess">
         <div style={{ fontSize: "2rem", marginBottom: 16 }}>{"\u2726"}</div>
-        <h3
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "1.6rem",
-            color: "var(--earth)",
-            marginBottom: 8,
-          }}
-        >
-          Welcome to the Path
-        </h3>
-        <p style={{ color: "var(--text-light)", fontSize: "0.88rem" }}>
-          We&apos;ll be in touch with next steps and exclusive access.
-        </p>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "var(--earth)", marginBottom: 8 }}>Welcome to the Path</h3>
+        <p style={{ color: "var(--text-light)", fontSize: "0.88rem" }}>We&apos;ll be in touch with next steps and exclusive access.</p>
       </div>
     );
   }
@@ -1043,51 +500,28 @@ function WaitlistForm() {
       <div className="waitlistFields">
         <div className="waitlistField">
           <label>Full Name</label>
-          <input
-            type="text"
-            placeholder="Your name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
+          <input type="text" placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         </div>
         <div className="waitlistField">
           <label>Email</label>
-          <input
-            type="email"
-            placeholder="your@email.com"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
+          <input type="email" placeholder="your@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
         </div>
         <div className="waitlistField">
           <label>I&apos;m Interested In</label>
-          <select
-            value={form.interest}
-            onChange={(e) => setForm({ ...form, interest: e.target.value })}
-          >
+          <select value={form.interest} onChange={(e) => setForm({ ...form, interest: e.target.value })}>
             <option value="">Select one...</option>
             <option value="community">Community Membership</option>
-            <option value="florida">Florida &mdash; Lot Reservation</option>
+            <option value="florida">Sebastian, FL &mdash; Lot Reservation</option>
             <option value="colombia">Colombia &mdash; Early Access</option>
             <option value="brand-invest">Brand / IP Investment</option>
-            <option value="site-invest">Site-Specific Investment</option>
+            <option value="site-invest">Site-Specific Development</option>
             <option value="other">Other / General Inquiry</option>
           </select>
         </div>
       </div>
-      <button className="ctaBtn" onClick={handleSubmit}>
-        Join the Waitlist {"\u2192"}
-      </button>
-      <p
-        style={{
-          fontSize: "0.72rem",
-          color: "var(--text-light)",
-          marginTop: 16,
-          textAlign: "center",
-        }}
-      >
-        No commitment required. Deeper investment access requires NDA +
-        qualified investor vetting.
+      <button className="ctaBtn" onClick={() => setSubmitted(true)}>Join the Waitlist {"\u2192"}</button>
+      <p style={{ fontSize: "0.72rem", color: "var(--text-light)", marginTop: 16, textAlign: "center" }}>
+        No commitment required. Deeper investment access requires NDA + qualified investor vetting.
       </p>
     </div>
   );
@@ -1109,74 +543,74 @@ export default function Home() {
       {/* ═══ HERO ═══ */}
       <section className="hero" id="hero">
         <div className="heroContent">
-          <p className="heroEyebrow">Investment &amp; Brand Deck</p>
+          <p className="heroEyebrow">Future of Cities &bull; Investment &amp; Brand Deck &bull; 2025</p>
           <h1 className="heroTitle">CHOZEN</h1>
-          <p className="heroSub">The Alternative to a Golf Community</p>
-          <p className="heroTagline">
-            A regenerative living brand built on 11+ years of community,
-            <br />
-            wellness, nature, and ancestral wisdom.
-          </p>
+          <p className="heroSub">A Camp for the Humanity of the Future</p>
+          <p className="heroTagline">Where Nature is the Ceremony</p>
           <div className="heroLine" />
+          <p className="heroMission">
+            Innovation. Transformation. Regeneration.
+          </p>
           <div className="heroCtas">
-            <a href="#story" className="heroBtn heroBtnPrimary">
-              Explore the Deck
-            </a>
-            <a href="#waitlist" className="heroBtn heroBtnSecondary">
-              Join the Waitlist
-            </a>
+            <a href="#story" className="heroBtn heroBtnPrimary">Explore the Deck</a>
+            <a href="#waitlist" className="heroBtn heroBtnSecondary">Join the Waitlist</a>
           </div>
         </div>
-        <div className="heroScrollIndicator">
-          <span />
+        <div className="heroScrollIndicator"><span /></div>
+      </section>
+
+      {/* ═══ TESTIMONIALS ═══ */}
+      <section className="sectionAlt" style={{ padding: 0 }}>
+        <div style={{ maxWidth: 1320, margin: "0 auto", padding: "64px 32px" }}>
+          <div className="testimonialGrid">
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} className="testimonialCard">
+                <div className="testimonialQuote">&ldquo;{t.quote}&rdquo;</div>
+                <div className="testimonialDivider" />
+                <div className="testimonialName">{t.name}</div>
+                <div className="testimonialRole">{t.role}</div>
+                {t.detail && <div className="testimonialDetail">{t.detail}</div>}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ═══ 1. THE CHOZEN STORY ═══ */}
       <section className="section" id="story">
         <SectionHeader
-          eyebrow="Origin"
+          eyebrow="Regenerative Placemaking"
           title="The ChoZen Story"
-          desc="Born in Florida over 11 years ago, ChoZen evolved from a community gathering into a regenerative wellness, hospitality, and nature brand &mdash; building bridges, not walls."
+          desc="At Future of Cities, we see development through a regenerative lens &mdash; where nature, community, and culture shape thriving, resilient places."
         />
 
         <FadeIn>
           <div className="storyGrid">
             <div className="storyCard storyCardMain">
               <div className="storyCardInner">
-                <h3>From Community to Brand</h3>
+                <h3>Bioregional Hubs</h3>
                 <p>
-                  What started as intimate gatherings around fire, food, and
-                  shared intention grew into something much larger &mdash; a
-                  movement. Over a decade of curated events, wellness
-                  programming, and regenerative placemaking built a community of
-                  thousands: culture makers, healers, builders, and visionaries
-                  united by a common ethos.
+                  Our bioregional hubs apply ecosystems thinking to re-village real estate, weaving together
+                  climate-conscious design, circular economies, and community-driven innovation.
                 </p>
                 <p style={{ marginTop: 16 }}>
-                  ChoZen is now a licensable brand platform &mdash; packaging
-                  regenerative design, ancestral wisdom, and conscious
-                  hospitality into a framework that developers and investors can
-                  bring to life in communities worldwide.
+                  By restoring ecological balance and fostering social and economic vitality, we are building
+                  the cities of tomorrow &mdash; rooted in place, inspired by community, powered by nature.
+                </p>
+                <p style={{ marginTop: 16, fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--sage)" }}>
+                  Local Roots, Global Impact.
                 </p>
               </div>
             </div>
-            <div className="storyCard storyCardMission">
-              <div className="storyCardLabel">Mission</div>
-              <h3>Regenerative Placemaking</h3>
-              <p>
-                Building bridges, not walls. Creating spaces where nature is
-                medicine, food is medicine, and community is medicine.
-              </p>
+            <div className="storyCard">
+              <div className="storyCardLabel">The Challenge</div>
+              <h3>Nature in Crisis</h3>
+              <p>Vanishing wetlands, declining species, water scarcity. Rising costs, gentrification, instability. Stress, isolation, lost traditions. ChoZen offers a holistic path forward &mdash; a bioregional approach restoring ecology, economy, and community.</p>
             </div>
-            <div className="storyCard storyCardBook">
-              <div className="storyCardLabel">Framework</div>
-              <h3>Generation Regeneration</h3>
-              <p>
-                The intellectual backbone &mdash; a book and framework outlining
-                the principles of regenerative living, placemaking, and conscious
-                development.
-              </p>
+            <div className="storyCard">
+              <div className="storyCardLabel">The Solution</div>
+              <h3>Revillaging</h3>
+              <p>Optimizing for human connection. Close-knit communities of 50&ndash;150 people striking the perfect balance: large enough for diverse skills, small enough for deep relationships and shared purpose.</p>
             </div>
           </div>
         </FadeIn>
@@ -1191,39 +625,15 @@ export default function Home() {
             ))}
           </div>
         </FadeIn>
-
-        <FadeIn delay={0.2}>
-          <div className="communitySection">
-            <h3 className="commTitle">
-              Notable Community &amp; Collaborators
-            </h3>
-            <div className="commGrid">
-              {COMMUNITY_HIGHLIGHTS.map((c, i) => (
-                <div key={i} className="commCard">
-                  <div className="commName">{c.name}</div>
-                  <div className="commRole">{c.role}</div>
-                  <div className="commDetail">{c.detail}</div>
-                </div>
-              ))}
-              <div className="commCard commCardMore">
-                <div className="commName">+ Many More</div>
-                <div className="commDetail">
-                  Thought leaders, indigenous elders, wellness practitioners,
-                  chefs, artists, and builders from around the world.
-                </div>
-              </div>
-            </div>
-          </div>
-        </FadeIn>
       </section>
 
-      {/* ═══ 2. THE BRAND & IP ═══ */}
+      {/* ═══ 2. BRAND & OFFERINGS ═══ */}
       <section className="sectionAlt" id="brand">
         <div className="sectionInner">
           <SectionHeader
             eyebrow="Brand & IP"
             title="A Lifestyle Brand for Regenerative Living"
-            desc="ChoZen is more than a place &mdash; it&apos;s a wellness, hospitality, and nature brand with a built-in community of culture makers and changemakers."
+            desc="Nature is medicine. Food is medicine. Community is medicine."
           />
 
           <FadeIn>
@@ -1238,33 +648,34 @@ export default function Home() {
             </div>
           </FadeIn>
 
+          <FadeIn delay={0.1}>
+            <div style={{ marginTop: 64 }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.4rem, 2.5vw, 2rem)", color: "var(--earth)", textAlign: "center", marginBottom: 12 }}>
+                ChoZen Expansion
+              </h3>
+              <div className="divider" />
+              <p style={{ fontSize: "0.88rem", color: "var(--text-light)", textAlign: "center", maxWidth: 600, margin: "0 auto 40px" }}>
+                Transforming living with integrated wellness, sustainable retreats, and community-centered design.
+              </p>
+              <div className="offersGrid">
+                {BRAND_OFFERS.map((o, i) => (
+                  <div key={i} className="offerCard">
+                    <div className="offerIcon">{o.icon}</div>
+                    <h4>{o.title}</h4>
+                    <p>{o.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+
           {/* We Are / We Are Not */}
           <FadeIn delay={0.15}>
             <div style={{ marginTop: 80 }}>
-              <h3
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
-                  color: "var(--earth)",
-                  textAlign: "center",
-                  marginBottom: 12,
-                }}
-              >
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.4rem, 2.5vw, 2rem)", color: "var(--earth)", textAlign: "center", marginBottom: 12 }}>
                 We Are vs. We Are Not
               </h3>
               <div className="divider" />
-              <p
-                style={{
-                  fontSize: "0.88rem",
-                  color: "var(--text-light)",
-                  textAlign: "center",
-                  maxWidth: 560,
-                  margin: "0 auto 40px",
-                }}
-              >
-                A clear declaration of what ChoZen stands for &mdash; and what
-                it rejects.
-              </p>
               <div className="brandPillarsGrid">
                 {PILLARS_BRAND.map((p, i) => (
                   <div key={i} className="brandPillarCard">
@@ -1274,25 +685,17 @@ export default function Home() {
                     </div>
                     <div className="bpBody">
                       <div className="bpCol bpYes">
-                        <div className="bpColLabel">
-                          {"\u2713"} We Are
-                        </div>
+                        <div className="bpColLabel">{"\u2713"} We Are</div>
                         <p>{p.yes}</p>
                       </div>
                       <div className="bpCol bpNo">
-                        <div className="bpColLabel">
-                          {"\u2715"} We Are Not
-                        </div>
+                        <div className="bpColLabel">{"\u2715"} We Are Not</div>
                         <p>{p.no}</p>
                       </div>
                     </div>
                     {p.tags.length > 0 && (
                       <div className="bpTags">
-                        {p.tags.map((t) => (
-                          <span key={t} className="bpTag">
-                            {t}
-                          </span>
-                        ))}
+                        {p.tags.map((t) => <span key={t} className="bpTag">{t}</span>)}
                       </div>
                     )}
                   </div>
@@ -1303,10 +706,7 @@ export default function Home() {
 
           <FadeIn delay={0.2}>
             <div className="brandBookCta">
-              <button
-                onClick={() => setBookOpen(true)}
-                className="ctaBtn"
-              >
+              <button onClick={() => setBookOpen(true)} className="ctaBtn">
                 Explore Full Brand Book {"\u2192"}
               </button>
             </div>
@@ -1314,60 +714,62 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ 3. WHAT CHOZEN OFFERS ═══ */}
-      <section className="section" id="offerings">
+      {/* ═══ 3. FLORIDA — CURRENT LOCATION ═══ */}
+      <section className="section" id="florida">
         <SectionHeader
-          eyebrow="Brand IP"
-          title="What ChoZen Offers"
-          desc="An exclusive ecosystem of membership, content, events, and community &mdash; designed for culture makers who build, not just consume."
+          eyebrow="Sebastian, Florida"
+          title="Nested in Nature: A Sanctuary for Renewal"
+          desc="Set amidst the lush, subtropical beauty of the 22,000-acre St. Sebastian River Preserve, within North America&apos;s most biodiverse lagoon system."
         />
 
         <FadeIn>
-          <div className="offersGrid">
-            {BRAND_OFFERS.map((o, i) => (
-              <div key={i} className="offerCard">
-                <div className="offerIcon">{o.icon}</div>
-                <h4>{o.title}</h4>
-                <p>{o.desc}</p>
+          <div className="floridaGrid">
+            {FLORIDA_FEATURES.map((f, i) => (
+              <div key={i} className="floridaCard">
+                <div className="floridaCardNum">{String(i + 1).padStart(2, "0")}</div>
+                <h4>{f.label}</h4>
+                <p>{f.desc}</p>
               </div>
             ))}
           </div>
         </FadeIn>
 
+        {/* CCRL Mission */}
         <FadeIn delay={0.15}>
-          <div className="offerCallout">
+          <div className="offerCallout" style={{ marginTop: 40 }}>
             <div className="offerCalloutInner">
-              <div className="offerCalloutLabel">The Network</div>
-              <h3>An Exclusive Community of Builders</h3>
+              <div className="offerCalloutLabel">ChoZen Center for Regenerative Living</div>
+              <h3>Our Mission</h3>
               <p>
-                ChoZen members don&apos;t just attend &mdash; they build. A
-                curated network of developers, wellness practitioners, chefs,
-                artists, and thought leaders creating the future of regenerative
-                living together.
+                Regenerate land and biodiversity. Revitalize local economies.
+                Elevate human well-being. Advance wildlife conservation through
+                strategic partnerships like Wildpath and Path of the Panther.
               </p>
             </div>
           </div>
         </FadeIn>
       </section>
 
-      {/* ═══ 4. CURRENT LOCATION — FLORIDA ═══ */}
-      <section className="sectionAlt" id="florida">
+      {/* ═══ 4. FUTURE LOCATIONS ═══ */}
+      <section className="sectionAlt" id="locations">
         <div className="sectionInner">
           <SectionHeader
-            eyebrow="Current Location"
-            title="ChoZen Village &mdash; Florida"
-            desc="The flagship. Over a decade of community building, retreat programming, and regenerative farming in the heart of Florida&apos;s Wildlife Corridor."
+            eyebrow="Global Pipeline"
+            title="Future Growth"
+            desc="Expanding regenerative hubs, each shaped by its land, culture, and people."
           />
 
           <FadeIn>
-            <div className="floridaGrid">
-              {FLORIDA_FEATURES.map((f, i) => (
-                <div key={i} className="floridaCard">
-                  <div className="floridaCardNum">
-                    {String(i + 1).padStart(2, "0")}
+            <div className="locationsGrid">
+              {FUTURE_LOCATIONS.map((loc, i) => (
+                <div key={i} className="locationCard">
+                  <div className="locationStatus">{loc.status}</div>
+                  <h3 className="locationCity">{loc.city}</h3>
+                  <div className="locationCountry">{loc.country}</div>
+                  <p className="locationDesc">{loc.desc}</p>
+                  <div className="locationFeatures">
+                    {loc.features.map((f) => <span key={f} className="locationFeature">{f}</span>)}
                   </div>
-                  <h4>{f.label}</h4>
-                  <p>{f.desc}</p>
                 </div>
               ))}
             </div>
@@ -1375,34 +777,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ 5. FUTURE LOCATIONS ═══ */}
-      <section className="section" id="locations">
+      {/* ═══ 5. MARKET OPPORTUNITY ═══ */}
+      <section className="section" id="market">
         <SectionHeader
-          eyebrow="Global Pipeline"
-          title="Future Locations"
-          desc="ChoZen is expanding &mdash; replicating the regenerative model in markets aligned with the brand&apos;s ethos of nature, community, and conscious living."
+          eyebrow="Market Opportunity"
+          title="Rising Demand for Well-Being"
+          desc="The global wellness real estate market is booming &mdash; ChoZen sits at the intersection of every major growth trend."
         />
 
         <FadeIn>
-          <div className="locationsGrid">
-            {FUTURE_LOCATIONS.map((loc, i) => (
-              <div
-                key={i}
-                className={`locationCard ${i === 0 ? "locationCardFeatured" : ""}`}
-              >
-                <div className="locationStatus">{loc.status}</div>
-                <h3 className="locationCity">{loc.city}</h3>
-                <div className="locationCountry">{loc.country}</div>
-                <p className="locationDesc">{loc.desc}</p>
-                <div className="locationFeatures">
-                  {loc.features.map((f) => (
-                    <span key={f} className="locationFeature">
-                      {f}
-                    </span>
-                  ))}
-                </div>
+          <div className="marketGrid">
+            {MARKET_DATA.map((m, i) => (
+              <div key={i} className="marketCard">
+                <div className="marketValue">{m.value}</div>
+                <div className="marketLabel">{m.label}</div>
+                <div className="marketSub">{m.sub}</div>
               </div>
             ))}
+          </div>
+        </FadeIn>
+
+        <FadeIn delay={0.1}>
+          <div style={{ textAlign: "center", marginTop: 24 }}>
+            <p style={{ fontSize: "0.68rem", color: "var(--text-light)", letterSpacing: "0.05em" }}>
+              Source: Facts and Factors, Global Wellness Institute, Blue Zones
+            </p>
+          </div>
+        </FadeIn>
+
+        {/* Partnerships */}
+        <FadeIn delay={0.15}>
+          <div style={{ marginTop: 64 }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "var(--earth)", textAlign: "center", marginBottom: 28 }}>
+              Partnerships
+            </h3>
+            <div className="partnersGrid">
+              {PARTNERSHIPS.map((p, i) => (
+                <div key={i} className="partnerCard">{p}</div>
+              ))}
+            </div>
           </div>
         </FadeIn>
       </section>
@@ -1411,16 +824,11 @@ export default function Home() {
       <section className="sectionDark" id="invest">
         <div className="sectionInner">
           <div className="sectionHeader">
-            <p className="sectionEyebrow" style={{ color: "var(--sage)" }}>
-              Investment
-            </p>
-            <h2 className="sectionTitle" style={{ color: "var(--cream)" }}>
-              Investment Opportunities
-            </h2>
+            <p className="sectionEyebrow" style={{ color: "var(--sage)" }}>Investment</p>
+            <h2 className="sectionTitle" style={{ color: "var(--cream)" }}>Investment Opportunities</h2>
             <div className="divider" style={{ background: "var(--gold)" }} />
             <p className="sectionDesc" style={{ color: "var(--sand)" }}>
-              Two distinct layers of participation &mdash; invest at the brand
-              level, the site level, or both.
+              Two distinct layers of participation &mdash; invest at the brand level, the site level, or both.
             </p>
           </div>
 
@@ -1428,22 +836,14 @@ export default function Home() {
             <div className="investGrid">
               {INVESTMENT_LAYERS.map((inv, i) => (
                 <div key={i} className="investCard">
-                  <div
-                    className="investLayer"
-                    style={{ color: inv.color }}
-                  >
-                    {inv.layer}
-                  </div>
+                  <div className="investLayer" style={{ color: inv.color }}>{inv.layer}</div>
                   <h3 className="investTitle">{inv.title}</h3>
                   <div className="investSub">{inv.subtitle}</div>
                   <p className="investDesc">{inv.desc}</p>
                   <div className="investItems">
                     {inv.items.map((item, j) => (
                       <div key={j} className="investItem">
-                        <span
-                          className="investDot"
-                          style={{ background: inv.color }}
-                        />
+                        <span className="investDot" style={{ background: inv.color }} />
                         {item}
                       </div>
                     ))}
@@ -1453,45 +853,47 @@ export default function Home() {
             </div>
           </FadeIn>
 
-          {/* Gated Access Notice */}
+          {/* Financials Summary */}
+          <FadeIn delay={0.1}>
+            <div className="investGrid" style={{ marginTop: 24 }}>
+              {[FINANCIALS.village, FINANCIALS.hospitality].map((fin, i) => (
+                <div key={i} className="investCard">
+                  <h3 className="investTitle" style={{ marginBottom: 20 }}>{fin.title}</h3>
+                  {fin.rows.map((row, j) => (
+                    <div key={j} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(200,185,154,0.1)" }}>
+                      <span style={{ fontSize: "0.82rem", color: "var(--sand)" }}>{row.label}</span>
+                      <span style={{ fontSize: "0.88rem", fontWeight: row.highlight ? 700 : 500, color: row.highlight ? "var(--sage)" : "var(--cream)", fontFamily: row.highlight ? "var(--font-display)" : "inherit", letterSpacing: row.highlight ? "0.02em" : "0" }}>{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+
+          {/* Gated Access */}
           <FadeIn delay={0.15}>
             <div className="gateNotice">
               <div className="gateIcon">{"\uD83D\uDD12"}</div>
               <h3>Deeper Access Requires Verification</h3>
-              <p>
-                Detailed investment memorandums, financial projections, and
-                partnership structures are available to qualified investors after
-                NDA execution and vetting.
-              </p>
+              <p>Detailed investment memorandums, financial projections, and partnership structures are available to qualified investors after NDA execution and vetting.</p>
               <div className="gateTiers">
                 <div className="gateTier">
                   <div className="gateTierLabel">Public Access</div>
-                  <div className="gateTierDesc">
-                    Brand story, community highlights, waitlist signup
-                  </div>
+                  <div className="gateTierDesc">Brand story, community highlights, waitlist signup</div>
                 </div>
                 <div className="gateTierDivider">{"\u2192"}</div>
                 <div className="gateTier gateTierGated">
                   <div className="gateTierLabel">Gated Access</div>
-                  <div className="gateTierDesc">
-                    Location details, investment memo, partnership structures
-                    (NDA required)
-                  </div>
+                  <div className="gateTierDesc">Location details, investment memo, partnership structures (NDA required)</div>
                 </div>
               </div>
               {!gateUnlocked ? (
-                <button
-                  className="ctaBtnAlt"
-                  onClick={() => setGateUnlocked(true)}
-                >
+                <button className="ctaBtnAlt" onClick={() => setGateUnlocked(true)}>
                   Request Gated Access {"\u2192"}
                 </button>
               ) : (
                 <div className="gateUnlocked">
-                  <p>
-                    Thank you for your interest. Our team will reach out to
-                    begin the vetting process and provide NDA documentation.
-                  </p>
+                  <p>Thank you for your interest. Our team will reach out to begin the vetting process and provide NDA documentation.</p>
                 </div>
               )}
             </div>
@@ -1499,60 +901,67 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ 7. CALL TO ACTION / WAITLIST ═══ */}
-      <section className="section" id="waitlist">
+      {/* ═══ 7. TEAM ═══ */}
+      <section className="section" id="team">
         <SectionHeader
-          eyebrow="Get Involved"
-          title="Join the ChoZen Path"
-          desc="Whether you&apos;re a future resident, community member, or investor &mdash; your journey starts here."
+          eyebrow="Leadership"
+          title="About the Cofounders"
         />
 
         <FadeIn>
-          <WaitlistForm />
-        </FadeIn>
-
-        <FadeIn delay={0.15}>
-          <div className="ctaCards">
-            <div className="ctaCard">
-              <h4>Community Waitlist</h4>
-              <p>
-                Sign up to join the membership community and receive updates on
-                events, retreats, and programming.
-              </p>
-            </div>
-            <div className="ctaCard">
-              <h4>Lot Reservations</h4>
-              <p>
-                Inquire about lot and home reservations in current or future
-                ChoZen locations.
-              </p>
-            </div>
-            <div className="ctaCard">
-              <h4>Investment Inquiry</h4>
-              <p>
-                Deeper investment access requires NDA execution and qualified
-                investor vetting.
-              </p>
-            </div>
+          <div className="teamGrid">
+            {COFOUNDERS.map((c, i) => (
+              <div key={i} className="teamCard">
+                <h3 className="teamName">{c.name}</h3>
+                <p className="teamBio">{c.bio}</p>
+                <div className="teamOrgs">
+                  {c.orgs.map((o) => <span key={o} className="teamOrg">{o}</span>)}
+                </div>
+              </div>
+            ))}
           </div>
         </FadeIn>
+      </section>
+
+      {/* ═══ 8. CTA / WAITLIST ═══ */}
+      <section className="sectionAlt" id="waitlist">
+        <div className="sectionInner">
+          <SectionHeader
+            eyebrow="Get Involved"
+            title="Join the ChoZen Path"
+            desc="Whether you&apos;re a future resident, community member, or investor &mdash; your journey starts here."
+          />
+
+          <FadeIn>
+            <WaitlistForm />
+          </FadeIn>
+
+          <FadeIn delay={0.15}>
+            <div className="ctaCards">
+              <div className="ctaCard">
+                <h4>Community Waitlist</h4>
+                <p>Sign up to join the membership community and receive updates on events, retreats, and programming.</p>
+              </div>
+              <div className="ctaCard">
+                <h4>Lot Reservations</h4>
+                <p>Inquire about 55 exclusive homes, cottages, and tree houses in Sebastian, FL ($700K&ndash;$6M+).</p>
+              </div>
+              <div className="ctaCard">
+                <h4>Investment Inquiry</h4>
+                <p>$139M projected home sales. $9.1M ARR. $50M estimated exit. NDA required for full details.</p>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
       <footer className="footer">
         <div className="footerLogo">CHOZEN</div>
-        <p style={{ marginBottom: 4 }}>Center for Regenerative Living</p>
+        <p style={{ marginBottom: 4 }}>Center for Regenerative Living &bull; Future of Cities</p>
         <p>Investment &amp; Brand Deck &mdash; 2025</p>
-        <p
-          style={{
-            marginTop: 16,
-            fontSize: "0.62rem",
-            opacity: 0.35,
-          }}
-        >
-          This material is for informational purposes only and does not
-          constitute an offer to sell or a solicitation of an offer to buy any
-          securities.
+        <p style={{ marginTop: 16, fontSize: "0.62rem", opacity: 0.35 }}>
+          This material is for informational purposes only and does not constitute an offer to sell or a solicitation of an offer to buy any securities.
         </p>
       </footer>
     </>
