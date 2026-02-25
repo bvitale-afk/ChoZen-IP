@@ -533,39 +533,173 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
   .pillarExplorerImg{height:280px}
 }
 @media(max-width:768px){
-  .sec{padding:100px 0}.wrap{padding:0 20px}
+  /* ─── Global spacing reduction ─── */
+  .sec{padding:56px 0}.wrap{padding:0 16px}
+  .secHead{margin-bottom:32px}
+  .secDesc{font-size:0.85rem;margin-top:12px}
+  .subHead{margin-top:36px!important;margin-bottom:20px;font-size:1.4rem!important}
+  .hdivider{margin:16px auto}
+  .eyebrow{margin-bottom:10px;font-size:0.6rem}
+
+  /* ─── Nav ─── */
   .navLinks{display:none;position:fixed;top:68px;left:0;right:0;background:var(--warm-white);flex-direction:column;padding:16px;border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
   .navLinks.open{display:flex}.navToggle{display:block}
-  .locGrid,.investGrid,.teamGrid{grid-template-columns:1fr}
-  .statsRow,.marketGrid{grid-template-columns:repeat(2,1fr)}
-  .expansionGrid{grid-template-columns:1fr;grid-auto-rows:280px}
-  .ipGrid{grid-template-columns:1fr}
-  .ipFeature{grid-template-columns:1fr}
-  .ipFeatureImg{min-height:220px}
-  .ipWygGrid{grid-template-columns:1fr}
-  .ipWhatYouGet{padding:28px}
-  .bzLayout{grid-template-columns:1fr}.bzImage{order:-1}
-  .commGrid{grid-template-columns:1fr}
-  .partnerGrid{grid-template-columns:repeat(2,1fr)}
-  .storyHeroContent{padding:160px 28px 32px}
-  .photoBreak{height:55vh!important}
+
+  /* ─── Hero ─── */
+  .hero{min-height:85vh}
+  .heroTitle{font-size:4.5rem!important}
+  .heroStamp{width:48px;height:48px;margin-bottom:18px}
+  .heroEyebrow{margin-bottom:24px}
+  .heroLine{margin:24px auto}
+  .heroScrollDown{margin-top:28px}
+
+  /* ─── Testimonials ─── */
+  .testimonials{padding:40px 0}
+  .testGrid{grid-template-columns:1fr;gap:16px}
+  .testCard{padding:24px}
+  .testImg{width:64px;height:64px;margin-bottom:14px}
+  .testQuote{font-size:1.1rem!important;margin-bottom:12px}
+  .testDivider{margin-bottom:12px}
+
+  /* ─── Story ─── */
+  .storyCards{grid-template-columns:1fr;gap:16px;margin-bottom:28px}
+  .storyCard{padding:28px}
+  .storyHero{min-height:360px}
+  .storyHeroContent{padding:120px 20px 24px}
+  .storyHeroContent h3{font-size:1.6rem!important}
+  .statsRow{grid-template-columns:repeat(3,1fr);gap:8px}
+  .stat{padding:20px 10px;border-radius:12px}
+  .statNum{font-size:1.8rem!important}
+  .statLbl{font-size:0.6rem;margin-top:4px}
+
+  /* ─── Community ─── */
+  .communityHighlights{padding:56px 0}
+  .commGrid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .commCard{padding:20px}
+  .commIcon{width:52px;height:52px;margin-bottom:12px}
+  .commCard h4{font-size:0.95rem;margin-bottom:6px}
+  .commCard p{font-size:0.72rem}
+
+  /* ─── The IP ─── */
+  .ipSection{padding:56px 0}
+  .ipHeader{margin-bottom:36px}
+  .ipStamp{width:36px;height:36px;margin-bottom:16px}
+  .ipTitle{font-size:1.8rem!important}
+  .ipFeature{grid-template-columns:1fr;margin-bottom:20px}
+  .ipFeatureImg{min-height:200px}
+  .ipFeatureBody{padding:24px}
+  .ipFeatureBody h3{font-size:1.6rem!important}
+  .ipFeatureBody>p:last-of-type{font-size:0.88rem;margin-bottom:16px}
+  .ipFeatureTags span{padding:6px 12px;font-size:0.58rem}
+  .ipGrid{grid-template-columns:1fr;gap:14px;margin-bottom:32px}
+  .ipCardImg{height:160px}
+  .ipCardBody{padding:20px}
+  .ipWygGrid{grid-template-columns:1fr;gap:12px;margin-bottom:24px}
+  .ipWhatYouGet{padding:24px}
+  .ipWygCard{padding:20px}
+
+  /* ─── Brand / Pillars ─── */
   .pillarExplorerContent{grid-template-columns:1fr;height:auto}
-  .pillarExplorerImg{height:240px}
-  .pillarExplorerText{padding:28px}
+  .pillarExplorerImg{height:200px}
+  .pillarExplorerText{padding:20px}
+  .pillarExplorerText h3{font-size:1.5rem!important}
   .pillarExplorerTabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .pillarTab{min-width:80px;padding:14px 10px}
+  .pillarTabIcon{font-size:1.1rem}
+  .pillarTabLabel{font-size:0.55rem}
+  .accordionWrap{margin-top:0}
   .accordionInner{grid-template-columns:1fr}
   .accordionCol:first-child{border-right:none;border-bottom:1px solid var(--border)}
-  .amenFeatured{height:300px}
-  .amenFeaturedContent{padding:20px 24px}
-  .amenThumb{width:90px}
-  .amenThumb img{width:90px;height:60px}
-  .investToggle{flex-direction:column}
-  .investDetail{grid-template-columns:1fr;padding:28px}
-  .hospChartBody{height:260px}
-  .hospChart{padding:24px}
-  .hospBar{max-width:36px}
-  .textReveal{font-size:clamp(1.8rem,5vw,3rem)!important}
-  .bkStage{min-height:340px}
-  .bkPageContent{padding:28px 32px 28px 40px}
+  .accordionCol{padding:12px 16px}
+  .accordionHeader{padding:14px 20px}
+  .accordionTags{padding:8px 20px 14px}
+  .accordionTags span{font-size:0.52rem;padding:3px 8px}
+
+  /* ─── Photo breaks ─── */
+  .photoBreak{height:40vh!important}
+  .photoBreakTitle{font-size:1.6rem!important}
+  .photoBreakSub{margin-bottom:12px;font-size:0.62rem}
+
+  /* ─── Florida / Expansion ─── */
+  .expansionGrid{grid-template-columns:1fr 1fr;grid-auto-rows:180px;gap:8px}
+  .expContent{padding:16px}
+  .expContent h4{font-size:1.1rem!important}
+  .expContent p{font-size:0.7rem;margin-bottom:4px}
+
+  /* ─── Amenities ─── */
+  .amenFeatured{height:240px}
+  .amenFeaturedContent{padding:16px 20px}
+  .amenFeaturedLabel{font-size:1.4rem!important}
+  .amenThumb{width:72px}
+  .amenThumb img{width:72px;height:48px}
+
+  /* ─── Mission / Nonprofit ─── */
+  .missionFull{min-height:50vh}
+  .missionFullContent{padding:32px 20px}
+  .missionFullContent h2{font-size:1.8rem!important;margin-bottom:12px}
+  .missionFullContent .missionStamp{width:44px;height:44px;margin-bottom:16px}
+  .missionFullContent p{font-size:0.88rem}
+
+  /* ─── Locations ─── */
+  .locGrid{grid-template-columns:1fr}
+  .locCard{padding:24px}
+  .locCard h3{font-size:1.5rem!important}
+  .locCard p{font-size:0.82rem;margin-bottom:12px}
+
+  /* ─── Market ─── */
+  .marketGrid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .marketCard{padding:24px 16px}
+  .mktVal{font-size:1.6rem!important}
+  .partnerGrid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .partnerCard{padding:10px;min-height:52px}
+  .partnerCard img{max-width:80px;max-height:28px}
+
+  /* ─── Blue Zones ─── */
+  .blueZones{padding:56px 0}
+  .bzLayout{grid-template-columns:1fr}.bzImage{order:-1}
+  .bzImage img{width:100%;height:200px}
+  .bzTitle{font-size:1.6rem!important}
+  .bzQuote{font-size:1.15rem;margin-bottom:16px}
+  .bzDef,.bzText{font-size:0.82rem}
+
+  /* ─── Invest ─── */
+  .investToggle{flex-direction:column;gap:8px}
+  .investToggleBtn{padding:16px 20px}
+  .investDetail{grid-template-columns:1fr;padding:20px}
+  .investGrid{gap:14px}
+  .investCard{padding:24px}
+  .gateBox{padding:32px 20px}
+  .gateBox h3{font-size:1.3rem}
+  .hospChartBody{height:220px}
+  .hospChart{padding:20px}
+  .hospBar{max-width:28px}
+  .hospChartHeader{margin-bottom:16px}
+  .hospChart h4{font-size:1.1rem!important}
+  .hospAxisLeft span,.hospAxisRight span{font-size:0.52rem}
+  .hospBarLabel{font-size:0.52rem}
+  .hospBarYear{font-size:0.52rem}
+
+  /* ─── Team ─── */
+  .teamGrid{grid-template-columns:1fr;gap:20px}
+  .teamCard{padding:32px 24px}
+  .teamPhoto{width:120px;height:120px;margin-bottom:18px}
+  .teamCard h3{font-size:1.5rem!important;margin-bottom:12px}
+  .teamCard p{font-size:0.82rem;margin-bottom:16px}
+
+  /* ─── Waitlist ─── */
+  .waitlistForm{max-width:100%}
+  .wfField input,.wfField select{padding:12px 16px;font-size:0.85rem}
+
+  /* ─── Book modal ─── */
+  .bkStage{min-height:300px}
+  .bkPageContent{padding:24px 24px 24px 32px}
   .bkSpine{width:10px;left:-4px}
+  .bkPageNum{margin-bottom:16px}
+  .modalTitle{font-size:1.5rem!important}
+
+  /* ─── Footer ─── */
+  .footer{padding:44px 20px}
+
+  /* ─── Typography ─── */
+  .textReveal{font-size:clamp(1.6rem,5vw,2.6rem)!important}
 }
