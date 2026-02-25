@@ -552,7 +552,7 @@ function BrandBookModal({ onClose }) {
         {loading ? (
           <div className="magLoading">
             <div className="topoSpinner" />
-            <span style={{ color: "var(--sand)", marginTop: 16, fontSize: "0.85rem" }}>Loading Brand Book…</span>
+            <span style={{ color: "var(--earth)", marginTop: 16, fontSize: "0.85rem", opacity: 0.6 }}>Loading Brand Book…</span>
           </div>
         ) : (
           <>
