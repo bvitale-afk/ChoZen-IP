@@ -745,138 +745,232 @@ function TopoViewer() {
         const THREE = window.THREE;
         const w = container.clientWidth, h = container.clientHeight;
 
+        // Scene
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0a0908);
+        scene.fog = new THREE.FogExp2(0x0a0908, 0.0012);
+
+        // Camera
         const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 5000);
-        camera.position.set(250, 300, 350);
-        camera.lookAt(0, 30, 0);
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(w, h);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        scene.add(new THREE.AmbientLight(0xfff5e0, 0.5));
-        const dir = new THREE.DirectionalLight(0xffffff, 0.7);
-        dir.position.set(200, 400, 200); scene.add(dir);
+        // Lights — dramatic mountain lighting
+        scene.add(new THREE.AmbientLight(0x4a6832, 0.4));
+        const sun = new THREE.DirectionalLight(0xfff5d0, 1.0);
+        sun.position.set(300, 500, 200);
+        scene.add(sun);
+        const fill = new THREE.DirectionalLight(0x6a8fa0, 0.3);
+        fill.position.set(-200, 200, -100);
+        scene.add(fill);
+        const rim = new THREE.PointLight(0xb8963e, 0.4, 600);
+        rim.position.set(0, 200, -300);
+        scene.add(rim);
 
-        const groundGeo = new THREE.PlaneGeometry(600, 600);
-        const groundMat = new THREE.MeshStandardMaterial({ color: 0x15120e, roughness: 1 });
-        const ground = new THREE.Mesh(groundGeo, groundMat);
-        ground.rotation.x = -Math.PI / 2; ground.position.y = -2; scene.add(ground);
-        const grid = new THREE.GridHelper(500, 25, 0x2a2520, 0x1a1610);
-        grid.position.y = -1; scene.add(grid);
-
+        // Fetch and parse SVG
         const resp = await fetch(TOPO_SVG);
         const svgText = await resp.text();
         if (disposed) return;
         const parser = new DOMParser();
         const doc = parser.parseFromString(svgText, "image/svg+xml");
 
-        const elevLabels = [];
-        doc.querySelectorAll('g[id="r80"] text, g[id="r80"] [data-name="TEXT"] text').forEach(txt => {
-          const val = parseInt(txt.textContent.trim());
-          if (val >= 2400 && val <= 2500) {
-            const tf = txt.getAttribute("transform") || "";
-            const m = tf.match(/translate\(([-\d.]+)\s+([-\d.]+)\)/);
-            if (m) elevLabels.push({ elev: val, x: parseFloat(m[1]), y: parseFloat(m[2]) });
-          }
-        });
-
-        const topoGroups = ["topo5", "topo1"];
-        const yellowClasses = new Set(["st2", "st7", "st27", "st28", "st35", "st38"]);
-        const polylines = [];
-        topoGroups.forEach(gid => {
-          const g = doc.getElementById(gid) || doc.querySelector(`[id="${gid}"]`);
+        // Collect contour polylines from topo groups
+        const contours = [];
+        ["topo5", "topo1"].forEach(gid => {
+          const g = doc.getElementById(gid);
           if (!g) return;
           g.querySelectorAll("polyline").forEach(pl => {
-            const cls = pl.getAttribute("class") || "";
-            if (cls.split(/\s+/).some(c => yellowClasses.has(c))) return;
             const pts = pl.getAttribute("points");
             if (!pts) return;
             const coords = pts.trim().split(/[\s,]+/).map(Number);
-            const points2d = [];
+            const points = [];
             for (let i = 0; i < coords.length - 1; i += 2) {
-              if (!isNaN(coords[i]) && !isNaN(coords[i+1])) points2d.push({ x: coords[i], y: coords[i+1] });
+              if (!isNaN(coords[i]) && !isNaN(coords[i+1])) points.push([coords[i], coords[i+1]]);
             }
-            if (points2d.length >= 2) polylines.push(points2d);
+            if (points.length >= 3) {
+              const xs = points.map(p => p[0]), ys = points.map(p => p[1]);
+              const bbox = (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys));
+              contours.push({ points, bbox });
+            }
           });
         });
 
-        ["st51", "st16", "st17", "st18", "st36"].forEach(cls => {
-          if (yellowClasses.has(cls)) return;
-          doc.querySelectorAll(`polyline.${cls}`).forEach(el => {
-              const pts = el.getAttribute("points");
-              if (!pts) return;
-              const coords = pts.trim().split(/[\s,]+/).map(Number);
-              const points2d = [];
-              for (let i = 0; i < coords.length - 1; i += 2) {
-                if (!isNaN(coords[i]) && !isNaN(coords[i+1])) points2d.push({ x: coords[i], y: coords[i+1] });
-              }
-              if (points2d.length >= 2) polylines.push(points2d);
-          });
-        });
+        // SVG bounds for the contour data
+        const allX = contours.flatMap(c => c.points.map(p => p[0]));
+        const allY = contours.flatMap(c => c.points.map(p => p[1]));
+        const svgMinX = Math.min(...allX), svgMaxX = Math.max(...allX);
+        const svgMinY = Math.min(...allY), svgMaxY = Math.max(...allY);
+        const svgW = svgMaxX - svgMinX, svgH = svgMaxY - svgMinY;
 
-        const seen = new Set();
-        // Filter to main contour area (SVG coords ~250-600 X, 0-400 Y) and deduplicate
-        const uniquePolylines = polylines.filter(pl => {
-          const cx = pl.reduce((s, p) => s + p.x, 0) / pl.length;
-          const cy = pl.reduce((s, p) => s + p.y, 0) / pl.length;
-          if (cx < 200 || cx > 650 || cy < -20 || cy > 420) return false;
-          const key = pl.slice(0, 3).map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join("|");
-          if (seen.has(key)) return false; seen.add(key); return true;
-        });
-
-        const svgW = 841.9, svgH = 595.3;
-        const scale = 400 / Math.max(svgW, svgH);
-        const ox = -svgW * scale / 2, oz = -svgH * scale / 2;
-        const minElev = 2400, maxElev = 2500, elevRange = maxElev - minElev;
-        const yScale = 1.5;
-
-        const assignElev = (pl) => {
-          const cx = pl.reduce((s, p) => s + p.x, 0) / pl.length;
-          const cy = pl.reduce((s, p) => s + p.y, 0) / pl.length;
-          let best = minElev, bestD = Infinity;
-          elevLabels.forEach(lb => { const d = Math.hypot(cx - lb.x, cy - lb.y); if (d < bestD) { bestD = d; best = lb.elev; } });
-          return best;
-        };
-
-        const colorForElev = (elev) => {
-          const t = Math.max(0, Math.min(1, (elev - minElev) / elevRange));
-          // Dark amber → bright gold ramp
-          const r = 0.42 + t * 0.38;
-          const g = 0.32 + t * 0.28;
-          const b = 0.10 + t * 0.10;
-          return new THREE.Color(r, g, b);
-        };
-
-        const topoGroup = new THREE.Group();
-        uniquePolylines.forEach(pl => {
-          const elev = assignElev(pl);
-          const y3d = ((elev - minElev) / elevRange) * elevRange * yScale * 0.5;
-          const color = colorForElev(elev);
-          const verts = [];
-          pl.forEach(p => { verts.push(p.x * scale + ox, y3d, p.y * scale + oz); });
-          const geo = new THREE.BufferGeometry();
-          geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-          topoGroup.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color, linewidth: 1, transparent: true, opacity: 0.85 })));
-          if (pl.length > 6 && y3d > 3) {
-            for (let i = 0; i < pl.length; i += Math.max(1, Math.floor(pl.length / 4))) {
-              const p = pl[i];
-              const sv = [p.x * scale + ox, 0, p.y * scale + oz, p.x * scale + ox, y3d, p.y * scale + oz];
-              const sg = new THREE.BufferGeometry();
-              sg.setAttribute("position", new THREE.Float32BufferAttribute(sv, 3));
-              topoGroup.add(new THREE.Line(sg, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.08 })));
+        // Point-in-polygon test (ray casting)
+        const pointInPoly = (px, py, poly) => {
+          let inside = false;
+          for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+            const [xi, yi] = poly[i], [xj, yj] = poly[j];
+            if ((yi > py) !== (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi) {
+              inside = !inside;
             }
           }
+          return inside;
+        };
+
+        // Close open contours by connecting first/last points
+        const closedContours = contours.map(c => {
+          const pts = [...c.points];
+          const d = Math.hypot(pts[0][0] - pts[pts.length-1][0], pts[0][1] - pts[pts.length-1][1]);
+          if (d > 2) pts.push([...pts[0]]);
+          return { points: pts, bbox: c.bbox };
+        }).filter(c => c.bbox > 50); // filter out tiny fragments
+
+        // Sort contours by bbox area descending (largest = lowest elevation)
+        closedContours.sort((a, b) => b.bbox - a.bbox);
+
+        // Build height grid
+        const gridRes = 128;
+        const heights = new Float32Array(gridRes * gridRes);
+        const margin = 10;
+        const gMinX = svgMinX - margin, gMaxX = svgMaxX + margin;
+        const gMinY = svgMinY - margin, gMaxY = svgMaxY + margin;
+        const gW = gMaxX - gMinX, gH = gMaxY - gMinY;
+
+        // For each grid point, count how many contours enclose it
+        for (let gy = 0; gy < gridRes; gy++) {
+          for (let gx = 0; gx < gridRes; gx++) {
+            const px = gMinX + (gx / (gridRes - 1)) * gW;
+            const py = gMinY + (gy / (gridRes - 1)) * gH;
+            let enclosing = 0;
+            for (const c of closedContours) {
+              if (pointInPoly(px, py, c.points)) enclosing++;
+            }
+            heights[gy * gridRes + gx] = enclosing;
+          }
+        }
+
+        // Normalize heights
+        let maxH = 0;
+        for (let i = 0; i < heights.length; i++) if (heights[i] > maxH) maxH = heights[i];
+        if (maxH > 0) for (let i = 0; i < heights.length; i++) heights[i] /= maxH;
+
+        // Smooth the height field (3 passes of box blur for natural look)
+        const smooth = (h, res, passes) => {
+          const tmp = new Float32Array(res * res);
+          for (let p = 0; p < passes; p++) {
+            for (let y = 0; y < res; y++) {
+              for (let x = 0; x < res; x++) {
+                let sum = 0, count = 0;
+                for (let dy = -1; dy <= 1; dy++) {
+                  for (let dx = -1; dx <= 1; dx++) {
+                    const nx = x + dx, ny = y + dy;
+                    if (nx >= 0 && nx < res && ny >= 0 && ny < res) {
+                      sum += h[ny * res + nx];
+                      count++;
+                    }
+                  }
+                }
+                tmp[y * res + x] = sum / count;
+              }
+            }
+            for (let i = 0; i < res * res; i++) h[i] = tmp[i];
+          }
+        };
+        smooth(heights, gridRes, 4);
+
+        // Build terrain geometry
+        const terrainSize = 300;
+        const heightScale = 100;
+        const geo = new THREE.PlaneGeometry(terrainSize, terrainSize, gridRes - 1, gridRes - 1);
+        const pos = geo.attributes.position;
+        const colors = new Float32Array(pos.count * 3);
+
+        for (let i = 0; i < pos.count; i++) {
+          const gx = i % gridRes;
+          const gy = Math.floor(i / gridRes);
+          const h = heights[gy * gridRes + gx];
+          pos.setZ(i, h * heightScale);
+
+          // Color ramp: dark earth → moss → forest green → bright green peaks
+          const t = h;
+          let r, g, b;
+          if (t < 0.15) {
+            // Low: dark earth/brown
+            r = 0.12 + t * 0.6; g = 0.10 + t * 0.8; b = 0.06 + t * 0.3;
+          } else if (t < 0.4) {
+            // Mid-low: dark moss
+            const s = (t - 0.15) / 0.25;
+            r = 0.21 - s * 0.04; g = 0.22 + s * 0.12; b = 0.11 - s * 0.02;
+          } else if (t < 0.7) {
+            // Mid: rich forest green
+            const s = (t - 0.4) / 0.3;
+            r = 0.17 + s * 0.05; g = 0.34 + s * 0.14; b = 0.09 + s * 0.04;
+          } else {
+            // High: bright sage/lime peaks
+            const s = (t - 0.7) / 0.3;
+            r = 0.22 + s * 0.18; g = 0.48 + s * 0.15; b = 0.13 + s * 0.06;
+          }
+          colors[i * 3] = r;
+          colors[i * 3 + 1] = g;
+          colors[i * 3 + 2] = b;
+        }
+
+        geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+        geo.computeVertexNormals();
+
+        // Rotate to horizontal and flip
+        geo.rotateX(-Math.PI / 2);
+
+        const mat = new THREE.MeshStandardMaterial({
+          vertexColors: true,
+          roughness: 0.85,
+          metalness: 0.05,
+          flatShading: false,
         });
-        scene.add(topoGroup);
+        const terrain = new THREE.Mesh(geo, mat);
+        scene.add(terrain);
+
+        // Add contour lines on the terrain surface for detail
+        contours.forEach((c, idx) => {
+          const verts = [];
+          c.points.forEach(([px, py]) => {
+            const gx = ((px - gMinX) / gW) * (gridRes - 1);
+            const gy = ((py - gMinY) / gH) * (gridRes - 1);
+            const gxi = Math.min(gridRes - 2, Math.max(0, Math.floor(gx)));
+            const gyi = Math.min(gridRes - 2, Math.max(0, Math.floor(gy)));
+            const fx = gx - gxi, fy = gy - gyi;
+            const h00 = heights[gyi * gridRes + gxi];
+            const h10 = heights[gyi * gridRes + gxi + 1];
+            const h01 = heights[(gyi + 1) * gridRes + gxi];
+            const h11 = heights[(gyi + 1) * gridRes + gxi + 1];
+            const h = (h00 * (1 - fx) * (1 - fy) + h10 * fx * (1 - fy) + h01 * (1 - fx) * fy + h11 * fx * fy);
+            const wx = ((px - gMinX) / gW - 0.5) * terrainSize;
+            const wz = ((py - gMinY) / gH - 0.5) * terrainSize;
+            verts.push(wx, h * heightScale + 0.3, -wz);
+          });
+          if (verts.length >= 6) {
+            const lg = new THREE.BufferGeometry();
+            lg.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+            const lm = new THREE.LineBasicMaterial({ color: 0xb8963e, transparent: true, opacity: 0.12 });
+            scene.add(new THREE.Line(lg, lm));
+          }
+        });
+
+        // Water/base plane
+        const baseGeo = new THREE.PlaneGeometry(500, 500);
+        const baseMat = new THREE.MeshStandardMaterial({ color: 0x0e1a0e, roughness: 1 });
+        const base = new THREE.Mesh(baseGeo, baseMat);
+        base.rotation.x = -Math.PI / 2;
+        base.position.y = -1;
+        scene.add(base);
+
         setLoading(false);
 
+        // Orbit controls
         let isDragging = false, prevMouse = { x: 0, y: 0 };
-        let theta = Math.PI / 4, phi = Math.PI / 6, radius = 420;
-        const target = new THREE.Vector3(0, 30, 0);
-        let autoRot = true;
-        let autoRotTimer = null;
+        let theta = Math.PI / 4, phi = Math.PI / 5, radius = 350;
+        const target = new THREE.Vector3(0, 25, 0);
+        let autoRot = true, autoRotTimer = null;
+
         const updateCam = () => {
           camera.position.x = target.x + radius * Math.sin(theta) * Math.cos(phi);
           camera.position.y = target.y + radius * Math.sin(phi);
@@ -894,7 +988,7 @@ function TopoViewer() {
         const onDown = (e) => { isDragging = true; const pt = e.touches ? e.touches[0] : e; prevMouse = { x: pt.clientX, y: pt.clientY }; pauseAutoRot(); };
         const onMove = (e) => { if (!isDragging) return; e.preventDefault(); const pt = e.touches ? e.touches[0] : e; const dx = pt.clientX - prevMouse.x, dy = pt.clientY - prevMouse.y; theta -= dx * 0.005; phi = Math.max(0.05, Math.min(Math.PI / 2.2, phi + dy * 0.005)); prevMouse = { x: pt.clientX, y: pt.clientY }; updateCam(); };
         const onUp = () => { isDragging = false; };
-        const onWheel = (e) => { e.preventDefault(); radius = Math.max(150, Math.min(800, radius + e.deltaY * 0.5)); updateCam(); pauseAutoRot(); };
+        const onWheel = (e) => { e.preventDefault(); radius = Math.max(120, Math.min(700, radius + e.deltaY * 0.4)); updateCam(); pauseAutoRot(); };
 
         const el = renderer.domElement;
         el.addEventListener("mousedown", onDown); el.addEventListener("mousemove", onMove);
@@ -917,7 +1011,7 @@ function TopoViewer() {
 
   return (
     <div className="topoStage" ref={containerRef}>
-      {loading && !err && <div className="topoLoading"><div className="topoSpinner" /><span>Loading topography&hellip;</span></div>}
+      {loading && !err && <div className="topoLoading"><div className="topoSpinner" /><span>Building terrain&hellip;</span></div>}
       {err && <div className="topoLoading"><span style={{ color: "#ff6b6b" }}>Error: {err}</span></div>}
     </div>
   );
