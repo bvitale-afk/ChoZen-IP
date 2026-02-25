@@ -404,36 +404,39 @@ function ProgressBar({ pct, color = "var(--moss)" }) {
 }
 
 function ImageSlideshow({ images, alt = "", interval = 4000 }) {
-  const [current, setCurrent] = useState(0);
-  const [prev, setPrev] = useState(null);
-  const timeoutRef = useRef(null);
+  const [topIdx, setTopIdx] = useState(0);
+  const [botIdx, setBotIdx] = useState(images.length > 1 ? 1 : 0);
+  const [topVisible, setTopVisible] = useState(true);
+  const tick = useRef(0);
   useEffect(() => {
     if (images.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent(c => {
-        setPrev(c);
-        return (c + 1) % images.length;
-      });
+      tick.current += 1;
+      // Toggle which layer is visible - this triggers the CSS crossfade
+      setTopVisible(v => !v);
     }, interval);
     return () => clearInterval(timer);
   }, [images.length, interval]);
+  // After each fade completes, update the now-hidden layer's src to the next image
   useEffect(() => {
-    if (prev === null) return;
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => setPrev(null), 1800);
-    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
-  }, [prev]);
+    if (images.length <= 1) return;
+    if (tick.current === 0) return;
+    const t = setTimeout(() => {
+      const nextImg = (Math.max(topIdx, botIdx) + 1) % images.length;
+      if (topVisible) {
+        // top is showing, bottom is hidden — update bottom
+        setBotIdx(nextImg);
+      } else {
+        // bottom is showing, top is hidden — update top
+        setTopIdx(nextImg);
+      }
+    }, 1700);
+    return () => clearTimeout(t);
+  }, [topVisible]);
   return (
     <div className="slideshowWrap">
-      {images.map((src, i) => (
-        <img
-          key={src}
-          src={src}
-          alt={alt}
-          className="slideshowImg"
-          style={{ opacity: i === current ? 1 : i === prev ? 0 : 0, zIndex: i === current ? 2 : i === prev ? 1 : 0 }}
-        />
-      ))}
+      <img src={images[botIdx]} alt={alt} className="slideshowImg slideshowBot" />
+      <img src={images[topIdx]} alt={alt} className="slideshowImg slideshowTop" style={{ opacity: topVisible ? 1 : 0 }} />
     </div>
   );
 }
@@ -711,21 +714,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ MISSION CALLOUT — FULL SCREEN ═══ */}
-      <section className="missionFull">
-        <img src={`${IMG}/temple-to-nature.jpg`} alt="" className="missionFullBg" />
-        <div className="missionFullOverlay" />
-        <div className="missionFullContent">
-          <FadeIn>
-            <img src={`${IMG}/chozen-stamp.png`} alt="" className="missionStamp" />
-            <h2>ChoZen Center for Regenerative Living</h2>
-            <p className="nonprofitTag">Adjacent 501(c)(3) Nonprofit</p>
-            <p>Regenerate land and biodiversity. Revitalize local economies. Elevate human well-being. Advance wildlife conservation through partnerships with Wildpath and Path of the Panther.</p>
-            <a href="#waitlist" className="btn btnGhost" style={{ marginTop: 32 }}>Get Involved &rarr;</a>
-          </FadeIn>
-        </div>
-      </section>
-
       {/* ═══ LOCATIONS ═══ */}
       <section className="sec secDark" id="locations">
         <div className="wrap">
@@ -752,6 +740,21 @@ export default function Home() {
                 </FadeIn>
               ))}
             </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ═══ MISSION CALLOUT — FULL SCREEN ═══ */}
+      <section className="missionFull">
+        <img src={`${IMG}/temple-to-nature.jpg`} alt="" className="missionFullBg" />
+        <div className="missionFullOverlay" />
+        <div className="missionFullContent">
+          <FadeIn>
+            <img src={`${IMG}/chozen-stamp.png`} alt="" className="missionStamp" />
+            <h2>ChoZen Center for Regenerative Living</h2>
+            <p className="nonprofitTag">Adjacent 501(c)(3) Nonprofit</p>
+            <p>Regenerate land and biodiversity. Revitalize local economies. Elevate human well-being. Advance wildlife conservation through partnerships with Wildpath and Path of the Panther.</p>
+            <a href="#waitlist" className="btn btnGhost" style={{ marginTop: 32 }}>Get Involved &rarr;</a>
           </FadeIn>
         </div>
       </section>
