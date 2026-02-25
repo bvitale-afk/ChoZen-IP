@@ -332,20 +332,24 @@ function PillarExplorer() {
 function BrandBookModal({ onClose }) {
   const [page, setPage] = useState(0);
   const [turning, setTurning] = useState(false);
-  const [turnDir, setTurnDir] = useState(null); // 'next' or 'prev'
-  const [fromPage, setFromPage] = useState(0);
+  const [turnDir, setTurnDir] = useState(null);
+  const [displayPage, setDisplayPage] = useState(0);
+  const [nextPage, setNextPage] = useState(0);
   const total = BOOK_PAGES.length;
 
   const goTo = (target) => {
     if (turning || target === page || target < 0 || target >= total) return;
-    setFromPage(page);
-    setTurnDir(target > page ? "next" : "prev");
+    const dir = target > page ? "next" : "prev";
+    setTurnDir(dir);
+    setDisplayPage(page);
+    setNextPage(target);
     setTurning(true);
     setTimeout(() => {
       setPage(target);
+      setDisplayPage(target);
       setTurning(false);
       setTurnDir(null);
-    }, 600);
+    }, 800);
   };
 
   useEffect(() => {
@@ -359,63 +363,62 @@ function BrandBookModal({ onClose }) {
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
   }, [page, onClose, total, turning]);
 
-  const renderPage = (p) => (
-    <>
+  const renderPage = (p, pageNum) => (
+    <div className="bkPageContent">
+      <div className="bkPageNum">{String(pageNum + 1).padStart(2, "0")}</div>
       <h2 className="modalTitle">{p.title}</h2>
       {p.subtitle && <p className="modalSub">{p.subtitle}</p>}
       {p.text && <p className="modalText">{p.text}</p>}
       {p.items && <div className="modalItems">{p.items.map((item, i) => <div key={i} className="modalItem"><strong>{item.bold}</strong> &mdash; {item.text}</div>)}</div>}
       {p.lines && <div className="modalLines">{p.lines.map((l, i) => <p key={i}>{l}</p>)}</div>}
-    </>
+    </div>
   );
-
-  // Determine what shows on the turning page (front = old content, back = new content)
-  const turningFrom = BOOK_PAGES[fromPage];
-  const turningTo = BOOK_PAGES[turnDir === "next" ? Math.min(fromPage + 1, total - 1) : Math.max(fromPage - 1, 0)];
 
   return (
     <div className="modalOverlay" onClick={onClose}>
-      <div className="bookModal" onClick={e => e.stopPropagation()}>
-        <div className="bookHeader">
-          <span>Brand Book</span>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: "0.7rem", opacity: 0.5 }}>{page + 1}/{total}</span>
-            <button className="modalClose" onClick={onClose}>&times;</button>
-          </div>
+      <div className="bkModal" onClick={e => e.stopPropagation()}>
+        {/* Book spine edge */}
+        <div className="bkSpine" />
+        {/* Page stack effect — visible page edges at bottom */}
+        <div className="bkPageEdges">
+          <div className="bkEdge bkEdge1" />
+          <div className="bkEdge bkEdge2" />
+          <div className="bkEdge bkEdge3" />
         </div>
-        <div className="bookStage">
-          {/* Static base page (current page, visible underneath) */}
-          <div className="bookPage bookPageBase">
-            <div className="bookPageInner">{renderPage(BOOK_PAGES[page])}</div>
+        {/* Main book area */}
+        <div className="bkStage">
+          {/* Bottom layer: destination page */}
+          <div className="bkSheet bkSheetBase" key={`base-${turning ? nextPage : page}`}>
+            {renderPage(BOOK_PAGES[turning ? nextPage : page], turning ? nextPage : page)}
           </div>
-          {/* Turning page overlay */}
-          {turning && turnDir === "next" && (
-            <div className="bookPageTurn bookTurnNext">
-              <div className="bookPageFront">
-                <div className="bookPageInner">{renderPage(turningFrom)}</div>
+
+          {/* Turning page */}
+          {turning && (
+            <div className={`bkTurnWrap ${turnDir === "next" ? "bkTurnNext" : "bkTurnPrev"}`}>
+              {/* Front of page (what you see before it flips) */}
+              <div className="bkTurnFront bkSheet">
+                {renderPage(BOOK_PAGES[displayPage], displayPage)}
+                <div className="bkPageGrain" />
+                <div className="bkTurnHighlight" />
               </div>
-              <div className="bookPageBack">
-                <div className="bookPageInner">{renderPage(turningTo)}</div>
+              {/* Back of page (revealed as it flips) */}
+              <div className="bkTurnBack bkSheet">
+                <div className="bkBackTexture" />
               </div>
+              {/* Thick edge of the page visible during turn */}
+              <div className="bkPageThickness" />
             </div>
           )}
-          {turning && turnDir === "prev" && (
-            <div className="bookPageTurn bookTurnPrev">
-              <div className="bookPageFront">
-                <div className="bookPageInner">{renderPage(turningTo)}</div>
-              </div>
-              <div className="bookPageBack">
-                <div className="bookPageInner">{renderPage(turningFrom)}</div>
-              </div>
-            </div>
-          )}
-          {/* Page shadow during turn */}
-          {turning && <div className={`bookShadow ${turnDir === "next" ? "bookShadowNext" : "bookShadowPrev"}`} />}
+
+          {/* Shadow cast on the page below */}
+          {turning && <div className={`bkCastShadow ${turnDir === "next" ? "bkCastShadowNext" : "bkCastShadowPrev"}`} />}
         </div>
-        <div className="bookFooter">
-          <button disabled={page === 0 || turning} onClick={() => goTo(page - 1)} className="modalNav">&larr; Prev</button>
-          <div className="modalDots">{BOOK_PAGES.map((_, i) => <span key={i} onClick={() => goTo(i)} className={`modalDot ${i === page ? "active" : ""}`} />)}</div>
-          <button disabled={page === total - 1 || turning} onClick={() => goTo(page + 1)} className="modalNav">Next &rarr;</button>
+
+        {/* Controls */}
+        <div className="bkControls">
+          <button disabled={page === 0 || turning} onClick={() => goTo(page - 1)} className="bkNavBtn">&larr;</button>
+          <div className="bkDots">{BOOK_PAGES.map((_, i) => <span key={i} onClick={() => goTo(i)} className={`bkDot ${i === page ? "bkDotActive" : ""}`} />)}</div>
+          <button disabled={page === total - 1 || turning} onClick={() => goTo(page + 1)} className="bkNavBtn">&rarr;</button>
         </div>
       </div>
     </div>
