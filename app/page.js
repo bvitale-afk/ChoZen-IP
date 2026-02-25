@@ -592,9 +592,11 @@ export default function Home() {
           <p className="heroSub">A Camp for the Humanity of the Future</p>
           <p className="heroTagline">Where Nature is the Ceremony</p>
           <div className="heroLine" />
-          <div className="heroCtas">
-            <a href="#story" className="btn btnPrimary">Explore the Vision</a>
-            <a href="#waitlist" className="btn btnGhost">Apply for Access</a>
+          <div className="heroScrollDown">
+            <a href="#story" className="heroScrollLink">
+              <span className="heroScrollChevron" />
+              <span className="heroScrollChevron heroScrollChevron2" />
+            </a>
           </div>
         </div>
         <div className="heroScroll"><span /></div>
