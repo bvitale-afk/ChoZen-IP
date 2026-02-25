@@ -504,27 +504,50 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 /* ─── TOPO MODAL ─── */
 .locTopoLink{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 18px;border-radius:6px;border:1px solid rgba(74,93,35,0.3);background:rgba(74,93,35,0.08);color:var(--sage);font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:var(--font-body)}
 .locTopoLink:hover{background:rgba(74,93,35,0.18);border-color:var(--sage);color:var(--cream)}
-.topoModal{background:#0d0c0a;border-radius:var(--radius-lg);max-width:900px;width:100%;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.6)}
+.topoModal{background:#0a0908;border-radius:var(--radius-lg);max-width:940px;width:100%;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.6)}
 .topoHeader{display:flex;justify-content:space-between;align-items:flex-start;padding:24px 28px 16px;border-bottom:1px solid rgba(200,185,154,0.1)}
 .topoTitle{font-family:var(--font-display);font-size:1.4rem;color:var(--cream);margin:0}
-.topoSub{font-size:0.65rem;color:var(--sand);opacity:0.5;letter-spacing:0.1em;margin-top:4px}
+.topoSub{font-size:0.62rem;color:var(--sand);opacity:0.4;letter-spacing:0.1em;margin-top:4px}
 .topoClose{background:none;border:none;font-size:1.8rem;color:var(--sand);cursor:pointer;padding:0 4px;line-height:1;opacity:0.5;transition:opacity 0.2s}
 .topoClose:hover{opacity:1}
-.topoStage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:400px;background:radial-gradient(ellipse at center,rgba(74,93,35,0.06) 0%,transparent 70%)}
-.topoSvgWrap{width:70%;max-width:560px;transition:transform 0.05s linear;will-change:transform;filter:drop-shadow(0 20px 40px rgba(0,0,0,0.4))}
-.topoSvgImg{width:100%;height:auto;display:block;opacity:0.9}
-.topoDeg{position:absolute;top:20px;right:24px;font-family:var(--font-display);font-size:2rem;color:var(--gold);opacity:0.3;font-variant-numeric:tabular-nums;letter-spacing:0.05em}
+
+/* 3D Stage */
+.topoStage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:440px;cursor:grab;touch-action:none;background:radial-gradient(ellipse at center,rgba(50,46,38,0.5) 0%,rgba(10,9,8,1) 75%);user-select:none}
+.topoStage:active{cursor:grabbing}
+
+/* Grid floor for depth */
+.topoFloor{position:absolute;width:500px;height:500px;pointer-events:none;opacity:0.06;background-image:linear-gradient(rgba(200,185,154,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(200,185,154,0.5) 1px,transparent 1px);background-size:40px 40px;will-change:transform}
+
+/* The SVG as a 3D card */
+.topoCard{width:60%;max-width:520px;transform-style:preserve-3d;will-change:transform;position:relative}
+.topoSvgImg{width:100%;height:auto;display:block;background:rgba(255,255,255,0.97);border-radius:4px;box-shadow:0 2px 20px rgba(0,0,0,0.3);pointer-events:none}
+
+/* Simulated thickness edges */
+.topoEdgeBottom{position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(to bottom,#d4d0c8,#a8a49c);transform-origin:top center;border-radius:0 0 2px 2px}
+.topoEdgeRight{position:absolute;top:0;right:0;bottom:0;width:4px;background:linear-gradient(to right,#d4d0c8,#a8a49c);transform-origin:left center;border-radius:0 2px 2px 0}
+
+/* Shadow projected below */
+.topoShadow{position:absolute;width:400px;height:300px;background:radial-gradient(ellipse,rgba(0,0,0,0.35) 0%,transparent 65%);pointer-events:none;will-change:transform}
+
+/* Degree readout */
+.topoDeg{position:absolute;top:16px;right:20px;display:flex;flex-direction:column;gap:2px;text-align:right}
+.topoDeg span{font-family:var(--font-body);font-size:0.6rem;color:var(--sand);opacity:0.3;font-variant-numeric:tabular-nums;letter-spacing:0.08em;font-weight:600}
+
+/* Drag hint overlay */
+.topoDragHint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;color:var(--sand);opacity:0.3;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;pointer-events:none;animation:topoPulse 2.5s ease-in-out infinite}
+@keyframes topoPulse{0%,100%{opacity:0.3}50%{opacity:0.6}}
+
+/* Controls */
 .topoControls{padding:16px 28px 20px;border-top:1px solid rgba(200,185,154,0.1)}
-.topoControlRow{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.topoControlRow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;flex-wrap:wrap}
 .topoZoom{display:flex;align-items:center;gap:8px}
-.topoZoomLabel{font-size:0.65rem;color:var(--sand);opacity:0.5;min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
-.topoBtn{padding:8px 16px;border-radius:6px;border:1px solid rgba(200,185,154,0.15);background:rgba(255,255,255,0.04);color:var(--sand);font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:var(--font-body)}
+.topoZoomLabel{font-size:0.62rem;color:var(--sand);opacity:0.4;min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
+.topoBtn{padding:8px 16px;border-radius:6px;border:1px solid rgba(200,185,154,0.15);background:rgba(255,255,255,0.04);color:var(--sand);font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:var(--font-body)}
 .topoBtn:hover{background:rgba(255,255,255,0.1);border-color:rgba(200,185,154,0.3)}
 .topoBtnActive{background:rgba(74,93,35,0.2);border-color:var(--moss);color:var(--sage)}
-.topoAngles{display:flex;gap:4px;flex-wrap:wrap}
-.topoAngleBtn{padding:6px 12px;border-radius:4px;border:1px solid rgba(200,185,154,0.1);background:rgba(255,255,255,0.02);color:var(--sand);opacity:0.5;font-size:0.58rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--font-body);font-variant-numeric:tabular-nums}
-.topoAngleBtn:hover{opacity:0.8;background:rgba(255,255,255,0.06)}
-.topoAngleBtnActive{opacity:1;background:rgba(184,150,62,0.12);border-color:var(--gold);color:var(--gold)}
+.topoAngles{display:flex;gap:6px}
+.topoAngleBtn{padding:8px 18px;border-radius:6px;border:1px solid rgba(200,185,154,0.12);background:rgba(255,255,255,0.03);color:var(--sand);opacity:0.6;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:var(--font-body)}
+.topoAngleBtn:hover{opacity:1;background:rgba(255,255,255,0.08);border-color:rgba(200,185,154,0.25)}
 
 /* ─── FOOTER ─── */
 .footer{background:var(--earth);padding:72px 32px;text-align:center}
