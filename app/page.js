@@ -715,17 +715,17 @@ function HospitalityGrowthChart() {
 
 const TOPO_SVG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS.svg";
 
-function TopoModal({ onClose }) {
+const MEDELLIN_PHOTOS = [
+  `${IMG}/chozen-hospitality.jpg`,
+  `${IMG}/chozen-hospitality2.jpg`,
+  `${IMG}/chozen-hospitality3.jpg`,
+  `${IMG}/chozen-hospitality4.jpg`,
+];
+
+function TopoViewer() {
   const containerRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
-
-  useEffect(() => {
-    const fn = e => { if (e.key === "Escape") onClose(); };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", fn);
-    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
-  }, [onClose]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -745,48 +745,33 @@ function TopoModal({ onClose }) {
         const THREE = window.THREE;
         const w = container.clientWidth, h = container.clientHeight;
 
-        // Scene
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0a0908);
-
-        // Camera
         const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 5000);
         camera.position.set(250, 300, 350);
         camera.lookAt(0, 30, 0);
-
-        // Renderer
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(w, h);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // Lights
         scene.add(new THREE.AmbientLight(0xfff5e0, 0.5));
         const dir = new THREE.DirectionalLight(0xffffff, 0.7);
-        dir.position.set(200, 400, 200);
-        scene.add(dir);
+        dir.position.set(200, 400, 200); scene.add(dir);
 
-        // Ground
         const groundGeo = new THREE.PlaneGeometry(600, 600);
         const groundMat = new THREE.MeshStandardMaterial({ color: 0x15120e, roughness: 1 });
         const ground = new THREE.Mesh(groundGeo, groundMat);
-        ground.rotation.x = -Math.PI / 2; ground.position.y = -2;
-        scene.add(ground);
-
-        // Grid
+        ground.rotation.x = -Math.PI / 2; ground.position.y = -2; scene.add(ground);
         const grid = new THREE.GridHelper(500, 25, 0x2a2520, 0x1a1610);
-        grid.position.y = -1;
-        scene.add(grid);
+        grid.position.y = -1; scene.add(grid);
 
-        // Fetch SVG
         const resp = await fetch(TOPO_SVG);
         const svgText = await resp.text();
         if (disposed) return;
-
         const parser = new DOMParser();
         const doc = parser.parseFromString(svgText, "image/svg+xml");
 
-        // Extract elevation labels from r80 group TEXT elements
         const elevLabels = [];
         doc.querySelectorAll('g[id="r80"] text, g[id="r80"] [data-name="TEXT"] text').forEach(txt => {
           const val = parseInt(txt.textContent.trim());
@@ -797,7 +782,6 @@ function TopoModal({ onClose }) {
           }
         });
 
-        // Collect ALL contour polylines from topo groups
         const topoGroups = ["topo5", "topo1"];
         const polylines = [];
         topoGroups.forEach(gid => {
@@ -815,7 +799,6 @@ function TopoModal({ onClose }) {
           });
         });
 
-        // Also grab polylines from the main drawing area using contour-like classes
         ["st51", "st16", "st17", "st18", "st36", "st37"].forEach(cls => {
           doc.querySelectorAll(`polyline.${cls}, path.${cls}`).forEach(el => {
             if (el.tagName === "polyline") {
@@ -831,84 +814,57 @@ function TopoModal({ onClose }) {
           });
         });
 
-        // Deduplicate polylines
         const seen = new Set();
         const uniquePolylines = polylines.filter(pl => {
           const key = pl.slice(0, 3).map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join("|");
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
+          if (seen.has(key)) return false; seen.add(key); return true;
         });
 
-        // Scale: SVG is 841.9 x 595.3, map to ~400 units centered
         const svgW = 841.9, svgH = 595.3;
         const scale = 400 / Math.max(svgW, svgH);
         const ox = -svgW * scale / 2, oz = -svgH * scale / 2;
+        const minElev = 2400, maxElev = 2500, elevRange = maxElev - minElev;
+        const yScale = 1.5;
 
-        // Min/max elevation
-        const minElev = 2400, maxElev = 2500;
-        const elevRange = maxElev - minElev;
-        const yScale = 1.5; // exaggeration factor
-
-        // Assign elevation to each polyline by nearest label
         const assignElev = (pl) => {
           const cx = pl.reduce((s, p) => s + p.x, 0) / pl.length;
           const cy = pl.reduce((s, p) => s + p.y, 0) / pl.length;
           let best = minElev, bestD = Infinity;
-          elevLabels.forEach(lb => {
-            const d = Math.hypot(cx - lb.x, cy - lb.y);
-            if (d < bestD) { bestD = d; best = lb.elev; }
-          });
+          elevLabels.forEach(lb => { const d = Math.hypot(cx - lb.x, cy - lb.y); if (d < bestD) { bestD = d; best = lb.elev; } });
           return best;
         };
 
-        // Color ramp: low (dark green) -> high (tan/gold)
         const colorForElev = (elev) => {
           const t = Math.max(0, Math.min(1, (elev - minElev) / elevRange));
-          const r = 0.18 + t * 0.55;
-          const g = 0.28 + t * 0.38;
-          const b = 0.12 + (1 - t) * 0.05 + t * 0.18;
-          return new THREE.Color(r, g, b);
+          return new THREE.Color(0.18 + t * 0.55, 0.28 + t * 0.38, 0.12 + (1 - t) * 0.05 + t * 0.18);
         };
 
-        // Create 3D lines
         const topoGroup = new THREE.Group();
         uniquePolylines.forEach(pl => {
           const elev = assignElev(pl);
           const y3d = ((elev - minElev) / elevRange) * elevRange * yScale * 0.5;
           const color = colorForElev(elev);
-
           const verts = [];
-          pl.forEach(p => {
-            verts.push(p.x * scale + ox, y3d, p.y * scale + oz);
-          });
-
+          pl.forEach(p => { verts.push(p.x * scale + ox, y3d, p.y * scale + oz); });
           const geo = new THREE.BufferGeometry();
           geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-          const mat = new THREE.LineBasicMaterial({ color, linewidth: 1, transparent: true, opacity: 0.85 });
-          topoGroup.add(new THREE.Line(geo, mat));
-
-          // Add thin vertical "skirt" lines at intervals for depth perception
+          topoGroup.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color, linewidth: 1, transparent: true, opacity: 0.85 })));
           if (pl.length > 6 && y3d > 3) {
             for (let i = 0; i < pl.length; i += Math.max(1, Math.floor(pl.length / 4))) {
               const p = pl[i];
               const sv = [p.x * scale + ox, 0, p.y * scale + oz, p.x * scale + ox, y3d, p.y * scale + oz];
               const sg = new THREE.BufferGeometry();
               sg.setAttribute("position", new THREE.Float32BufferAttribute(sv, 3));
-              const sm = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.1 });
-              topoGroup.add(new THREE.Line(sg, sm));
+              topoGroup.add(new THREE.Line(sg, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.1 })));
             }
           }
         });
-
         scene.add(topoGroup);
         setLoading(false);
 
-        // Simple orbit controls (manual)
         let isDragging = false, prevMouse = { x: 0, y: 0 };
         let theta = Math.PI / 4, phi = Math.PI / 6, radius = 420;
         const target = new THREE.Vector3(0, 30, 0);
-
         const updateCam = () => {
           camera.position.x = target.x + radius * Math.sin(theta) * Math.cos(phi);
           camera.position.y = target.y + radius * Math.sin(phi);
@@ -917,90 +873,173 @@ function TopoModal({ onClose }) {
         };
         updateCam();
 
-        const onDown = (e) => {
-          isDragging = true;
-          const pt = e.touches ? e.touches[0] : e;
-          prevMouse = { x: pt.clientX, y: pt.clientY };
-        };
-        const onMove = (e) => {
-          if (!isDragging) return;
-          e.preventDefault();
-          const pt = e.touches ? e.touches[0] : e;
-          const dx = pt.clientX - prevMouse.x, dy = pt.clientY - prevMouse.y;
-          theta -= dx * 0.005;
-          phi = Math.max(0.05, Math.min(Math.PI / 2.2, phi + dy * 0.005));
-          prevMouse = { x: pt.clientX, y: pt.clientY };
-          updateCam();
-        };
+        const onDown = (e) => { isDragging = true; const pt = e.touches ? e.touches[0] : e; prevMouse = { x: pt.clientX, y: pt.clientY }; };
+        const onMove = (e) => { if (!isDragging) return; e.preventDefault(); const pt = e.touches ? e.touches[0] : e; const dx = pt.clientX - prevMouse.x, dy = pt.clientY - prevMouse.y; theta -= dx * 0.005; phi = Math.max(0.05, Math.min(Math.PI / 2.2, phi + dy * 0.005)); prevMouse = { x: pt.clientX, y: pt.clientY }; updateCam(); };
         const onUp = () => { isDragging = false; };
-        const onWheel = (e) => {
-          e.preventDefault();
-          radius = Math.max(150, Math.min(800, radius + e.deltaY * 0.5));
-          updateCam();
-        };
+        const onWheel = (e) => { e.preventDefault(); radius = Math.max(150, Math.min(800, radius + e.deltaY * 0.5)); updateCam(); };
 
         const el = renderer.domElement;
-        el.addEventListener("mousedown", onDown);
-        el.addEventListener("mousemove", onMove);
-        el.addEventListener("mouseup", onUp);
-        el.addEventListener("mouseleave", onUp);
+        el.addEventListener("mousedown", onDown); el.addEventListener("mousemove", onMove);
+        el.addEventListener("mouseup", onUp); el.addEventListener("mouseleave", onUp);
         el.addEventListener("wheel", onWheel, { passive: false });
         el.addEventListener("touchstart", onDown, { passive: false });
         el.addEventListener("touchmove", onMove, { passive: false });
         el.addEventListener("touchend", onUp);
 
-        // Auto-rotate + render loop
         let autoRot = true;
         el.addEventListener("mousedown", () => { autoRot = false; });
         el.addEventListener("touchstart", () => { autoRot = false; });
 
-        const animate = () => {
-          if (disposed) return;
-          if (autoRot) { theta += 0.002; updateCam(); }
-          renderer.render(scene, camera);
-          animId = requestAnimationFrame(animate);
-        };
+        const animate = () => { if (disposed) return; if (autoRot) { theta += 0.002; updateCam(); } renderer.render(scene, camera); animId = requestAnimationFrame(animate); };
         animate();
 
-        // Resize
-        const onResize = () => {
-          const nw = container.clientWidth, nh = container.clientHeight;
-          camera.aspect = nw / nh;
-          camera.updateProjectionMatrix();
-          renderer.setSize(nw, nh);
-        };
+        const onResize = () => { const nw = container.clientWidth, nh = container.clientHeight; camera.aspect = nw / nh; camera.updateProjectionMatrix(); renderer.setSize(nw, nh); };
         window.addEventListener("resize", onResize);
-
-      } catch (e) {
-        if (!disposed) setErr(e.message);
-      }
+      } catch (e) { if (!disposed) setErr(e.message); }
     })();
 
-    return () => {
-      disposed = true;
-      if (animId) cancelAnimationFrame(animId);
-      if (renderer) { renderer.dispose(); renderer.domElement.remove(); }
-    };
+    return () => { disposed = true; if (animId) cancelAnimationFrame(animId); if (renderer) { renderer.dispose(); renderer.domElement.remove(); } };
+  }, []);
+
+  return (
+    <div className="topoStage" ref={containerRef}>
+      {loading && !err && <div className="topoLoading"><div className="topoSpinner" /><span>Loading topography&hellip;</span></div>}
+      {err && <div className="topoLoading"><span style={{ color: "#ff6b6b" }}>Error: {err}</span></div>}
+    </div>
+  );
+}
+
+function MedellinModal({ onClose }) {
+  const [heroImg, setHeroImg] = useState(0);
+
+  useEffect(() => {
+    const fn = e => { if (e.key === "Escape") onClose(); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", fn);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
+  }, [onClose]);
+
+  // Hero image crossfade
+  useEffect(() => {
+    const t = setInterval(() => setHeroImg(p => (p + 1) % MEDELLIN_PHOTOS.length), 5000);
+    return () => clearInterval(t);
   }, []);
 
   return (
     <div className="modalOverlay" onClick={onClose}>
-      <div className="topoModal" onClick={e => e.stopPropagation()}>
-        <div className="topoHeader">
-          <div>
-            <h3 className="topoTitle">Medellín &mdash; Site Topography</h3>
-            <p className="topoSub">3D elevation contours &bull; 2,405m &ndash; 2,495m ASL &bull; Drag to rotate &bull; Scroll to zoom</p>
-          </div>
-          <button className="topoClose" onClick={onClose}>&times;</button>
-        </div>
-        <div className="topoStage" ref={containerRef}>
-          {loading && !err && (
-            <div className="topoLoading">
-              <div className="topoSpinner" />
-              <span>Loading topography&hellip;</span>
+      <div className="medModal" onClick={e => e.stopPropagation()}>
+        {/* Close button */}
+        <button className="medClose" onClick={onClose}>&times;</button>
+
+        <div className="medScroll">
+          {/* ── HERO ── */}
+          <div className="medHero">
+            {MEDELLIN_PHOTOS.map((src, i) => (
+              <img key={i} src={src} alt="" className={`medHeroImg ${i === heroImg ? "medHeroActive" : ""}`} />
+            ))}
+            <div className="medHeroOverlay" />
+            <div className="medHeroContent">
+              <p className="medHeroEyebrow">ChoZen &bull; Colombia</p>
+              <h2 className="medHeroTitle">Medell&iacute;n</h2>
+              <p className="medHeroTag">Branded Residential &bull; Agricultural Naturehood</p>
             </div>
-          )}
-          {err && <div className="topoLoading"><span style={{ color: "#ff6b6b" }}>Error: {err}</span></div>}
+          </div>
+
+          {/* ── OVERVIEW ── */}
+          <div className="medSection">
+            <div className="medOverviewGrid">
+              <div>
+                <p className="medEyebrow">The Vision</p>
+                <h3 className="medSectionTitle">A Regenerative Naturehood in the Mountains of Antioquia</h3>
+                <p className="medBody">Nestled in the hills above Medell&iacute;n at 2,400 meters, this 40-acre site becomes a living model for branded residential development woven into the agricultural landscape. Maker&rsquo;s villages, artist residencies, ancestral wisdom centers, and regenerative farming &mdash; all connected by trails through native cloud forest.</p>
+              </div>
+              <div className="medStats">
+                <div className="medStat">
+                  <span className="medStatNum">40</span>
+                  <span className="medStatLabel">Acres</span>
+                </div>
+                <div className="medStat">
+                  <span className="medStatNum">2,400m</span>
+                  <span className="medStatLabel">Elevation</span>
+                </div>
+                <div className="medStat">
+                  <span className="medStatNum">18</span>
+                  <span className="medStatLabel">Lots Planned</span>
+                </div>
+                <div className="medStat">
+                  <span className="medStatNum">5m</span>
+                  <span className="medStatLabel">Contour Interval</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── PHOTO PAIR ── */}
+          <div className="medPhotoPair">
+            <div className="medPhotoLg" style={{ backgroundImage: `url(${MEDELLIN_PHOTOS[1]})` }} />
+            <div className="medPhotoSm" style={{ backgroundImage: `url(${MEDELLIN_PHOTOS[2]})` }} />
+          </div>
+
+          {/* ── PILLARS ── */}
+          <div className="medSection">
+            <p className="medEyebrow">Pillars</p>
+            <h3 className="medSectionTitle">What We&rsquo;re Building</h3>
+            <div className="medPillars">
+              {[
+                { icon: "\u25B3", title: "Branded Residences", desc: "Architect-designed homes embedded in the terrain, each with private gardens and cloud forest views." },
+                { icon: "\u2740", title: "Agricultural Naturehood", desc: "Community farming, food forests, and seed-saving woven into the residential fabric." },
+                { icon: "\u2726", title: "Maker\u2019s Village", desc: "Workshops, studios, and co-working spaces for artisans, creators, and remote workers." },
+                { icon: "\u2600", title: "Ancestral Wisdom", desc: "Partnership with indigenous communities for plant medicine (where legal), healing traditions, and cultural exchange." },
+              ].map((p, i) => (
+                <div key={i} className="medPillar">
+                  <span className="medPillarIcon">{p.icon}</span>
+                  <h4>{p.title}</h4>
+                  <p>{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── TOPOGRAPHY ── */}
+          <div className="medTopoSection">
+            <div className="medTopoHead">
+              <p className="medEyebrow" style={{ color: "var(--sage)" }}>Site Topography</p>
+              <h3 className="medSectionTitle" style={{ color: "var(--cream)" }}>3D Elevation Contours</h3>
+              <p className="medTopoCaption">2,405m &ndash; 2,495m ASL &bull; Drag to rotate &bull; Scroll to zoom</p>
+            </div>
+            <TopoViewer />
+          </div>
+
+          {/* ── FULL WIDTH IMAGE ── */}
+          <div className="medFullImg" style={{ backgroundImage: `url(${MEDELLIN_PHOTOS[3]})` }} />
+
+          {/* ── STATUS ── */}
+          <div className="medSection medSectionLast">
+            <div className="medStatusGrid">
+              <div>
+                <p className="medEyebrow">Status</p>
+                <h3 className="medSectionTitle">Active Development</h3>
+                <p className="medBody">Land acquisition is underway with topographic surveys complete. Architectural programming and lot planning are in progress with Estudio Transversal. The project is currently accepting early interest from aligned partners and future residents.</p>
+              </div>
+              <div className="medTimeline">
+                {[
+                  { phase: "Topographic Survey", status: "Complete" },
+                  { phase: "Lot Planning (18 lots)", status: "In Progress" },
+                  { phase: "Architectural Programming", status: "In Progress" },
+                  { phase: "Infrastructure Design", status: "Upcoming" },
+                  { phase: "Construction Phase 1", status: "2026" },
+                ].map((t, i) => (
+                  <div key={i} className="medTimelineItem">
+                    <div className={`medTimelineDot ${t.status === "Complete" ? "medDotDone" : t.status === "In Progress" ? "medDotActive" : ""}`} />
+                    <div>
+                      <span className="medTimelinePhase">{t.phase}</span>
+                      <span className="medTimelineStatus">{t.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1033,7 +1072,7 @@ function AccordionItem({ title, yes, no, tags, index }) {
 
 export default function Home() {
   const [bookOpen, setBookOpen] = useState(false);
-  const [topoOpen, setTopoOpen] = useState(false);
+  const [medOpen, setMedOpen] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
   const [activeInvest, setActiveInvest] = useState(0);
   const storyParallax = useParallax(0.2);
@@ -1042,7 +1081,7 @@ export default function Home() {
     <>
       <Nav />
       {bookOpen && <BrandBookModal onClose={() => setBookOpen(false)} />}
-      {topoOpen && <TopoModal onClose={() => setTopoOpen(false)} />}
+      {medOpen && <MedellinModal onClose={() => setMedOpen(false)} />}
 
       {/* ═══ HERO ═══ */}
       <section className="hero" id="hero">
@@ -1298,7 +1337,7 @@ export default function Home() {
                     <div className="locCountry">{loc.country}</div>
                     <p>{loc.desc}</p>
                     <div className="locFeats">{loc.features.map(f => <span key={f}>{f}</span>)}</div>
-                    {i === 0 && <button className="locTopoLink" onClick={() => setTopoOpen(true)}>View Topography &rarr;</button>}
+                    {i === 0 && <button className="locTopoLink" onClick={() => setMedOpen(true)}>Open Medell&iacute;n &rarr;</button>}
                     {loc.status === "Open" && <a href="#waitlist" className="btn btnGold" style={{ marginTop: 20, fontSize: "0.6rem", padding: "12px 28px" }}>Propose a Location &rarr;</a>}
                   </div>
                 </FadeIn>
