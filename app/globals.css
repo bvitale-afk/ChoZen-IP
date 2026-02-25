@@ -87,12 +87,14 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .source{font-size:0.65rem;color:var(--text-light);text-align:center;margin-top:16px;letter-spacing:.05em}
 
 /* ─── TESTIMONIALS ─── */
-.testimonials{background:var(--cream);padding:80px 0}
-.testGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
-.testCard{text-align:center;padding:32px;background:white;border-radius:var(--radius-lg);border:1px solid var(--border)}
-.testImg{width:100px;height:100px;border-radius:50%;overflow:hidden;margin:0 auto 24px;border:3px solid var(--border)}
+.testimonials{background:var(--cream);padding:80px 0 100px}
+.testGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:80px;align-items:stretch}
+.testGrid>div{display:flex;flex-direction:column}
+.testGrid>div>div{flex:1;display:flex;flex-direction:column}
+.testCard{text-align:center;padding:130px 28px 40px;background:white;border-radius:var(--radius-lg);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;position:relative;overflow:visible}
+.testImg{width:160px;height:160px;border-radius:50%;overflow:hidden;position:absolute;top:-48px;left:50%;transform:translateX(-50%);border:4px solid white;box-shadow:0 8px 32px rgba(26,22,16,0.14)}
 .testImg img{width:100%;height:100%;object-fit:cover}
-.testQuote{font-family:var(--font-display);font-size:clamp(1.2rem,2vw,1.5rem);color:var(--earth);line-height:1.5;margin-bottom:20px}
+.testQuote{font-family:var(--font-display);font-size:clamp(1.2rem,2vw,1.5rem);color:var(--earth);line-height:1.5;margin-bottom:20px;flex:1}
 .testDivider{width:36px;height:2px;background:var(--gold);margin:0 auto 20px}
 .testName{font-weight:700;font-size:0.88rem;color:var(--earth)}
 .testRole{font-size:0.72rem;color:var(--text-light);margin-top:4px}
@@ -120,14 +122,14 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 
 /* ─── COMMUNITY ─── */
 .communityHighlights{padding:140px 0 100px;background:var(--cream)}
-.commGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:80px}
-.commGridItem{height:100%}
-.commCard{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 28px 36px;padding-top:100px;text-align:center;height:100%;display:flex;flex-direction:column;align-items:center;overflow:visible;position:relative}
+.commGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:80px;align-items:stretch}
+.commGridItem{height:100%;display:flex}
+.commCard{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:130px 28px 40px;text-align:center;width:100%;display:flex;flex-direction:column;align-items:center;overflow:visible;position:relative}
 .commCard:hover{box-shadow:var(--shadow)}
 .commIcon{width:160px;height:160px;border-radius:50%;overflow:hidden;position:absolute;top:-48px;left:50%;transform:translateX(-50%);border:4px solid white;box-shadow:0 8px 32px rgba(26,22,16,0.14)}
 .commIcon img{width:100%;height:100%;object-fit:cover}
 .commCard h4{font-family:var(--font-display);font-size:1.15rem;margin-bottom:12px;color:var(--earth)}
-.commCard p{font-size:0.82rem;line-height:1.7;color:var(--text)}
+.commCard p{font-size:0.82rem;line-height:1.7;color:var(--text);flex:1}
 .nonprofitTag{display:inline-block;font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:6px 16px;border-radius:20px;background:rgba(74,93,35,0.08);color:var(--moss);margin-bottom:12px}
 
 /* ─── THE IP ─── */
@@ -575,10 +577,10 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
   .heroScrollDown{margin-top:28px}
 
   /* ─── Testimonials ─── */
-  .testimonials{padding:40px 0}
-  .testGrid{grid-template-columns:1fr;gap:16px}
-  .testCard{padding:24px}
-  .testImg{width:64px;height:64px;margin-bottom:14px}
+  .testimonials{padding:56px 0 80px}
+  .testGrid{grid-template-columns:1fr;gap:16px;margin-top:70px}
+  .testCard{padding:100px 20px 32px}
+  .testImg{width:120px;height:120px;top:-36px}
   .testQuote{font-size:1.1rem!important;margin-bottom:12px}
   .testDivider{margin-bottom:12px}
 
@@ -596,7 +598,8 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
   /* ─── Community ─── */
   .communityHighlights{padding:56px 0 80px}
   .commGrid{grid-template-columns:repeat(2,1fr);gap:16px;margin-top:70px}
-  .commCard{padding:20px 16px 20px;padding-top:90px}
+  .commGridItem{display:flex}
+  .commCard{padding:100px 16px 32px}
   .commIcon{width:120px;height:120px;top:-36px}
   .commCard h4{font-size:0.95rem;margin-bottom:6px}
   .commCard p{font-size:0.72rem}
