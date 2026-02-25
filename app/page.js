@@ -114,6 +114,17 @@ const FINANCIALS = {
   ]},
 };
 
+const HOSP_GROWTH = [
+  { year: 2025, beds: 36, revenue: 1.2 },
+  { year: 2026, beds: 45, revenue: 2.0 },
+  { year: 2027, beds: 45, revenue: 2.2 },
+  { year: 2028, beds: 60, revenue: 3.5 },
+  { year: 2029, beds: 60, revenue: 4.0 },
+  { year: 2030, beds: 79, revenue: 6.0 },
+  { year: 2031, beds: 79, revenue: 6.5 },
+  { year: 2032, beds: 120, revenue: 10.0 },
+];
+
 const PARTNERSHIPS = [
   { name: "Blue Zones", img: `${IMG}/blue-zones.jpg` },
   { name: "Future of Cities", img: `${IMG}/future-of-cities-logo.jpg` },
@@ -544,6 +555,99 @@ function AmenitiesShowcase() {
   );
 }
 
+function HospitalityGrowthChart() {
+  const [ref, inView] = useInView(0.2);
+  const [hovered, setHovered] = useState(null);
+  const maxBeds = 120;
+  const maxRev = 10;
+  const chartW = 100; // percentage based
+  const data = HOSP_GROWTH;
+  // SVG viewbox coords for the revenue line
+  const svgW = 720;
+  const svgH = 320;
+  const padL = 0;
+  const padR = 0;
+  const padT = 20;
+  const padB = 0;
+  const plotW = svgW - padL - padR;
+  const plotH = svgH - padT - padB;
+  const barW = plotW / data.length;
+  // Generate line points
+  const points = data.map((d, i) => {
+    const x = padL + i * barW + barW / 2;
+    const y = padT + plotH - (d.revenue / maxRev) * plotH;
+    return { x, y, ...d };
+  });
+  const linePath = points.map((p, i) => {
+    if (i === 0) return `M ${p.x} ${p.y}`;
+    const prev = points[i - 1];
+    const cpx1 = prev.x + barW * 0.4;
+    const cpx2 = p.x - barW * 0.4;
+    return `C ${cpx1} ${prev.y}, ${cpx2} ${p.y}, ${p.x} ${p.y}`;
+  }).join(" ");
+  // Revenue Y gridlines
+  const revTicks = [2, 4, 6, 8, 10];
+  return (
+    <div ref={ref} className={`hospChart ${inView ? "hospChartVisible" : ""}`}>
+      <div className="hospChartHeader">
+        <h4>Hospitality Growth Projection</h4>
+        <div className="hospChartLegend">
+          <span className="hospLegBeds"><span className="hospLegSwatch hospLegSwatchBeds" />Beds</span>
+          <span className="hospLegRev"><span className="hospLegSwatch hospLegSwatchRev" />Revenue</span>
+        </div>
+      </div>
+      <div className="hospChartBody">
+        {/* Left axis labels (beds) */}
+        <div className="hospAxisLeft">
+          {[120, 100, 80, 60, 40, 20, 0].map(v => (
+            <span key={v}>{v}</span>
+          ))}
+        </div>
+        {/* Chart area */}
+        <div className="hospChartArea">
+          {/* Grid lines */}
+          <div className="hospGridLines">
+            {[0, 1, 2, 3, 4, 5, 6].map(i => <div key={i} className="hospGridLine" />)}
+          </div>
+          {/* Bars */}
+          <div className="hospBars">
+            {data.map((d, i) => {
+              const pct = (d.beds / maxBeds) * 100;
+              return (
+                <div key={i} className="hospBarCol" onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)}>
+                  <div className="hospBarLabel">{d.beds}</div>
+                  <div className="hospBar" style={{ height: inView ? `${pct}%` : "0%", transitionDelay: `${i * 0.08}s` }} />
+                  <div className="hospBarYear">{d.year}</div>
+                  {hovered === i && (
+                    <div className="hospTooltip">
+                      <strong>{d.year}</strong>
+                      <span>{d.beds} beds</span>
+                      <span>${d.revenue}M revenue</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {/* Revenue line overlay */}
+          <svg className="hospLineSvg" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none">
+            <path d={linePath} fill="none" stroke="var(--gold)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="hospRevLine" style={{ strokeDasharray: 1200, strokeDashoffset: inView ? 0 : 1200 }} />
+            {points.map((p, i) => (
+              <circle key={i} cx={p.x} cy={p.y} r="5" fill="var(--gold)" className="hospRevDot" style={{ opacity: inView ? 1 : 0, transitionDelay: `${0.6 + i * 0.1}s` }} />
+            ))}
+          </svg>
+        </div>
+        {/* Right axis labels (revenue) */}
+        <div className="hospAxisRight">
+          {revTicks.map(v => (
+            <span key={v}>${v}m</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AccordionItem({ title, yes, no, tags, index }) {
   const [open, setOpen] = useState(true);
   return (
@@ -953,6 +1057,9 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </FadeIn>
+          <FadeIn delay={0.12}>
+            <HospitalityGrowthChart />
           </FadeIn>
           <FadeIn delay={0.15}>
             <div className="gateBox">
