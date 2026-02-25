@@ -352,6 +352,36 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .gateSuccess{background:rgba(74,93,35,0.1);border:1px solid rgba(74,93,35,0.2);border-radius:var(--radius);padding:24px;display:inline-block}
 .gateSuccess p{font-size:0.85rem;color:var(--sage);margin:0}
 
+/* ─── HOSPITALITY GROWTH CHART ─── */
+.hospChart{background:rgba(255,255,255,0.04);border:1px solid rgba(200,185,154,0.12);border-radius:var(--radius-lg);padding:40px;margin-bottom:32px;backdrop-filter:blur(8px)}
+.hospChartHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.hospChart h4{font-family:var(--font-display);font-size:clamp(1.2rem,2.5vw,1.6rem);color:var(--cream);margin:0}
+.hospChartLegend{display:flex;gap:20px}
+.hospLegBeds,.hospLegRev{display:flex;align-items:center;gap:6px;font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--sand)}
+.hospLegSwatch{width:12px;height:12px;border-radius:3px}
+.hospLegSwatchBeds{background:rgba(200,185,154,0.25)}
+.hospLegSwatchRev{background:var(--gold)}
+.hospChartBody{display:flex;gap:0;align-items:stretch;height:340px;position:relative}
+.hospAxisLeft,.hospAxisRight{display:flex;flex-direction:column;justify-content:space-between;padding:0 10px;flex-shrink:0}
+.hospAxisLeft span{font-size:0.62rem;color:var(--sand);opacity:0.5;font-variant-numeric:tabular-nums;text-align:right;line-height:1}
+.hospAxisRight span{font-size:0.68rem;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums;text-align:left;line-height:1}
+.hospChartArea{flex:1;position:relative;overflow:hidden}
+.hospGridLines{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.hospGridLine{height:1px;background:rgba(200,185,154,0.08)}
+.hospBars{display:flex;height:100%;align-items:flex-end;position:relative;z-index:2}
+.hospBarCol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;cursor:pointer}
+.hospBarCol:hover .hospBar{background:rgba(200,185,154,0.3)}
+.hospBarLabel{font-size:0.62rem;color:var(--sage);font-weight:700;margin-bottom:4px;font-variant-numeric:tabular-nums;opacity:0;transition:opacity 0.6s ease 0.8s}
+.hospChartVisible .hospBarLabel{opacity:1}
+.hospBar{width:60%;max-width:56px;background:rgba(200,185,154,0.18);border-radius:4px 4px 0 0;transition:height 0.8s cubic-bezier(0.22,1,0.36,1),background 0.2s}
+.hospBarYear{font-size:0.62rem;color:var(--sand);opacity:0.5;margin-top:8px;font-variant-numeric:tabular-nums;font-weight:600}
+.hospTooltip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--earth);border:1px solid rgba(200,185,154,0.25);border-radius:8px;padding:10px 14px;white-space:nowrap;z-index:10;pointer-events:none;display:flex;flex-direction:column;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.hospTooltip strong{font-family:var(--font-display);font-size:0.9rem;color:var(--cream)}
+.hospTooltip span{font-size:0.68rem;color:var(--sand)}
+.hospLineSvg{position:absolute;inset:0;width:100%;height:calc(100% - 24px);z-index:3;pointer-events:none}
+.hospRevLine{transition:stroke-dashoffset 2s cubic-bezier(0.22,1,0.36,1) 0.4s}
+.hospRevDot{transition:opacity 0.4s ease}
+
 /* ─── TEAM ─── */
 .teamGrid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
 .teamCard{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:56px;text-align:center;transition:0.3s}
@@ -454,5 +484,8 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
   .amenThumb img{width:90px;height:60px}
   .investToggle{flex-direction:column}
   .investDetail{grid-template-columns:1fr;padding:28px}
+  .hospChartBody{height:260px}
+  .hospChart{padding:24px}
+  .hospBar{max-width:36px}
   .textReveal{font-size:clamp(1.8rem,5vw,3rem)!important}
 }
