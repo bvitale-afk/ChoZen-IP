@@ -716,27 +716,10 @@ function HospitalityGrowthChart() {
 const TOPO_SVG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS.svg";
 
 function TopoModal({ onClose }) {
-  const [rotX, setRotX] = useState(25);
-  const [rotY, setRotY] = useState(0);
-  const [scale, setScale] = useState(1);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const dragging = useRef(false);
-  const lastPos = useRef({ x: 0, y: 0 });
-  const stageRef = useRef(null);
+  const containerRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState(null);
 
-  // Auto-rotate Y axis
-  useEffect(() => {
-    if (!autoRotate) return;
-    let raf;
-    const animate = () => {
-      setRotY(r => (r + 0.25) % 360);
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, [autoRotate]);
-
-  // Escape to close
   useEffect(() => {
     const fn = e => { if (e.key === "Escape") onClose(); };
     document.body.style.overflow = "hidden";
@@ -744,99 +727,280 @@ function TopoModal({ onClose }) {
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
   }, [onClose]);
 
-  // Mouse drag
-  const onPointerDown = (e) => {
-    dragging.current = true;
-    lastPos.current = { x: e.clientX, y: e.clientY };
-    setAutoRotate(false);
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
-  const onPointerMove = (e) => {
-    if (!dragging.current) return;
-    const dx = e.clientX - lastPos.current.x;
-    const dy = e.clientY - lastPos.current.y;
-    setRotY(r => r + dx * 0.4);
-    setRotX(r => Math.max(-80, Math.min(80, r - dy * 0.4)));
-    lastPos.current = { x: e.clientX, y: e.clientY };
-  };
-  const onPointerUp = () => { dragging.current = false; };
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    let disposed = false;
+    let renderer, animId;
 
-  // Scroll to zoom
-  const onWheel = (e) => {
-    e.preventDefault();
-    setScale(s => Math.max(0.3, Math.min(3, s - e.deltaY * 0.001)));
-  };
+    const loadScript = (src) => new Promise((res, rej) => {
+      if (document.querySelector(`script[src="${src}"]`)) return res();
+      const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s);
+    });
 
-  // Reset
-  const reset = () => { setRotX(25); setRotY(0); setScale(1); setAutoRotate(true); };
+    (async () => {
+      try {
+        await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js");
+        if (disposed) return;
+        const THREE = window.THREE;
+        const w = container.clientWidth, h = container.clientHeight;
+
+        // Scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0908);
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 5000);
+        camera.position.set(250, 300, 350);
+        camera.lookAt(0, 30, 0);
+
+        // Renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(w, h);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Lights
+        scene.add(new THREE.AmbientLight(0xfff5e0, 0.5));
+        const dir = new THREE.DirectionalLight(0xffffff, 0.7);
+        dir.position.set(200, 400, 200);
+        scene.add(dir);
+
+        // Ground
+        const groundGeo = new THREE.PlaneGeometry(600, 600);
+        const groundMat = new THREE.MeshStandardMaterial({ color: 0x15120e, roughness: 1 });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2; ground.position.y = -2;
+        scene.add(ground);
+
+        // Grid
+        const grid = new THREE.GridHelper(500, 25, 0x2a2520, 0x1a1610);
+        grid.position.y = -1;
+        scene.add(grid);
+
+        // Fetch SVG
+        const resp = await fetch(TOPO_SVG);
+        const svgText = await resp.text();
+        if (disposed) return;
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgText, "image/svg+xml");
+
+        // Extract elevation labels from r80 group TEXT elements
+        const elevLabels = [];
+        doc.querySelectorAll('g[id="r80"] text, g[id="r80"] [data-name="TEXT"] text').forEach(txt => {
+          const val = parseInt(txt.textContent.trim());
+          if (val >= 2400 && val <= 2500) {
+            const tf = txt.getAttribute("transform") || "";
+            const m = tf.match(/translate\(([-\d.]+)\s+([-\d.]+)\)/);
+            if (m) elevLabels.push({ elev: val, x: parseFloat(m[1]), y: parseFloat(m[2]) });
+          }
+        });
+
+        // Collect ALL contour polylines from topo groups
+        const topoGroups = ["topo5", "topo1"];
+        const polylines = [];
+        topoGroups.forEach(gid => {
+          const g = doc.getElementById(gid) || doc.querySelector(`[id="${gid}"]`);
+          if (!g) return;
+          g.querySelectorAll("polyline").forEach(pl => {
+            const pts = pl.getAttribute("points");
+            if (!pts) return;
+            const coords = pts.trim().split(/[\s,]+/).map(Number);
+            const points2d = [];
+            for (let i = 0; i < coords.length - 1; i += 2) {
+              if (!isNaN(coords[i]) && !isNaN(coords[i+1])) points2d.push({ x: coords[i], y: coords[i+1] });
+            }
+            if (points2d.length >= 2) polylines.push(points2d);
+          });
+        });
+
+        // Also grab polylines from the main drawing area using contour-like classes
+        ["st51", "st16", "st17", "st18", "st36", "st37"].forEach(cls => {
+          doc.querySelectorAll(`polyline.${cls}, path.${cls}`).forEach(el => {
+            if (el.tagName === "polyline") {
+              const pts = el.getAttribute("points");
+              if (!pts) return;
+              const coords = pts.trim().split(/[\s,]+/).map(Number);
+              const points2d = [];
+              for (let i = 0; i < coords.length - 1; i += 2) {
+                if (!isNaN(coords[i]) && !isNaN(coords[i+1])) points2d.push({ x: coords[i], y: coords[i+1] });
+              }
+              if (points2d.length >= 2) polylines.push(points2d);
+            }
+          });
+        });
+
+        // Deduplicate polylines
+        const seen = new Set();
+        const uniquePolylines = polylines.filter(pl => {
+          const key = pl.slice(0, 3).map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join("|");
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        // Scale: SVG is 841.9 x 595.3, map to ~400 units centered
+        const svgW = 841.9, svgH = 595.3;
+        const scale = 400 / Math.max(svgW, svgH);
+        const ox = -svgW * scale / 2, oz = -svgH * scale / 2;
+
+        // Min/max elevation
+        const minElev = 2400, maxElev = 2500;
+        const elevRange = maxElev - minElev;
+        const yScale = 1.5; // exaggeration factor
+
+        // Assign elevation to each polyline by nearest label
+        const assignElev = (pl) => {
+          const cx = pl.reduce((s, p) => s + p.x, 0) / pl.length;
+          const cy = pl.reduce((s, p) => s + p.y, 0) / pl.length;
+          let best = minElev, bestD = Infinity;
+          elevLabels.forEach(lb => {
+            const d = Math.hypot(cx - lb.x, cy - lb.y);
+            if (d < bestD) { bestD = d; best = lb.elev; }
+          });
+          return best;
+        };
+
+        // Color ramp: low (dark green) -> high (tan/gold)
+        const colorForElev = (elev) => {
+          const t = Math.max(0, Math.min(1, (elev - minElev) / elevRange));
+          const r = 0.18 + t * 0.55;
+          const g = 0.28 + t * 0.38;
+          const b = 0.12 + (1 - t) * 0.05 + t * 0.18;
+          return new THREE.Color(r, g, b);
+        };
+
+        // Create 3D lines
+        const topoGroup = new THREE.Group();
+        uniquePolylines.forEach(pl => {
+          const elev = assignElev(pl);
+          const y3d = ((elev - minElev) / elevRange) * elevRange * yScale * 0.5;
+          const color = colorForElev(elev);
+
+          const verts = [];
+          pl.forEach(p => {
+            verts.push(p.x * scale + ox, y3d, p.y * scale + oz);
+          });
+
+          const geo = new THREE.BufferGeometry();
+          geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+          const mat = new THREE.LineBasicMaterial({ color, linewidth: 1, transparent: true, opacity: 0.85 });
+          topoGroup.add(new THREE.Line(geo, mat));
+
+          // Add thin vertical "skirt" lines at intervals for depth perception
+          if (pl.length > 6 && y3d > 3) {
+            for (let i = 0; i < pl.length; i += Math.max(1, Math.floor(pl.length / 4))) {
+              const p = pl[i];
+              const sv = [p.x * scale + ox, 0, p.y * scale + oz, p.x * scale + ox, y3d, p.y * scale + oz];
+              const sg = new THREE.BufferGeometry();
+              sg.setAttribute("position", new THREE.Float32BufferAttribute(sv, 3));
+              const sm = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.1 });
+              topoGroup.add(new THREE.Line(sg, sm));
+            }
+          }
+        });
+
+        scene.add(topoGroup);
+        setLoading(false);
+
+        // Simple orbit controls (manual)
+        let isDragging = false, prevMouse = { x: 0, y: 0 };
+        let theta = Math.PI / 4, phi = Math.PI / 6, radius = 420;
+        const target = new THREE.Vector3(0, 30, 0);
+
+        const updateCam = () => {
+          camera.position.x = target.x + radius * Math.sin(theta) * Math.cos(phi);
+          camera.position.y = target.y + radius * Math.sin(phi);
+          camera.position.z = target.z + radius * Math.cos(theta) * Math.cos(phi);
+          camera.lookAt(target);
+        };
+        updateCam();
+
+        const onDown = (e) => {
+          isDragging = true;
+          const pt = e.touches ? e.touches[0] : e;
+          prevMouse = { x: pt.clientX, y: pt.clientY };
+        };
+        const onMove = (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const pt = e.touches ? e.touches[0] : e;
+          const dx = pt.clientX - prevMouse.x, dy = pt.clientY - prevMouse.y;
+          theta -= dx * 0.005;
+          phi = Math.max(0.05, Math.min(Math.PI / 2.2, phi + dy * 0.005));
+          prevMouse = { x: pt.clientX, y: pt.clientY };
+          updateCam();
+        };
+        const onUp = () => { isDragging = false; };
+        const onWheel = (e) => {
+          e.preventDefault();
+          radius = Math.max(150, Math.min(800, radius + e.deltaY * 0.5));
+          updateCam();
+        };
+
+        const el = renderer.domElement;
+        el.addEventListener("mousedown", onDown);
+        el.addEventListener("mousemove", onMove);
+        el.addEventListener("mouseup", onUp);
+        el.addEventListener("mouseleave", onUp);
+        el.addEventListener("wheel", onWheel, { passive: false });
+        el.addEventListener("touchstart", onDown, { passive: false });
+        el.addEventListener("touchmove", onMove, { passive: false });
+        el.addEventListener("touchend", onUp);
+
+        // Auto-rotate + render loop
+        let autoRot = true;
+        el.addEventListener("mousedown", () => { autoRot = false; });
+        el.addEventListener("touchstart", () => { autoRot = false; });
+
+        const animate = () => {
+          if (disposed) return;
+          if (autoRot) { theta += 0.002; updateCam(); }
+          renderer.render(scene, camera);
+          animId = requestAnimationFrame(animate);
+        };
+        animate();
+
+        // Resize
+        const onResize = () => {
+          const nw = container.clientWidth, nh = container.clientHeight;
+          camera.aspect = nw / nh;
+          camera.updateProjectionMatrix();
+          renderer.setSize(nw, nh);
+        };
+        window.addEventListener("resize", onResize);
+
+      } catch (e) {
+        if (!disposed) setErr(e.message);
+      }
+    })();
+
+    return () => {
+      disposed = true;
+      if (animId) cancelAnimationFrame(animId);
+      if (renderer) { renderer.dispose(); renderer.domElement.remove(); }
+    };
+  }, []);
 
   return (
     <div className="modalOverlay" onClick={onClose}>
       <div className="topoModal" onClick={e => e.stopPropagation()}>
         <div className="topoHeader">
           <div>
-            <h3 className="topoTitle">Medellín Topography</h3>
-            <p className="topoSub">Click &amp; drag to rotate &bull; Scroll to zoom</p>
+            <h3 className="topoTitle">Medellín &mdash; Site Topography</h3>
+            <p className="topoSub">3D elevation contours &bull; 2,405m &ndash; 2,495m ASL &bull; Drag to rotate &bull; Scroll to zoom</p>
           </div>
           <button className="topoClose" onClick={onClose}>&times;</button>
         </div>
-        <div
-          className="topoStage"
-          ref={stageRef}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerLeave={onPointerUp}
-          onWheel={onWheel}
-        >
-          {/* Grid floor for depth reference */}
-          <div className="topoFloor" style={{ transform: `perspective(1200px) rotateX(75deg) rotateZ(${rotY}deg) scale(${scale * 1.4})` }} />
-          {/* The SVG card */}
-          <div className="topoCard" style={{
-            transform: `perspective(1200px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale})`,
-          }}>
-            {/* Front face */}
-            <img src={TOPO_SVG} alt="Topography" className="topoSvgImg" draggable={false} />
-            {/* Simulated thickness/edge */}
-            <div className="topoEdgeBottom" style={{ transform: `rotateX(-90deg) translateZ(0px) scaleY(1)` }} />
-            <div className="topoEdgeRight" style={{ transform: `rotateY(90deg) translateZ(0px)` }} />
-          </div>
-          {/* Shadow on the floor */}
-          <div className="topoShadow" style={{ transform: `perspective(1200px) rotateX(75deg) rotateZ(${rotY}deg) scale(${scale * 0.85})`, opacity: Math.max(0.08, 0.25 - Math.abs(rotX) * 0.003) }} />
-          {/* Rotation readout */}
-          <div className="topoDeg">
-            <span>X {Math.round(rotX)}°</span>
-            <span>Y {Math.round(((rotY % 360) + 360) % 360)}°</span>
-          </div>
-          {/* Drag hint */}
-          {autoRotate && <div className="topoDragHint">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2v4m0 12v4M2 12h4m12 0h4" /><circle cx="12" cy="12" r="3" /></svg>
-            <span>Drag to explore</span>
-          </div>}
-        </div>
-        <div className="topoControls">
-          <div className="topoControlRow">
-            <button className={`topoBtn ${autoRotate ? "topoBtnActive" : ""}`} onClick={() => setAutoRotate(!autoRotate)}>
-              {autoRotate ? "⏸ Pause" : "▶ Auto-Rotate"}
-            </button>
-            <div className="topoZoom">
-              <button className="topoBtn" onClick={() => setScale(s => Math.max(0.3, s - 0.2))}>−</button>
-              <span className="topoZoomLabel">{Math.round(scale * 100)}%</span>
-              <button className="topoBtn" onClick={() => setScale(s => Math.min(3, s + 0.2))}>+</button>
+        <div className="topoStage" ref={containerRef}>
+          {loading && !err && (
+            <div className="topoLoading">
+              <div className="topoSpinner" />
+              <span>Loading topography&hellip;</span>
             </div>
-            <button className="topoBtn" onClick={reset}>↺ Reset</button>
-          </div>
-          <div className="topoAngles">
-            {["Top", "Front", "Side", "Iso"].map(view => {
-              const presets = { Top: [90, 0], Front: [0, 0], Side: [0, 90], Iso: [25, 45] };
-              const [px, py] = presets[view];
-              return (
-                <button key={view} className="topoAngleBtn" onClick={() => { setAutoRotate(false); setRotX(px); setRotY(py); }}>
-                  {view}
-                </button>
-              );
-            })}
-          </div>
+          )}
+          {err && <div className="topoLoading"><span style={{ color: "#ff6b6b" }}>Error: {err}</span></div>}
         </div>
       </div>
     </div>
