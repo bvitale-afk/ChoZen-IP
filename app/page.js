@@ -713,8 +713,7 @@ function HospitalityGrowthChart() {
   );
 }
 
-const TOPO_SVG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS.svg";
-const TOPO_DXF_URL = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS%20%281%29.dxf";
+const TOPO_DATA_URL = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/topo-contours.json";
 
 const MEDELLIN_PHOTOS = [
   `${IMG}/chozen-hospitality.jpg`,
@@ -723,35 +722,13 @@ const MEDELLIN_PHOTOS = [
   `${IMG}/chozen-hospitality4.jpg`,
 ];
 
-// Parse DXF text and extract LWPOLYLINE contours with elevations
-function parseDxfContours(text) {
-  const lines = text.split(/\r?\n/);
-  const contours = [];
-  let i = 0;
-  while (i < lines.length - 1) {
-    if (lines[i].trim() === '0' && lines[i+1].trim() === 'LWPOLYLINE') {
-      let layer = '', elev = null, pts = [], curX = null;
-      i += 2;
-      while (i < lines.length - 1) {
-        const code = lines[i].trim(), val = lines[i+1].trim();
-        if (code === '0') break;
-        if (code === '8') layer = val;
-        else if (code === '38') elev = parseFloat(val);
-        else if (code === '10') curX = parseFloat(val);
-        else if (code === '20') { if (curX !== null) { pts.push([curX, parseFloat(val)]); curX = null; } }
-        i += 2;
-      }
-      if ((layer === 'C1' || layer === 'topo5') && elev !== null && elev > 2300 && pts.length >= 2) {
-        const xs = pts.map(p => p[0]);
-        if (Math.max(...xs) - Math.min(...xs) > 1 || Math.max(...pts.map(p => p[1])) - Math.min(...pts.map(p => p[1])) > 1) {
-          contours.push({ e: Math.round(elev), M: layer === 'topo5', pts });
-        }
-      }
-    } else { i += 2; }
-  }
-  return contours;
-}
-
+/*
+ * TopoViewer — 3D wireframe topography from pre-processed DXF contour data.
+ * Data: 737 contours (C1 1m + topo5 5m), elevations 2317–2501m,
+ * pre-aligned with DXF INSERT rotation transforms applied.
+ * Format: [[elev, isMajor, x1, y1, x2, y2, ...], ...]
+ * Coordinates normalized to 0–1000 range.
+ */
 function TopoViewer() {
   const containerRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -783,39 +760,33 @@ function TopoViewer() {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // Fetch and parse DXF
-        const resp = await fetch(TOPO_DXF_URL);
-        const dxfText = await resp.text();
+        // Fetch pre-processed aligned contour data (73KB vs 5MB DXF)
+        const resp = await fetch(TOPO_DATA_URL);
+        const raw = await resp.json();
         if (disposed) return;
-        const raw = parseDxfContours(dxfText);
 
-        // Separate clusters (C1 at X≈446K, topo5 at X≈847K)
-        const clusterA = raw.filter(c => c.pts[0][0] < 600000);
-        const clusterB = raw.filter(c => c.pts[0][0] >= 600000);
+        // Parse: each entry is [elev, isMajor, x1, y1, x2, y2, ...]
+        // Coords are 0–1000 normalized. Find actual bounds for centering.
+        let gMinX = Infinity, gMaxX = -Infinity, gMinY = Infinity, gMaxY = -Infinity;
+        let minE = Infinity, maxE = -Infinity;
+        const contours = raw.map(r => {
+          const e = r[0], major = r[1] === 1, pts = [];
+          for (let i = 2; i < r.length - 1; i += 2) {
+            pts.push([r[i], r[i+1]]);
+            if (r[i] < gMinX) gMinX = r[i];
+            if (r[i] > gMaxX) gMaxX = r[i];
+            if (r[i+1] < gMinY) gMinY = r[i+1];
+            if (r[i+1] > gMaxY) gMaxY = r[i+1];
+          }
+          if (e < minE) minE = e;
+          if (e > maxE) maxE = e;
+          return { e, major, pts };
+        });
 
-        // Use cluster A as primary (634 contours with 1m elevation precision)
-        // Normalize cluster A to world space
-        const aX = clusterA.flatMap(c => c.pts.map(p => p[0]));
-        const aY = clusterA.flatMap(c => c.pts.map(p => p[1]));
-        const aOx = Math.min(...aX), aOy = Math.min(...aY);
-        const aRx = Math.max(...aX) - aOx, aRy = Math.max(...aY) - aOy;
+        const cx = (gMinX + gMaxX) / 2, cy = (gMinY + gMaxY) / 2;
+        const rangeMax = Math.max(gMaxX - gMinX, gMaxY - gMinY);
         const worldSize = 300;
-        const aSc = worldSize / Math.max(aRx, aRy);
-
-        // Also normalize cluster B to overlay on A
-        let bOx = 0, bOy = 0, bScX = aSc, bScY = aSc;
-        if (clusterB.length) {
-          const bX = clusterB.flatMap(c => c.pts.map(p => p[0]));
-          const bY = clusterB.flatMap(c => c.pts.map(p => p[1]));
-          bOx = Math.min(...bX); bOy = Math.min(...bY);
-          const bRx = Math.max(...bX) - bOx, bRy = Math.max(...bY) - bOy;
-          bScX = (aRx * aSc) / bRx;
-          bScY = (aRy * aSc) / bRy;
-        }
-
-        // Elevation range
-        const allE = raw.map(c => c.e);
-        const minE = Math.min(...allE), maxE = Math.max(...allE);
+        const sc = worldSize / rangeMax;
         const eRange = maxE - minE || 1;
         const heightScale = 80;
 
@@ -823,36 +794,34 @@ function TopoViewer() {
         const goldColor = (t) => new THREE.Color(0.35 + t * 0.45, 0.26 + t * 0.40, 0.08 + t * 0.14);
 
         const topoGroup = new THREE.Group();
-
-        const addContour = (c, ox, oy, scX, scY) => {
+        contours.forEach(c => {
           const t = (c.e - minE) / eRange;
           const y3d = t * heightScale;
           const color = goldColor(t);
+
           const verts = [];
           c.pts.forEach(([px, py]) => {
-            verts.push((px - ox) * scX - worldSize / 2, y3d, -((py - oy) * scY - worldSize / 2));
+            verts.push((px - cx) * sc, y3d, -(py - cy) * sc);
           });
+
           const geo = new THREE.BufferGeometry();
           geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
           topoGroup.add(new THREE.Line(geo, new THREE.LineBasicMaterial({
-            color, transparent: true, opacity: c.M ? 0.9 : 0.45,
+            color, transparent: true, opacity: c.major ? 0.9 : 0.4,
           })));
-          // Vertical drop lines on major contours
-          if (c.M && c.pts.length > 4) {
+
+          // Vertical drop lines on major contours for depth
+          if (c.major && c.pts.length > 4) {
             const step = Math.max(1, Math.floor(c.pts.length / 6));
             for (let j = 0; j < c.pts.length; j += step) {
               const [px, py] = c.pts[j];
-              const wx = (px - ox) * scX - worldSize / 2;
-              const wz = -((py - oy) * scY - worldSize / 2);
+              const wx = (px - cx) * sc, wz = -(py - cy) * sc;
               const dg = new THREE.BufferGeometry();
               dg.setAttribute("position", new THREE.Float32BufferAttribute([wx, 0, wz, wx, y3d, wz], 3));
               topoGroup.add(new THREE.Line(dg, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.06 })));
             }
           }
-        };
-
-        clusterA.forEach(c => addContour(c, aOx, aOy, aSc, aSc));
-        clusterB.forEach(c => addContour(c, bOx, bOy, bScX, bScY));
+        });
         scene.add(topoGroup);
 
         // Ground + grid
