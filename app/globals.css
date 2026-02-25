@@ -37,11 +37,15 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .heroTagline{font-family:var(--font-display);font-size:1rem;color:rgba(200,185,154,0.6);margin-top:8px;font-style:italic;opacity:0;animation:fadeUp .8s .8s forwards}
 .heroLine{width:56px;height:1px;background:var(--gold);margin:40px auto;opacity:0;animation:fadeUp .8s .9s forwards}
 .heroStamp{width:64px;height:64px;object-fit:contain;margin-bottom:28px;filter:brightness(0) invert(1);opacity:0;animation:fadeUp .8s .15s forwards}
-.heroCtas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s 1s forwards}
+.heroScrollDown{margin-top:48px;opacity:0;animation:fadeUp .8s 1s forwards}
+.heroScrollLink{display:flex;flex-direction:column;align-items:center;gap:0;text-decoration:none;padding:12px}
+.heroScrollChevron{display:block;width:28px;height:28px;border-right:1.5px solid var(--sand);border-bottom:1.5px solid var(--sand);transform:rotate(45deg);opacity:0.4;animation:chevronBounce 2.4s ease-in-out infinite}
+.heroScrollChevron2{margin-top:-16px;opacity:0.2;animation-delay:0.15s}
 .heroScroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:1;opacity:0;animation:fadeUp .8s 1.2s forwards}
 .heroScroll span{display:block;width:1px;height:52px;background:linear-gradient(to bottom,var(--sage),transparent);animation:pulse 2s infinite}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes chevronBounce{0%,100%{transform:rotate(45deg) translateY(0);opacity:0.4}50%{transform:rotate(45deg) translateY(8px);opacity:0.7}}
 
 /* ─── MANIFESTO ─── */
 .manifesto{padding:100px 0;background:var(--earth);text-align:center;overflow:hidden}
