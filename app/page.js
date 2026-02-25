@@ -148,20 +148,7 @@ const PILLARS_BRAND = [
   { title: "Biophilic Design", yes: "Bamboo architecture, local materials, high-performance building systems.", no: "No harmful materials or depleting practices.", tags: ["Biophilia", "Net Zero", "Bamboo"] },
 ];
 
-const BOOK_PAGES = [
-  { title: "Brand Book 2026" },
-  { title: "Our Shared Vision", subtitle: "Rewilding Hearts & Minds in the Heart of Florida", text: "We gather thought leaders, changemakers, community builders and placemakers from around the world who seek to explore regenerative systems and implement climate solutions." },
-  { title: "Principles of the Chozen Path", items: [
-    { bold: "Reunite with your Inner Self", text: "Develop a conscious awareness of your mind, body, emotions and senses" },
-    { bold: "Reconnect with Nature", text: "Live in acknowledgment that we are not above or separate from Nature" },
-    { bold: "Honor the Sacred", text: "Follow the guidance of all life forms and our ancestors" },
-    { bold: "Assemble with Community", text: "Gather with thought leaders and community builders" },
-    { bold: "Embrace Regenerative Systems", text: "Act in accordance with our shared ethos for a sustainable future" },
-    { bold: "Empower the Future", text: "Actively participate in the co-creation of our future" },
-  ]},
-  { title: "Our Mission", subtitle: "Nature is Medicine. Food is Medicine. Community is Medicine.", text: "Our mission is to inspire action to protect mother nature and all of her inhabitants." },
-  { title: "Ethos", lines: ["CHOZEN is a place to discover yourself in nature", "A place to experience deep serenity", "Where we honor mother earth and the elements", "Create in dialogue with our planet", "Take action to protect humanity\u2019s future", "Walk the Chozen Path"] },
-];
+const BRAND_BOOK_PDF = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/Chozen%20Brand%20Book%202023.pdf";
 
 // ═══════════════════════════════════════════════════════════════
 // HOOKS
@@ -330,96 +317,191 @@ function PillarExplorer() {
 }
 
 function BrandBookModal({ onClose }) {
-  const [page, setPage] = useState(0);
-  const [turning, setTurning] = useState(false);
-  const [turnDir, setTurnDir] = useState(null);
-  const [displayPage, setDisplayPage] = useState(0);
-  const [nextPage, setNextPage] = useState(0);
-  const total = BOOK_PAGES.length;
-
-  const goTo = (target) => {
-    if (turning || target === page || target < 0 || target >= total) return;
-    const dir = target > page ? "next" : "prev";
-    setTurnDir(dir);
-    setDisplayPage(page);
-    setNextPage(target);
-    setTurning(true);
-    setTimeout(() => {
-      setPage(target);
-      setDisplayPage(target);
-      setTurning(false);
-      setTurnDir(null);
-    }, 800);
-  };
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0); // 0-indexed
+  const [loading, setLoading] = useState(true);
+  const [flipping, setFlipping] = useState(false);
+  const [flipDir, setFlipDir] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const pdfRef = useRef(null);
+  const canvasCache = useRef({});
+  const containerRef = useRef(null);
+  const touchStart = useRef(null);
 
   useEffect(() => {
-    const fn = e => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") goTo(page + 1);
-      if (e.key === "ArrowLeft") goTo(page - 1);
-    };
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", fn);
-    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
-  }, [page, onClose, total, turning]);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check(); window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
-  const renderPage = (p, pageNum) => (
-    <div className="bkPageContent">
-      <div className="bkPageNum">{String(pageNum + 1).padStart(2, "0")}</div>
-      <h2 className="modalTitle">{p.title}</h2>
-      {p.subtitle && <p className="modalSub">{p.subtitle}</p>}
-      {p.text && <p className="modalText">{p.text}</p>}
-      {p.items && <div className="modalItems">{p.items.map((item, i) => <div key={i} className="modalItem"><strong>{item.bold}</strong> &mdash; {item.text}</div>)}</div>}
-      {p.lines && <div className="modalLines">{p.lines.map((l, i) => <p key={i}>{l}</p>)}</div>}
-    </div>
-  );
+  // Load PDF.js
+  useEffect(() => {
+    let disposed = false;
+    const loadScript = (src) => new Promise((res, rej) => {
+      if (document.querySelector(`script[src="${src}"]`)) return res();
+      const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s);
+    });
+    (async () => {
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+      if (disposed) return;
+      const pdfjsLib = window.pdfjsLib;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      const pdf = await pdfjsLib.getDocument(BRAND_BOOK_PDF).promise;
+      if (disposed) return;
+      pdfRef.current = pdf;
+      setTotalPages(pdf.numPages);
+      setLoading(false);
+    })();
+    document.body.style.overflow = "hidden";
+    return () => { disposed = true; document.body.style.overflow = ""; };
+  }, []);
+
+  // Render page to data URL
+  const renderPage = useCallback(async (pageNum) => {
+    if (canvasCache.current[pageNum]) return canvasCache.current[pageNum];
+    if (!pdfRef.current || pageNum < 1 || pageNum > totalPages) return null;
+    const page = await pdfRef.current.getPage(pageNum);
+    const scale = isMobile ? 2.0 : 1.8;
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+    const url = canvas.toDataURL("image/jpeg", 0.92);
+    canvasCache.current[pageNum] = url;
+    return url;
+  }, [totalPages, isMobile]);
+
+  // Pre-render current + adjacent pages
+  const [rendered, setRendered] = useState({});
+  useEffect(() => {
+    if (loading || !totalPages) return;
+    let cancelled = false;
+    const needed = new Set();
+    for (let i = Math.max(0, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 3); i++) {
+      needed.add(i + 1); // 1-indexed for PDF
+    }
+    (async () => {
+      const results = {};
+      for (const p of needed) {
+        if (cancelled) return;
+        results[p] = await renderPage(p);
+      }
+      if (!cancelled) setRendered(prev => ({ ...prev, ...results }));
+    })();
+    return () => { cancelled = true; };
+  }, [currentPage, loading, totalPages, isMobile]);
+
+  const goTo = useCallback((target) => {
+    if (flipping || target === currentPage || target < 0 || target >= totalPages) return;
+    const dir = target > currentPage ? "next" : "prev";
+    setFlipDir(dir);
+    setFlipping(true);
+    setTimeout(() => {
+      setCurrentPage(target);
+      setFlipping(false);
+      setFlipDir(null);
+    }, 550);
+  }, [flipping, currentPage, totalPages]);
+
+  // Keyboard
+  useEffect(() => {
+    const fn = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") goTo(currentPage + 1);
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") goTo(currentPage - 1);
+    };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [currentPage, flipping, totalPages, onClose, goTo]);
+
+  // Touch swipe
+  const onTouchStart = (e) => { touchStart.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchStart.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStart.current;
+    if (Math.abs(dx) > 50) { dx < 0 ? goTo(currentPage + 1) : goTo(currentPage - 1); }
+    touchStart.current = null;
+  };
+
+  // Click left/right half of stage to navigate
+  const onStageClick = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < rect.width * 0.35) goTo(currentPage - 1);
+    else if (x > rect.width * 0.65) goTo(currentPage + 1);
+  };
+
+  // Current page data (1-indexed for rendering)
+  const pNum = currentPage + 1;
+  const nextPNum = currentPage + 2;
+  const prevPNum = currentPage; // the page we're leaving behind
 
   return (
     <div className="modalOverlay" onClick={onClose}>
-      <div className="bkModal" onClick={e => e.stopPropagation()}>
-        {/* Book spine edge */}
-        <div className="bkSpine" />
-        {/* Page stack effect — visible page edges at bottom */}
-        <div className="bkPageEdges">
-          <div className="bkEdge bkEdge1" />
-          <div className="bkEdge bkEdge2" />
-          <div className="bkEdge bkEdge3" />
-        </div>
-        {/* Main book area */}
-        <div className="bkStage">
-          {/* Bottom layer: destination page */}
-          <div className="bkSheet bkSheetBase" key={`base-${turning ? nextPage : page}`}>
-            {renderPage(BOOK_PAGES[turning ? nextPage : page], turning ? nextPage : page)}
+      <div className="magModal" onClick={e => e.stopPropagation()}>
+        {loading ? (
+          <div className="magLoading">
+            <div className="topoSpinner" />
+            <span style={{ color: "var(--sand)", marginTop: 16, fontSize: "0.85rem" }}>Loading Brand Book…</span>
           </div>
+        ) : (
+          <>
+            <button className="magClose" onClick={onClose}>&times;</button>
 
-          {/* Turning page */}
-          {turning && (
-            <div className={`bkTurnWrap ${turnDir === "next" ? "bkTurnNext" : "bkTurnPrev"}`}>
-              {/* Front of page (what you see before it flips) */}
-              <div className="bkTurnFront bkSheet">
-                {renderPage(BOOK_PAGES[displayPage], displayPage)}
-                <div className="bkPageGrain" />
-                <div className="bkTurnHighlight" />
+            <div className="magStage" ref={containerRef}
+              onClick={onStageClick}
+              onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+
+              {/* Current page (or the page being revealed underneath) */}
+              <div className="magPage magPageBase" key={`base-${flipping ? (flipDir === "next" ? currentPage + 1 : currentPage - 1) : currentPage}`}>
+                {(() => {
+                  const showP = flipping ? (flipDir === "next" ? nextPNum : prevPNum) : pNum;
+                  return rendered[showP]
+                    ? <img src={rendered[showP]} alt={`Page ${showP}`} draggable={false} />
+                    : <div className="magPageLoading"><div className="topoSpinner" /></div>;
+                })()}
               </div>
-              {/* Back of page (revealed as it flips) */}
-              <div className="bkTurnBack bkSheet">
-                <div className="bkBackTexture" />
-              </div>
-              {/* Thick edge of the page visible during turn */}
-              <div className="bkPageThickness" />
+
+              {/* Flipping page */}
+              {flipping && (
+                <div className={`magFlip ${flipDir === "next" ? "magFlipNext" : "magFlipPrev"}`}>
+                  <div className="magFlipFront">
+                    {rendered[pNum] ? <img src={rendered[pNum]} alt={`Page ${pNum}`} draggable={false} /> : null}
+                    <div className="magFlipSheen" />
+                  </div>
+                  <div className="magFlipBack" />
+                </div>
+              )}
+
+              {/* Page curl hint */}
+              {!flipping && currentPage < totalPages - 1 && (
+                <div className="magCurlHint" onClick={(e) => { e.stopPropagation(); goTo(currentPage + 1); }} />
+              )}
+
+              {/* Tap zones (visual) */}
+              {!flipping && currentPage > 0 && <div className="magTapPrev" />}
+              {!flipping && currentPage < totalPages - 1 && <div className="magTapNext" />}
             </div>
-          )}
 
-          {/* Shadow cast on the page below */}
-          {turning && <div className={`bkCastShadow ${turnDir === "next" ? "bkCastShadowNext" : "bkCastShadowPrev"}`} />}
-        </div>
-
-        {/* Controls */}
-        <div className="bkControls">
-          <button disabled={page === 0 || turning} onClick={() => goTo(page - 1)} className="bkNavBtn">&larr;</button>
-          <div className="bkDots">{BOOK_PAGES.map((_, i) => <span key={i} onClick={() => goTo(i)} className={`bkDot ${i === page ? "bkDotActive" : ""}`} />)}</div>
-          <button disabled={page === total - 1 || turning} onClick={() => goTo(page + 1)} className="bkNavBtn">&rarr;</button>
-        </div>
+            {/* Bottom bar */}
+            <div className="magBar">
+              <button className="magNav" disabled={currentPage === 0 || flipping} onClick={() => goTo(currentPage - 1)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <div className="magProgress">
+                <div className="magProgressTrack">
+                  <div className="magProgressFill" style={{ width: `${((currentPage + 1) / totalPages) * 100}%` }} />
+                </div>
+                <span className="magLabel">{currentPage + 1} / {totalPages}</span>
+              </div>
+              <button className="magNav" disabled={currentPage >= totalPages - 1 || flipping} onClick={() => goTo(currentPage + 1)}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
