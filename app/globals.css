@@ -220,7 +220,9 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 
 /* ─── IMAGE SLIDESHOW ─── */
 .slideshowWrap{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
-.slideshowImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity 1.6s ease-in-out}
+.slideshowImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slideshowBot{z-index:1}
+.slideshowTop{z-index:2;transition:opacity 1.6s ease-in-out}
 
 /* ─── PROGRESS BAR ─── */
 .progressBar{height:4px;background:rgba(74,93,35,0.1);border-radius:4px;margin:12px 0 16px;overflow:hidden}
