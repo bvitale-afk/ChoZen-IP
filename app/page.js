@@ -817,7 +817,11 @@ function TopoViewer() {
         });
 
         const seen = new Set();
+        // Filter to main contour area (SVG coords ~250-600 X, 0-400 Y) and deduplicate
         const uniquePolylines = polylines.filter(pl => {
+          const cx = pl.reduce((s, p) => s + p.x, 0) / pl.length;
+          const cy = pl.reduce((s, p) => s + p.y, 0) / pl.length;
+          if (cx < 200 || cx > 650 || cy < -20 || cy > 420) return false;
           const key = pl.slice(0, 3).map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join("|");
           if (seen.has(key)) return false; seen.add(key); return true;
         });
