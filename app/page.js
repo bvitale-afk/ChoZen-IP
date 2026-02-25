@@ -411,7 +411,7 @@ function AccordionItem({ title, yes, no, tags, index }) {
         <span className="accordionTitle">{title}</span>
         <span className="accordionArrow">{open ? "\u2212" : "\u002B"}</span>
       </button>
-      <div className="accordionBody" style={{ maxHeight: open ? 400 : 0 }}>
+      <div className="accordionBody" style={{ maxHeight: open ? 600 : 0 }}>
         <div className="accordionInner">
           <div className="accordionCol"><div className="accordionLabel accordionLabelYes">&#10003; We Are</div><p>{yes}</p></div>
           <div className="accordionCol"><div className="accordionLabel accordionLabelNo">&#10005; We Are Not</div><p>{no}</p></div>
@@ -494,9 +494,11 @@ export default function Home() {
       <section className="sec" id="story">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center" }}>A Demonstration Project of the Future of Cities</p>
-            <TextReveal text="The ChoZen Story" className="secTitle" />
-            <div className="hdivider" />
+            <div className="secHead">
+              <p className="eyebrow">A Demonstration Project of the Future of Cities</p>
+              <TextReveal text="The ChoZen Story" className="secTitle" />
+              <div className="hdivider" />
+            </div>
           </FadeIn>
           <FadeIn delay={0.1}>
             <div className="storyHero" ref={storyParallax.ref}>
@@ -530,10 +532,12 @@ export default function Home() {
       <section className="communityHighlights" id="community">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center" }}>Built-In Community</p>
-            <TextReveal text="It's Not Just a Place — It's Who's There" className="secTitle" />
-            <div className="hdivider" />
-            <p className="secDesc">Anyone can build a flashy development. What sets ChoZen apart is the community &mdash; changemakers, indigenous leaders, world-class practitioners, and visionaries.</p>
+            <div className="secHead">
+              <p className="eyebrow">Built-In Community</p>
+              <TextReveal text="It's Not Just a Place — It's Who's There" className="secTitle" />
+              <div className="hdivider" />
+              <p className="secDesc">Anyone can build a flashy development. What sets ChoZen apart is the community &mdash; changemakers, indigenous leaders, world-class practitioners, and visionaries.</p>
+            </div>
           </FadeIn>
           <div className="commGrid">
             {[
@@ -633,9 +637,11 @@ export default function Home() {
       <section className="sec secAlt" id="brand">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center" }}>Brand Identity</p>
-            <TextReveal text="A Lifestyle Brand for Regenerative Living" className="secTitle" />
-            <div className="hdivider" />
+            <div className="secHead">
+              <p className="eyebrow">Brand Identity</p>
+              <TextReveal text="A Lifestyle Brand for Regenerative Living" className="secTitle" />
+              <div className="hdivider" />
+            </div>
           </FadeIn>
           <FadeIn delay={0.1}><PillarExplorer /></FadeIn>
           <FadeIn delay={0.15}>
@@ -654,10 +660,12 @@ export default function Home() {
       <section className="sec" id="florida">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center" }}>Sebastian, Florida</p>
-            <TextReveal text="Nested in Nature: A Sanctuary for Renewal" className="secTitle" />
-            <div className="hdivider" />
-            <p className="secDesc">Set amidst the 22,000-acre St. Sebastian River Preserve, within North America&apos;s most biodiverse lagoon system.</p>
+            <div className="secHead">
+              <p className="eyebrow">Sebastian, Florida</p>
+              <TextReveal text="Nested in Nature: A Sanctuary for Renewal" className="secTitle" />
+              <div className="hdivider" />
+              <p className="secDesc">Set amidst the 22,000-acre St. Sebastian River Preserve, within North America&apos;s most biodiverse lagoon system.</p>
+            </div>
           </FadeIn>
           <FadeIn>
             <div className="expansionGrid">
@@ -687,10 +695,12 @@ export default function Home() {
       <section className="sec secDark" id="locations">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center", color: "var(--sage)" }}>Global Expansion</p>
-            <TextReveal text="Beyond Florida" className="secTitle secTitleLight" />
-            <div className="hdivider" style={{ background: "var(--gold)" }} />
-            <p className="secDesc" style={{ color: "var(--sand)" }}>From Colombia to Portugal to Brazil &mdash; each hub shaped by its land, culture, and people.</p>
+            <div className="secHead">
+              <p className="eyebrow" style={{ color: "var(--sage)" }}>Global Expansion</p>
+              <TextReveal text="Beyond Florida" className="secTitle secTitleLight" />
+              <div className="hdivider" style={{ background: "var(--gold)" }} />
+              <p className="secDesc" style={{ color: "var(--sand)" }}>From Colombia to Portugal to Brazil &mdash; each hub shaped by its land, culture, and people.</p>
+            </div>
           </FadeIn>
           <FadeIn>
             <div className="locGrid">
@@ -714,9 +724,11 @@ export default function Home() {
       <section className="sec">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center" }}>Market Opportunity</p>
-            <TextReveal text="Rising Demand for Well-Being" className="secTitle" />
-            <div className="hdivider" />
+            <div className="secHead">
+              <p className="eyebrow">Market Opportunity</p>
+              <TextReveal text="Rising Demand for Well-Being" className="secTitle" />
+              <div className="hdivider" />
+            </div>
           </FadeIn>
           <FadeIn>
             <div className="marketGrid">
@@ -765,9 +777,11 @@ export default function Home() {
       <section className="sec secDark" id="invest">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center", color: "var(--sage)" }}>Investment</p>
-            <TextReveal text="Investment Opportunities" className="secTitle secTitleLight" />
-            <div className="hdivider" style={{ background: "var(--gold)" }} />
+            <div className="secHead">
+              <p className="eyebrow" style={{ color: "var(--sage)" }}>Investment</p>
+              <TextReveal text="Investment Opportunities" className="secTitle secTitleLight" />
+              <div className="hdivider" style={{ background: "var(--gold)" }} />
+            </div>
           </FadeIn>
           <FadeIn>
             <div className="investToggle">
@@ -816,9 +830,11 @@ export default function Home() {
       <section className="sec" id="team">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center" }}>Leadership</p>
-            <TextReveal text="About the Cofounders" className="secTitle" />
-            <div className="hdivider" />
+            <div className="secHead">
+              <p className="eyebrow">Leadership</p>
+              <TextReveal text="About the Cofounders" className="secTitle" />
+              <div className="hdivider" />
+            </div>
           </FadeIn>
           <div className="teamGrid">
             {COFOUNDERS.map((c, i) => (
@@ -839,10 +855,12 @@ export default function Home() {
       <section className="sec secAlt" id="waitlist">
         <div className="wrap">
           <FadeIn>
-            <p className="eyebrow" style={{ textAlign: "center" }}>Get Involved</p>
-            <TextReveal text="Apply to Join the ChoZen Path" className="secTitle" />
-            <div className="hdivider" />
-            <p className="secDesc">Future residents, community members, and investors &mdash; your journey starts here.</p>
+            <div className="secHead">
+              <p className="eyebrow">Get Involved</p>
+              <TextReveal text="Apply to Join the ChoZen Path" className="secTitle" />
+              <div className="hdivider" />
+              <p className="secDesc">Future residents, community members, and investors &mdash; your journey starts here.</p>
+            </div>
           </FadeIn>
           <FadeIn><WaitlistForm /></FadeIn>
         </div>
