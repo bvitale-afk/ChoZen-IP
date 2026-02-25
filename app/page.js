@@ -713,6 +713,77 @@ function HospitalityGrowthChart() {
   );
 }
 
+const TOPO_SVG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS.svg";
+
+function TopoModal({ onClose }) {
+  const [rotation, setRotation] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const [scale, setScale] = useState(1);
+  const frameRef = useRef(null);
+
+  useEffect(() => {
+    if (!autoRotate) return;
+    let raf;
+    const animate = () => {
+      setRotation(r => (r + 0.3) % 360);
+      raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, [autoRotate]);
+
+  useEffect(() => {
+    const fn = e => { if (e.key === "Escape") onClose(); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", fn);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
+  }, [onClose]);
+
+  const presetAngles = [0, 45, 90, 135, 180, 225, 270, 315];
+
+  return (
+    <div className="modalOverlay" onClick={onClose}>
+      <div className="topoModal" onClick={e => e.stopPropagation()}>
+        <div className="topoHeader">
+          <div>
+            <h3 className="topoTitle">Medellín Topography</h3>
+            <p className="topoSub">Site schematic &bull; HRZ Esquemas</p>
+          </div>
+          <button className="topoClose" onClick={onClose}>&times;</button>
+        </div>
+        <div className="topoStage">
+          <div className="topoSvgWrap" style={{
+            transform: `perspective(1200px) rotateX(12deg) rotateZ(${rotation}deg) scale(${scale})`,
+          }}>
+            <img src={TOPO_SVG} alt="Topography" className="topoSvgImg" />
+          </div>
+          {/* Degree indicator */}
+          <div className="topoDeg">{Math.round(rotation % 360)}°</div>
+        </div>
+        <div className="topoControls">
+          <div className="topoControlRow">
+            <button className={`topoBtn ${autoRotate ? "topoBtnActive" : ""}`} onClick={() => setAutoRotate(!autoRotate)}>
+              {autoRotate ? "⏸ Pause" : "▶ Auto-Rotate"}
+            </button>
+            <div className="topoZoom">
+              <button className="topoBtn" onClick={() => setScale(s => Math.max(0.4, s - 0.15))}>−</button>
+              <span className="topoZoomLabel">{Math.round(scale * 100)}%</span>
+              <button className="topoBtn" onClick={() => setScale(s => Math.min(2.5, s + 0.15))}>+</button>
+            </div>
+          </div>
+          <div className="topoAngles">
+            {presetAngles.map(a => (
+              <button key={a} className={`topoAngleBtn ${Math.abs(rotation % 360 - a) < 5 ? "topoAngleBtnActive" : ""}`} onClick={() => { setAutoRotate(false); setRotation(a); }}>
+                {a}°
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AccordionItem({ title, yes, no, tags, index }) {
   const [open, setOpen] = useState(true);
   return (
@@ -739,6 +810,7 @@ function AccordionItem({ title, yes, no, tags, index }) {
 
 export default function Home() {
   const [bookOpen, setBookOpen] = useState(false);
+  const [topoOpen, setTopoOpen] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
   const [activeInvest, setActiveInvest] = useState(0);
   const storyParallax = useParallax(0.2);
@@ -747,6 +819,7 @@ export default function Home() {
     <>
       <Nav />
       {bookOpen && <BrandBookModal onClose={() => setBookOpen(false)} />}
+      {topoOpen && <TopoModal onClose={() => setTopoOpen(false)} />}
 
       {/* ═══ HERO ═══ */}
       <section className="hero" id="hero">
@@ -1002,6 +1075,7 @@ export default function Home() {
                     <div className="locCountry">{loc.country}</div>
                     <p>{loc.desc}</p>
                     <div className="locFeats">{loc.features.map(f => <span key={f}>{f}</span>)}</div>
+                    {i === 0 && <button className="locTopoLink" onClick={() => setTopoOpen(true)}>View Topography &rarr;</button>}
                     {loc.status === "Open" && <a href="#waitlist" className="btn btnGold" style={{ marginTop: 20, fontSize: "0.6rem", padding: "12px 28px" }}>Propose a Location &rarr;</a>}
                   </div>
                 </FadeIn>
