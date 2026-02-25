@@ -714,6 +714,7 @@ function HospitalityGrowthChart() {
 }
 
 const TOPO_SVG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS.svg";
+const TOPO_DXF_URL = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS%20%281%29.dxf";
 
 const MEDELLIN_PHOTOS = [
   `${IMG}/chozen-hospitality.jpg`,
@@ -721,6 +722,35 @@ const MEDELLIN_PHOTOS = [
   `${IMG}/chozen-hospitality3.jpg`,
   `${IMG}/chozen-hospitality4.jpg`,
 ];
+
+// Parse DXF text and extract LWPOLYLINE contours with elevations
+function parseDxfContours(text) {
+  const lines = text.split(/\r?\n/);
+  const contours = [];
+  let i = 0;
+  while (i < lines.length - 1) {
+    if (lines[i].trim() === '0' && lines[i+1].trim() === 'LWPOLYLINE') {
+      let layer = '', elev = null, pts = [], curX = null;
+      i += 2;
+      while (i < lines.length - 1) {
+        const code = lines[i].trim(), val = lines[i+1].trim();
+        if (code === '0') break;
+        if (code === '8') layer = val;
+        else if (code === '38') elev = parseFloat(val);
+        else if (code === '10') curX = parseFloat(val);
+        else if (code === '20') { if (curX !== null) { pts.push([curX, parseFloat(val)]); curX = null; } }
+        i += 2;
+      }
+      if ((layer === 'C1' || layer === 'topo5') && elev !== null && elev > 2300 && pts.length >= 2) {
+        const xs = pts.map(p => p[0]);
+        if (Math.max(...xs) - Math.min(...xs) > 1 || Math.max(...pts.map(p => p[1])) - Math.min(...pts.map(p => p[1])) > 1) {
+          contours.push({ e: Math.round(elev), M: layer === 'topo5', pts });
+        }
+      }
+    } else { i += 2; }
+  }
+  return contours;
+}
 
 function TopoViewer() {
   const containerRef = useRef(null);
@@ -747,130 +777,97 @@ function TopoViewer() {
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0a0908);
-
         const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 5000);
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(w, h);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // Fetch SVG
-        const resp = await fetch(TOPO_SVG);
-        const svgText = await resp.text();
+        // Fetch and parse DXF
+        const resp = await fetch(TOPO_DXF_URL);
+        const dxfText = await resp.text();
         if (disposed) return;
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(svgText, "image/svg+xml");
+        const raw = parseDxfContours(dxfText);
 
-        // Collect ALL polylines from topo5 (st27/black, major) and topo1 (st41/red, minor)
-        const contours = [];
-        const parseGroup = (gid, type) => {
-          const g = doc.getElementById(gid);
-          if (!g) return;
-          g.querySelectorAll("polyline").forEach(pl => {
-            const pts = pl.getAttribute("points");
-            if (!pts) return;
-            const coords = pts.trim().split(/[\s,]+/).map(Number);
-            const points = [];
-            for (let i = 0; i < coords.length - 1; i += 2) {
-              if (!isNaN(coords[i]) && !isNaN(coords[i+1])) points.push([coords[i], coords[i+1]]);
-            }
-            if (points.length >= 2) contours.push({ points, type });
-          });
-        };
-        parseGroup("topo5", "major"); // 98 polylines, black in SVG
-        parseGroup("topo1", "minor"); // 318 polylines, red in SVG
+        // Separate clusters (C1 at X≈446K, topo5 at X≈847K)
+        const clusterA = raw.filter(c => c.pts[0][0] < 600000);
+        const clusterB = raw.filter(c => c.pts[0][0] >= 600000);
 
-        // Bounds of contour data
-        const allX = contours.flatMap(c => c.points.map(p => p[0]));
-        const allY = contours.flatMap(c => c.points.map(p => p[1]));
-        const dataMinX = Math.min(...allX), dataMaxX = Math.max(...allX);
-        const dataMinY = Math.min(...allY), dataMaxY = Math.max(...allY);
-        const dataCX = (dataMinX + dataMaxX) / 2, dataCY = (dataMinY + dataMaxY) / 2;
-        const dataW = dataMaxX - dataMinX, dataH = dataMaxY - dataMinY;
+        // Use cluster A as primary (634 contours with 1m elevation precision)
+        // Normalize cluster A to world space
+        const aX = clusterA.flatMap(c => c.pts.map(p => p[0]));
+        const aY = clusterA.flatMap(c => c.pts.map(p => p[1]));
+        const aOx = Math.min(...aX), aOy = Math.min(...aY);
+        const aRx = Math.max(...aX) - aOx, aRy = Math.max(...aY) - aOy;
+        const worldSize = 300;
+        const aSc = worldSize / Math.max(aRx, aRy);
 
-        // Scale to fit ~300 units wide, centered at origin
-        const worldScale = 300 / Math.max(dataW, dataH);
+        // Also normalize cluster B to overlay on A
+        let bOx = 0, bOy = 0, bScX = aSc, bScY = aSc;
+        if (clusterB.length) {
+          const bX = clusterB.flatMap(c => c.pts.map(p => p[0]));
+          const bY = clusterB.flatMap(c => c.pts.map(p => p[1]));
+          bOx = Math.min(...bX); bOy = Math.min(...bY);
+          const bRx = Math.max(...bX) - bOx, bRy = Math.max(...bY) - bOy;
+          bScX = (aRx * aSc) / bRx;
+          bScY = (aRy * aSc) / bRy;
+        }
 
-        // Elevation formula from SVG label data:
-        // Labels at X+790 offset map to: elev = -0.2736 * svgX + 2503.8
-        // Each contour's elevation = formula applied to its median X
-        const elevFromX = (x) => -0.2736 * x + 2503.8;
+        // Elevation range
+        const allE = raw.map(c => c.e);
+        const minE = Math.min(...allE), maxE = Math.max(...allE);
+        const eRange = maxE - minE || 1;
+        const heightScale = 80;
 
-        // Find global elevation range
-        let globalMinE = Infinity, globalMaxE = -Infinity;
-        contours.forEach(c => {
-          const xs = c.points.map(p => p[0]).sort((a, b) => a - b);
-          const medX = xs[Math.floor(xs.length / 2)];
-          c.elev = elevFromX(medX);
-          if (c.elev < globalMinE) globalMinE = c.elev;
-          if (c.elev > globalMaxE) globalMaxE = c.elev;
-        });
-        const elevRange = globalMaxE - globalMinE || 1;
-        const heightScale = 80; // world units for full elevation range
+        // Gold color ramp
+        const goldColor = (t) => new THREE.Color(0.35 + t * 0.45, 0.26 + t * 0.40, 0.08 + t * 0.14);
 
-        // Color: gold ramp from dark to bright
-        const goldColor = (t) => {
-          const r = 0.35 + t * 0.45;
-          const g = 0.26 + t * 0.40;
-          const b = 0.08 + t * 0.14;
-          return new THREE.Color(r, g, b);
-        };
-
-        // Build 3D lines
         const topoGroup = new THREE.Group();
-        contours.forEach(c => {
-          const t = (c.elev - globalMinE) / elevRange;
+
+        const addContour = (c, ox, oy, scX, scY) => {
+          const t = (c.e - minE) / eRange;
           const y3d = t * heightScale;
           const color = goldColor(t);
-          const isMajor = c.type === "major";
-
           const verts = [];
-          c.points.forEach(([px, py]) => {
-            const wx = (px - dataCX) * worldScale;
-            const wz = (py - dataCY) * worldScale;
-            verts.push(wx, y3d, -wz);
+          c.pts.forEach(([px, py]) => {
+            verts.push((px - ox) * scX - worldSize / 2, y3d, -((py - oy) * scY - worldSize / 2));
           });
-
           const geo = new THREE.BufferGeometry();
           geo.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
-          const mat = new THREE.LineBasicMaterial({
-            color,
-            transparent: true,
-            opacity: isMajor ? 0.9 : 0.5,
-          });
-          topoGroup.add(new THREE.Line(geo, mat));
-
-          // Vertical drop lines on major contours for depth
-          if (isMajor && c.points.length > 4) {
-            const step = Math.max(1, Math.floor(c.points.length / 6));
-            for (let i = 0; i < c.points.length; i += step) {
-              const [px, py] = c.points[i];
-              const wx = (px - dataCX) * worldScale;
-              const wz = (py - dataCY) * worldScale;
-              const dropVerts = [wx, 0, -wz, wx, y3d, -wz];
+          topoGroup.add(new THREE.Line(geo, new THREE.LineBasicMaterial({
+            color, transparent: true, opacity: c.M ? 0.9 : 0.45,
+          })));
+          // Vertical drop lines on major contours
+          if (c.M && c.pts.length > 4) {
+            const step = Math.max(1, Math.floor(c.pts.length / 6));
+            for (let j = 0; j < c.pts.length; j += step) {
+              const [px, py] = c.pts[j];
+              const wx = (px - ox) * scX - worldSize / 2;
+              const wz = -((py - oy) * scY - worldSize / 2);
               const dg = new THREE.BufferGeometry();
-              dg.setAttribute("position", new THREE.Float32BufferAttribute(dropVerts, 3));
+              dg.setAttribute("position", new THREE.Float32BufferAttribute([wx, 0, wz, wx, y3d, wz], 3));
               topoGroup.add(new THREE.Line(dg, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.06 })));
             }
           }
-        });
+        };
+
+        clusterA.forEach(c => addContour(c, aOx, aOy, aSc, aSc));
+        clusterB.forEach(c => addContour(c, bOx, bOy, bScX, bScY));
         scene.add(topoGroup);
 
-        // Ground plane
-        const groundGeo = new THREE.PlaneGeometry(500, 500);
-        const groundMat = new THREE.MeshBasicMaterial({ color: 0x12100d });
-        const ground = new THREE.Mesh(groundGeo, groundMat);
+        // Ground + grid
+        const ground = new THREE.Mesh(
+          new THREE.PlaneGeometry(500, 500),
+          new THREE.MeshBasicMaterial({ color: 0x12100d })
+        );
         ground.rotation.x = -Math.PI / 2; ground.position.y = -1;
         scene.add(ground);
-
-        // Subtle grid
         const grid = new THREE.GridHelper(400, 20, 0x1e1a14, 0x161310);
-        grid.position.y = -0.5;
-        scene.add(grid);
+        grid.position.y = -0.5; scene.add(grid);
 
         setLoading(false);
 
-        // Orbit
+        // Orbit controls
         let isDragging = false, prevMouse = { x: 0, y: 0 };
         let theta = Math.PI / 4, phi = Math.PI / 5.5, radius = 320;
         const target = new THREE.Vector3(0, heightScale * 0.35, 0);
