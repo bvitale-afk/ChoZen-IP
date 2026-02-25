@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const IMG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/images";
 
