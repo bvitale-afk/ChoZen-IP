@@ -138,7 +138,7 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .ipFeature{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:36px;border-radius:var(--radius-lg);overflow:hidden;background:rgba(255,255,255,0.05);border:1px solid rgba(200,185,154,0.12);backdrop-filter:blur(8px);transition:0.3s}
 .ipFeature:hover{background:rgba(255,255,255,0.08);border-color:rgba(200,185,154,0.2)}
 .ipFeatureReverse .ipFeatureImg{order:2}.ipFeatureReverse .ipFeatureBody{order:1}
-.ipFeatureImg{height:100%;min-height:340px;overflow:hidden}
+.ipFeatureImg{height:100%;min-height:340px;overflow:hidden;position:relative}
 .ipFeatureImg img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1)}
 .ipFeature:hover .ipFeatureImg img{transform:scale(1.06)}
 .ipFeatureBody{padding:40px;display:flex;flex-direction:column;justify-content:center}
@@ -219,8 +219,8 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .amenItem span{position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(transparent,rgba(0,0,0,0.8));color:white;font-size:0.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 
 /* ─── IMAGE SLIDESHOW ─── */
-.slideshowWrap{position:relative;width:100%;height:100%;overflow:hidden}
-.slideshowImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease-in-out}
+.slideshowWrap{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.slideshowImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.6s ease-in-out}
 .slideshowImg.slideshowActive{opacity:1}
 
 /* ─── PROGRESS BAR ─── */
@@ -291,14 +291,19 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .bzCaption span{font-size:0.75rem;font-family:var(--font-body);color:var(--text-light);letter-spacing:0.04em}
 
 /* ─── INVEST ─── */
-.investToggle{display:flex;gap:12px;margin-bottom:32px}
-.investToggleBtn{flex:1;padding:24px 28px;border-radius:var(--radius);border:1px solid rgba(200,185,154,0.15);background:rgba(255,255,255,0.03);cursor:pointer;text-align:left;transition:all 0.3s cubic-bezier(0.22,1,0.36,1);position:relative;overflow:hidden}
+.investToggle{display:flex;gap:0;margin-bottom:32px;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(200,185,154,0.2)}
+.investToggleBtn{flex:1;padding:24px 28px;border-radius:0;border:none;border-right:1px solid rgba(200,185,154,0.15);background:rgba(255,255,255,0.03);cursor:pointer;text-align:left;transition:all 0.3s cubic-bezier(0.22,1,0.36,1);position:relative;overflow:hidden}
+.investToggleBtn:last-child{border-right:none}
 .investToggleBtn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transition:transform 0.3s}
 .investToggleBtn.active::after{transform:scaleX(1)}
-.investToggleBtn:hover{background:rgba(255,255,255,0.06)}
-.investToggleBtn.active{background:rgba(255,255,255,0.08);border-color:rgba(200,185,154,0.3)}
+.investToggleBtn:hover{background:rgba(255,255,255,0.08)}
+.investToggleBtn.active{background:rgba(255,255,255,0.1);border-color:rgba(200,185,154,0.3)}
+.investToggleBtn:not(.active) .investToggleTitle{opacity:0.6}
 .investToggleLayer{display:block;font-size:0.6rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--sage);margin-bottom:6px}
-.investToggleTitle{display:block;font-family:var(--font-display);font-size:1.2rem;color:var(--cream)}
+.investToggleTitle{display:block;font-family:var(--font-display);font-size:1.2rem;color:var(--cream);transition:opacity 0.3s}
+.investToggleIndicator{display:block;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-top:10px;font-weight:600;opacity:0;transition:opacity 0.3s}
+.investToggleBtn.active .investToggleIndicator{opacity:1}
+.investToggleBtn:not(.active) .investToggleIndicator{opacity:0.4}
 .investDetail{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:rgba(255,255,255,0.03);border:1px solid rgba(200,185,154,0.1);border-radius:var(--radius-lg);padding:40px;margin-bottom:48px;animation:investFadeIn 0.5s cubic-bezier(0.22,1,0.36,1)}
 @keyframes investFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .investDetailLeft h3{font-family:var(--font-display);font-size:1.6rem;color:var(--cream);margin-bottom:8px}
