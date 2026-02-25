@@ -119,12 +119,12 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .statLbl{font-size:0.72rem;color:var(--text-light);margin-top:10px;line-height:1.4}
 
 /* ─── COMMUNITY ─── */
-.communityHighlights{padding:140px 0;background:var(--cream)}
-.commGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:24px}
+.communityHighlights{padding:140px 0 100px;background:var(--cream)}
+.commGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:80px}
 .commGridItem{height:100%}
-.commCard{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px;text-align:center;height:100%;display:flex;flex-direction:column;align-items:center}
+.commCard{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 28px 36px;padding-top:100px;text-align:center;height:100%;display:flex;flex-direction:column;align-items:center;overflow:visible;position:relative}
 .commCard:hover{box-shadow:var(--shadow)}
-.commIcon{width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto 20px;border:3px solid var(--border)}
+.commIcon{width:160px;height:160px;border-radius:50%;overflow:hidden;position:absolute;top:-48px;left:50%;transform:translateX(-50%);border:4px solid white;box-shadow:0 8px 32px rgba(26,22,16,0.14)}
 .commIcon img{width:100%;height:100%;object-fit:cover}
 .commCard h4{font-family:var(--font-display);font-size:1.15rem;margin-bottom:12px;color:var(--earth)}
 .commCard p{font-size:0.82rem;line-height:1.7;color:var(--text)}
@@ -594,10 +594,10 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
   .statLbl{font-size:0.6rem;margin-top:4px}
 
   /* ─── Community ─── */
-  .communityHighlights{padding:56px 0}
-  .commGrid{grid-template-columns:repeat(2,1fr);gap:12px}
-  .commCard{padding:20px}
-  .commIcon{width:52px;height:52px;margin-bottom:12px}
+  .communityHighlights{padding:56px 0 80px}
+  .commGrid{grid-template-columns:repeat(2,1fr);gap:16px;margin-top:70px}
+  .commCard{padding:20px 16px 20px;padding-top:90px}
+  .commIcon{width:120px;height:120px;top:-36px}
   .commCard h4{font-size:0.95rem;margin-bottom:6px}
   .commCard p{font-size:0.72rem}
 
