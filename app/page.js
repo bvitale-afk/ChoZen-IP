@@ -405,13 +405,24 @@ function ProgressBar({ pct, color = "var(--moss)" }) {
 
 function ImageSlideshow({ images, alt = "", interval = 4000 }) {
   const [current, setCurrent] = useState(0);
+  const [prev, setPrev] = useState(null);
+  const timeoutRef = useRef(null);
   useEffect(() => {
     if (images.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent(prev => (prev + 1) % images.length);
+      setCurrent(c => {
+        setPrev(c);
+        return (c + 1) % images.length;
+      });
     }, interval);
     return () => clearInterval(timer);
   }, [images.length, interval]);
+  useEffect(() => {
+    if (prev === null) return;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setPrev(null), 1800);
+    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+  }, [prev]);
   return (
     <div className="slideshowWrap">
       {images.map((src, i) => (
@@ -419,7 +430,8 @@ function ImageSlideshow({ images, alt = "", interval = 4000 }) {
           key={src}
           src={src}
           alt={alt}
-          className={`slideshowImg ${i === current ? "slideshowActive" : ""}`}
+          className="slideshowImg"
+          style={{ opacity: i === current ? 1 : i === prev ? 0 : 0, zIndex: i === current ? 2 : i === prev ? 1 : 0 }}
         />
       ))}
     </div>
