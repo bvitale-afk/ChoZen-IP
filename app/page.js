@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const IMG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/images";
 
@@ -57,6 +57,7 @@ const FUTURE_LOCATIONS = [
   { city: "Bahia", country: "Brazil", desc: "Coastal regeneration and cultural preservation in rich biodiversity.", features: ["Coastal Regeneration", "Biodiversity"], status: "Pipeline" },
   { city: "Atlanta", country: "Georgia, USA", desc: "Emerging opportunity. Southeastern US bioregional hub.", features: ["Inbound Interest", "Urban Regeneration"], status: "Exploratory" },
   { city: "Florian\u00F3polis", country: "Brazil", desc: "Island ecology meets regenerative community.", features: ["Inbound Partnership", "Island Ecology"], status: "Exploratory" },
+  { city: "Your Destination", country: "Worldwide", desc: "Bring the ChoZen model to your bioregion. We\u2019re actively seeking partners with land, vision, and alignment to co-create the next regenerative community.", features: ["License the IP", "Co-Create", "JV Partnership"], status: "Open" },
 ];
 
 const MARKET_DATA = [
@@ -264,43 +265,27 @@ function TextReveal({ text, className = "", delay = 0 }) {
   );
 }
 
-function HorizontalGallery({ items }) {
-  const scrollRef = useRef(null);
-  const [canLeft, setCanLeft] = useState(false);
-  const [canRight, setCanRight] = useState(true);
-  const check = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 10);
-    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
-  }, []);
-  const scroll = (dir) => scrollRef.current?.scrollBy({ left: dir * 340, behavior: "smooth" });
-  return (
-    <div className="hGallery">
-      {canLeft && <button className="hGalleryArr hGalleryArrL" onClick={() => scroll(-1)}>&larr;</button>}
-      {canRight && <button className="hGalleryArr hGalleryArrR" onClick={() => scroll(1)}>&rarr;</button>}
-      <div className="hGalleryTrack" ref={scrollRef} onScroll={check}>
-        {items.map((a, i) => (
-          <div key={i} className="hGalleryItem">
-            <img src={a.img} alt={a.label} />
-            <div className="hGalleryLabel">{a.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function PillarExplorer() {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
   const p = PILLARS[active];
+  useEffect(() => {
+    if (paused) return;
+    const timer = setInterval(() => {
+      setActive(prev => (prev + 1) % PILLARS.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [paused]);
+  const activate = (i) => { setActive(i); setPaused(true); };
+  const resume = () => setPaused(false);
   return (
-    <div className="pillarExplorer">
+    <div className="pillarExplorer" onMouseLeave={resume}>
       <div className="pillarExplorerTabs">
         {PILLARS.map((pil, i) => (
-          <button key={i} className={`pillarTab ${i === active ? "active" : ""}`} onClick={() => setActive(i)}>
+          <button key={i} className={`pillarTab ${i === active ? "active" : ""}`} onClick={() => activate(i)} onMouseEnter={() => activate(i)}>
             <span className="pillarTabIcon">{pil.icon}</span>
             <span className="pillarTabLabel">{pil.title}</span>
+            {i === active && <span className="pillarTabTimer" key={`timer-${i}-${paused}`} style={{ animationPlayState: paused ? "paused" : "running" }} />}
           </button>
         ))}
       </div>
@@ -403,7 +388,7 @@ function ProgressBar({ pct, color = "var(--moss)" }) {
 }
 
 function AccordionItem({ title, yes, no, tags, index }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   return (
     <div className={`accordionItem ${open ? "open" : ""}`}>
       <button className="accordionHeader" onClick={() => setOpen(!open)}>
@@ -456,19 +441,6 @@ export default function Home() {
           </div>
         </div>
         <div className="heroScroll"><span /></div>
-      </section>
-
-      {/* ═══ MANIFESTO ═══ */}
-      <section className="manifesto">
-        <div className="wrap">
-          <FadeIn>
-            <h2 className="manifestoText">
-              Nature is <em>Medicine.</em><br />
-              Food is <em>Medicine.</em><br />
-              Community is <em>Medicine.</em>
-            </h2>
-          </FadeIn>
-        </div>
       </section>
 
       {/* ═══ TESTIMONIALS ═══ */}
@@ -676,20 +648,32 @@ export default function Home() {
           </FadeIn>
           <FadeIn delay={0.1}>
             <h3 className="subHead" style={{ marginTop: 64 }}>Amenities & Experiences</h3>
-            <HorizontalGallery items={AMENITIES} />
-          </FadeIn>
-          <FadeIn delay={0.15}>
-            <div className="missionCallout">
-              <img src={`${IMG}/chozen-stamp.png`} alt="" className="missionStamp" />
-              <h3>ChoZen Center for Regenerative Living</h3>
-              <p className="nonprofitTag">Adjacent 501(c)(3) Nonprofit</p>
-              <p>Regenerate land and biodiversity. Revitalize local economies. Elevate human well-being. Advance wildlife conservation through Wildpath and Path of the Panther.</p>
+            <div className="amenGrid">
+              {AMENITIES.map((a, i) => (
+                <div key={i} className="amenItem">
+                  <img src={a.img} alt={a.label} />
+                  <span>{a.label}</span>
+                </div>
+              ))}
             </div>
           </FadeIn>
         </div>
       </section>
 
-      <PhotoBreak img={`${IMG}/biophilic-design.jpg`} title="Biophilic Design" subtitle="Architecture Rooted in Nature" height="65vh" />
+      {/* ═══ MISSION CALLOUT — FULL SCREEN ═══ */}
+      <section className="missionFull">
+        <img src={`${IMG}/temple-to-nature.jpg`} alt="" className="missionFullBg" />
+        <div className="missionFullOverlay" />
+        <div className="missionFullContent">
+          <FadeIn>
+            <img src={`${IMG}/chozen-stamp.png`} alt="" className="missionStamp" />
+            <h2>ChoZen Center for Regenerative Living</h2>
+            <p className="nonprofitTag">Adjacent 501(c)(3) Nonprofit</p>
+            <p>Regenerate land and biodiversity. Revitalize local economies. Elevate human well-being. Advance wildlife conservation through partnerships with Wildpath and Path of the Panther.</p>
+            <a href="#waitlist" className="btn btnGhost" style={{ marginTop: 32 }}>Get Involved &rarr;</a>
+          </FadeIn>
+        </div>
+      </section>
 
       {/* ═══ LOCATIONS ═══ */}
       <section className="sec secDark" id="locations">
@@ -706,12 +690,13 @@ export default function Home() {
             <div className="locGrid">
               {FUTURE_LOCATIONS.map((loc, i) => (
                 <FadeIn key={i} delay={i * 0.08}>
-                  <div className={`locCard ${i === 0 ? "locCardFeatured" : ""}`}>
-                    <div className={`locStatus ${loc.status === "Active" ? "locStatusActive" : loc.status === "Exploratory" ? "locStatusExplore" : ""}`}>{loc.status}</div>
+                  <div className={`locCard ${i === 0 ? "locCardFeatured" : ""} ${loc.status === "Open" ? "locCardOpen" : ""}`}>
+                    <div className={`locStatus ${loc.status === "Active" ? "locStatusActive" : loc.status === "Exploratory" ? "locStatusExplore" : loc.status === "Open" ? "locStatusOpen" : ""}`}>{loc.status}</div>
                     <h3>{loc.city}</h3>
                     <div className="locCountry">{loc.country}</div>
                     <p>{loc.desc}</p>
                     <div className="locFeats">{loc.features.map(f => <span key={f}>{f}</span>)}</div>
+                    {loc.status === "Open" && <a href="#waitlist" className="btn btnGold" style={{ marginTop: 20, fontSize: "0.6rem", padding: "12px 28px" }}>Propose a Location &rarr;</a>}
                   </div>
                 </FadeIn>
               ))}
