@@ -504,13 +504,74 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 /* ─── TOPO MODAL ─── */
 .locTopoLink{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 18px;border-radius:6px;border:1px solid rgba(74,93,35,0.3);background:rgba(74,93,35,0.08);color:var(--sage);font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:var(--font-body)}
 .locTopoLink:hover{background:rgba(74,93,35,0.18);border-color:var(--sage);color:var(--cream)}
+/* ─── MEDELLIN MODAL ─── */
+.medModal{background:#0a0908;border-radius:var(--radius-lg);max-width:960px;width:100%;max-height:94vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.6);position:relative}
+.medClose{position:fixed;top:20px;right:20px;z-index:102;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.12);width:40px;height:40px;border-radius:50%;font-size:1.4rem;color:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.medClose:hover{background:rgba(255,255,255,0.15)}
+.medScroll{overflow-y:auto;overflow-x:hidden;flex:1;scroll-behavior:smooth}
+
+/* Hero */
+.medHero{position:relative;height:420px;overflow:hidden}
+.medHeroImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s ease}
+.medHeroActive{opacity:1}
+.medHeroOverlay{position:absolute;inset:0;background:linear-gradient(to top,#0a0908 0%,rgba(10,9,8,0.3) 50%,rgba(10,9,8,0.1) 100%)}
+.medHeroContent{position:absolute;bottom:0;left:0;right:0;padding:48px 44px 40px;z-index:1}
+.medHeroEyebrow{font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.medHeroTitle{font-family:var(--font-display);font-size:3.2rem;font-weight:300;letter-spacing:0.08em;color:var(--cream);margin:0}
+.medHeroTag{font-size:0.72rem;color:var(--sand);opacity:0.6;margin-top:8px;letter-spacing:0.06em}
+
+/* Sections */
+.medSection{padding:56px 44px}
+.medSectionLast{padding-bottom:64px}
+.medEyebrow{font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.medSectionTitle{font-family:var(--font-display);font-size:1.6rem;font-weight:300;letter-spacing:0.04em;color:var(--cream);margin:0 0 20px;line-height:1.3}
+.medBody{color:var(--sand);opacity:0.7;font-size:0.82rem;line-height:1.75;max-width:560px}
+
+/* Overview grid */
+.medOverviewGrid{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:start}
+.medStats{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.medStat{background:rgba(255,255,255,0.03);border:1px solid rgba(200,185,154,0.08);border-radius:12px;padding:24px 20px;text-align:center;display:flex;flex-direction:column;gap:4px}
+.medStatNum{font-family:var(--font-display);font-size:1.6rem;font-weight:300;color:var(--cream);letter-spacing:0.04em}
+.medStatLabel{font-size:0.56rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--sand);opacity:0.4}
+
+/* Photo pair */
+.medPhotoPair{display:grid;grid-template-columns:1.6fr 1fr;gap:3px;height:320px}
+.medPhotoLg,.medPhotoSm{background-size:cover;background-position:center}
+
+/* Pillars */
+.medPillars{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:8px}
+.medPillar{background:rgba(255,255,255,0.02);border:1px solid rgba(200,185,154,0.06);border-radius:12px;padding:28px 24px}
+.medPillarIcon{font-size:1.4rem;display:block;margin-bottom:12px;opacity:0.5}
+.medPillar h4{font-family:var(--font-display);font-size:0.92rem;font-weight:400;color:var(--cream);letter-spacing:0.04em;margin:0 0 8px}
+.medPillar p{font-size:0.72rem;color:var(--sand);opacity:0.6;line-height:1.6;margin:0}
+
+/* Topo section */
+.medTopoSection{background:#0a0908;padding:0}
+.medTopoHead{padding:48px 44px 20px;text-align:center}
+.medTopoCaption{font-size:0.6rem;color:var(--sand);opacity:0.35;letter-spacing:0.1em;margin-top:6px}
+
+/* Full-width image */
+.medFullImg{height:300px;background-size:cover;background-position:center}
+
+/* Status / Timeline */
+.medStatusGrid{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
+.medTimeline{display:flex;flex-direction:column;gap:0;position:relative;padding-left:24px}
+.medTimeline::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:rgba(200,185,154,0.12)}
+.medTimelineItem{display:flex;gap:16px;align-items:flex-start;padding:12px 0;position:relative}
+.medTimelineDot{width:13px;height:13px;border-radius:50%;border:2px solid rgba(200,185,154,0.15);background:#0a0908;flex-shrink:0;margin-left:-24px;z-index:1}
+.medDotDone{background:var(--moss);border-color:var(--moss)}
+.medDotActive{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px rgba(184,150,62,0.4)}
+.medTimelinePhase{display:block;font-size:0.76rem;color:var(--cream);font-weight:500}
+.medTimelineStatus{display:block;font-size:0.58rem;color:var(--sand);opacity:0.4;letter-spacing:0.08em;margin-top:2px}
+
+/* ─── TOPO VIEWER (inside Medellin modal) ─── */
 .topoModal{background:#0a0908;border-radius:var(--radius-lg);max-width:960px;width:100%;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.6)}
 .topoHeader{display:flex;justify-content:space-between;align-items:flex-start;padding:24px 28px 16px;border-bottom:1px solid rgba(200,185,154,0.1)}
 .topoTitle{font-family:var(--font-display);font-size:1.4rem;color:var(--cream);margin:0}
 .topoSub{font-size:0.62rem;color:var(--sand);opacity:0.4;letter-spacing:0.1em;margin-top:4px}
 .topoClose{background:none;border:none;font-size:1.8rem;color:var(--sand);cursor:pointer;padding:0 4px;line-height:1;opacity:0.5;transition:opacity 0.2s}
 .topoClose:hover{opacity:1}
-.topoStage{flex:1;position:relative;overflow:hidden;min-height:520px;cursor:grab;touch-action:none;user-select:none}
+.topoStage{position:relative;overflow:hidden;height:480px;cursor:grab;touch-action:none;user-select:none}
 .topoStage:active{cursor:grabbing}
 .topoStage canvas{display:block;width:100%!important;height:100%!important}
 .topoLoading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--sand);font-size:0.72rem;letter-spacing:0.1em;z-index:2}
@@ -710,7 +771,19 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
   .bkStage{min-height:300px}
   .bkPageContent{padding:24px 24px 24px 32px}
   .bkSpine{width:10px;left:-4px}
-  .topoStage{min-height:320px}
+  .topoStage{height:300px}
+  .medHero{height:280px}
+  .medHeroTitle{font-size:2rem}
+  .medHeroContent{padding:32px 24px 28px}
+  .medSection{padding:36px 24px}
+  .medOverviewGrid{grid-template-columns:1fr;gap:28px}
+  .medPhotoPair{grid-template-columns:1fr;height:auto}
+  .medPhotoLg,.medPhotoSm{height:200px}
+  .medPillars{grid-template-columns:1fr}
+  .medTopoHead{padding:32px 24px 16px}
+  .medFullImg{height:200px}
+  .medStatusGrid{grid-template-columns:1fr;gap:28px}
+  .medSectionTitle{font-size:1.3rem}
   .bkPageNum{margin-bottom:16px}
   .modalTitle{font-size:1.5rem!important}
 
