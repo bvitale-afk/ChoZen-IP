@@ -3,6 +3,22 @@ import { useState, useEffect, useRef } from "react";
 
 const IMG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/images";
 
+const VILLAGE_IMAGES = [
+  `${IMG}/chozen-village4.jpg`,
+  `${IMG}/chozen-village.jpg`,
+  `${IMG}/chozen-village2.jpg`,
+  `${IMG}/chozen-village3.jpg`,
+  `${IMG}/chozen-village5.jpg`,
+  `${IMG}/chozen-village6.jpg`,
+];
+
+const HOSPITALITY_IMAGES = [
+  `${IMG}/chozen-hospitality.jpg`,
+  `${IMG}/chozen-hospitality2.jpg`,
+  `${IMG}/chozen-hospitality3.jpg`,
+  `${IMG}/chozen-hospitality4.jpg`,
+];
+
 // ═══════════════════════════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════════════════════════
@@ -238,8 +254,8 @@ function AnimatedNumber({ target, suffix = "", duration = 2000 }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-function PhotoBreak({ img, title, subtitle, height = "70vh", overlay = 0.45 }) {
-  const { ref, offset } = useParallax(0.35);
+function PhotoBreak({ img, title, subtitle, height = "70vh", overlay = 0.45, parallaxSpeed = 0.35 }) {
+  const { ref, offset } = useParallax(parallaxSpeed);
   return (
     <div className="photoBreak" style={{ height }} ref={ref}>
       <img src={img} alt="" className="photoBreakImg" style={{ transform: `translateY(${offset}px) scale(1.15)` }} />
@@ -383,6 +399,29 @@ function ProgressBar({ pct, color = "var(--moss)" }) {
   return (
     <div ref={ref} className="progressBar">
       <div className="progressFill" style={{ width: inView ? `${pct}%` : "0%", background: color }} />
+    </div>
+  );
+}
+
+function ImageSlideshow({ images, alt = "", interval = 4000 }) {
+  const [current, setCurrent] = useState(0);
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent(prev => (prev + 1) % images.length);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [images.length, interval]);
+  return (
+    <div className="slideshowWrap">
+      {images.map((src, i) => (
+        <img
+          key={src}
+          src={src}
+          alt={alt}
+          className={`slideshowImg ${i === current ? "slideshowActive" : ""}`}
+        />
+      ))}
     </div>
   );
 }
@@ -544,7 +583,7 @@ export default function Home() {
           </FadeIn>
           <FadeIn delay={0.08}>
             <div className="ipFeature">
-              <div className="ipFeatureImg"><img src={`${IMG}/chozen-village4.jpg`} alt="ChoZen Village" /></div>
+              <div className="ipFeatureImg"><ImageSlideshow images={VILLAGE_IMAGES} alt="ChoZen Village" interval={4000} /></div>
               <div className="ipFeatureBody">
                 <p className="ipFeatureEyebrow">Residential Development</p>
                 <h3>ChoZen Village</h3>
@@ -556,7 +595,7 @@ export default function Home() {
           </FadeIn>
           <FadeIn delay={0.12}>
             <div className="ipFeature ipFeatureReverse">
-              <div className="ipFeatureImg"><img src={`${IMG}/chozen-hospitality.jpg`} alt="ChoZen Retreats" /></div>
+              <div className="ipFeatureImg"><ImageSlideshow images={HOSPITALITY_IMAGES} alt="ChoZen Retreats" interval={4500} /></div>
               <div className="ipFeatureBody">
                 <p className="ipFeatureEyebrow">Hospitality Development</p>
                 <h3>ChoZen Retreats</h3>
@@ -626,7 +665,7 @@ export default function Home() {
         </div>
       </section>
 
-      <PhotoBreak img={`${IMG}/chozen-path.jpg`} title="Walk the ChoZen Path" subtitle="Expansion 2026" height="65vh" />
+      <PhotoBreak img={`${IMG}/chozen-path.jpg`} title="Walk the ChoZen Path" subtitle="Expansion 2026" height="65vh" parallaxSpeed={0.8} />
 
       {/* ═══ FLORIDA ═══ */}
       <section className="sec" id="florida">
@@ -739,7 +778,7 @@ export default function Home() {
         </div>
       </section>
 
-      <PhotoBreak img={`${IMG}/community.jpg`} title="We Are Co-Creating a Community That Will Inspire Future Generations" height="70vh" overlay={0.5} />
+      <PhotoBreak img={`${IMG}/community.jpg`} title="We Are Co-Creating a Community That Will Inspire Future Generations" height="70vh" overlay={0.5} parallaxSpeed={0.8} />
 
       {/* ═══ BLUE ZONES ═══ */}
       <section className="blueZones">
