@@ -783,11 +783,14 @@ function TopoViewer() {
         });
 
         const topoGroups = ["topo5", "topo1"];
+        const yellowClasses = new Set(["st2", "st7", "st27", "st28", "st35", "st38"]);
         const polylines = [];
         topoGroups.forEach(gid => {
           const g = doc.getElementById(gid) || doc.querySelector(`[id="${gid}"]`);
           if (!g) return;
           g.querySelectorAll("polyline").forEach(pl => {
+            const cls = pl.getAttribute("class") || "";
+            if (cls.split(/\s+/).some(c => yellowClasses.has(c))) return;
             const pts = pl.getAttribute("points");
             if (!pts) return;
             const coords = pts.trim().split(/[\s,]+/).map(Number);
@@ -799,9 +802,9 @@ function TopoViewer() {
           });
         });
 
-        ["st51", "st16", "st17", "st18", "st36", "st37"].forEach(cls => {
-          doc.querySelectorAll(`polyline.${cls}, path.${cls}`).forEach(el => {
-            if (el.tagName === "polyline") {
+        ["st51", "st16", "st17", "st18", "st36"].forEach(cls => {
+          if (yellowClasses.has(cls)) return;
+          doc.querySelectorAll(`polyline.${cls}`).forEach(el => {
               const pts = el.getAttribute("points");
               if (!pts) return;
               const coords = pts.trim().split(/[\s,]+/).map(Number);
@@ -810,7 +813,6 @@ function TopoViewer() {
                 if (!isNaN(coords[i]) && !isNaN(coords[i+1])) points2d.push({ x: coords[i], y: coords[i+1] });
               }
               if (points2d.length >= 2) polylines.push(points2d);
-            }
           });
         });
 
@@ -836,7 +838,11 @@ function TopoViewer() {
 
         const colorForElev = (elev) => {
           const t = Math.max(0, Math.min(1, (elev - minElev) / elevRange));
-          return new THREE.Color(0.18 + t * 0.55, 0.28 + t * 0.38, 0.12 + (1 - t) * 0.05 + t * 0.18);
+          // Dark amber → bright gold ramp
+          const r = 0.42 + t * 0.38;
+          const g = 0.32 + t * 0.28;
+          const b = 0.10 + t * 0.10;
+          return new THREE.Color(r, g, b);
         };
 
         const topoGroup = new THREE.Group();
@@ -855,7 +861,7 @@ function TopoViewer() {
               const sv = [p.x * scale + ox, 0, p.y * scale + oz, p.x * scale + ox, y3d, p.y * scale + oz];
               const sg = new THREE.BufferGeometry();
               sg.setAttribute("position", new THREE.Float32BufferAttribute(sv, 3));
-              topoGroup.add(new THREE.Line(sg, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.1 })));
+              topoGroup.add(new THREE.Line(sg, new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.08 })));
             }
           }
         });
@@ -865,6 +871,8 @@ function TopoViewer() {
         let isDragging = false, prevMouse = { x: 0, y: 0 };
         let theta = Math.PI / 4, phi = Math.PI / 6, radius = 420;
         const target = new THREE.Vector3(0, 30, 0);
+        let autoRot = true;
+        let autoRotTimer = null;
         const updateCam = () => {
           camera.position.x = target.x + radius * Math.sin(theta) * Math.cos(phi);
           camera.position.y = target.y + radius * Math.sin(phi);
@@ -873,10 +881,16 @@ function TopoViewer() {
         };
         updateCam();
 
-        const onDown = (e) => { isDragging = true; const pt = e.touches ? e.touches[0] : e; prevMouse = { x: pt.clientX, y: pt.clientY }; };
+        const pauseAutoRot = () => {
+          autoRot = false;
+          if (autoRotTimer) clearTimeout(autoRotTimer);
+          autoRotTimer = setTimeout(() => { autoRot = true; }, 2500);
+        };
+
+        const onDown = (e) => { isDragging = true; const pt = e.touches ? e.touches[0] : e; prevMouse = { x: pt.clientX, y: pt.clientY }; pauseAutoRot(); };
         const onMove = (e) => { if (!isDragging) return; e.preventDefault(); const pt = e.touches ? e.touches[0] : e; const dx = pt.clientX - prevMouse.x, dy = pt.clientY - prevMouse.y; theta -= dx * 0.005; phi = Math.max(0.05, Math.min(Math.PI / 2.2, phi + dy * 0.005)); prevMouse = { x: pt.clientX, y: pt.clientY }; updateCam(); };
         const onUp = () => { isDragging = false; };
-        const onWheel = (e) => { e.preventDefault(); radius = Math.max(150, Math.min(800, radius + e.deltaY * 0.5)); updateCam(); };
+        const onWheel = (e) => { e.preventDefault(); radius = Math.max(150, Math.min(800, radius + e.deltaY * 0.5)); updateCam(); pauseAutoRot(); };
 
         const el = renderer.domElement;
         el.addEventListener("mousedown", onDown); el.addEventListener("mousemove", onMove);
@@ -886,11 +900,7 @@ function TopoViewer() {
         el.addEventListener("touchmove", onMove, { passive: false });
         el.addEventListener("touchend", onUp);
 
-        let autoRot = true;
-        el.addEventListener("mousedown", () => { autoRot = false; });
-        el.addEventListener("touchstart", () => { autoRot = false; });
-
-        const animate = () => { if (disposed) return; if (autoRot) { theta += 0.002; updateCam(); } renderer.render(scene, camera); animId = requestAnimationFrame(animate); };
+        const animate = () => { if (disposed) return; if (autoRot) { theta += 0.0015; updateCam(); } renderer.render(scene, camera); animId = requestAnimationFrame(animate); };
         animate();
 
         const onResize = () => { const nw = container.clientWidth, nh = container.clientHeight; camera.aspect = nw / nh; camera.updateProjectionMatrix(); renderer.setSize(nw, nh); };
