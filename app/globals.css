@@ -139,8 +139,8 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 .ipFeature:hover{background:rgba(255,255,255,0.08);border-color:rgba(200,185,154,0.2)}
 .ipFeatureReverse .ipFeatureImg{order:2}.ipFeatureReverse .ipFeatureBody{order:1}
 .ipFeatureImg{height:100%;min-height:340px;overflow:hidden;position:relative}
-.ipFeatureImg img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1)}
-.ipFeature:hover .ipFeatureImg img{transform:scale(1.06)}
+.ipFeatureImg > img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1)}
+.ipFeature:hover > .ipFeatureImg > img{transform:scale(1.06)}
 .ipFeatureBody{padding:40px;display:flex;flex-direction:column;justify-content:center}
 .ipFeatureEyebrow{font-size:0.68rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:14px}
 .ipFeatureBody h3{font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,2.6rem);color:var(--cream);margin-bottom:10px}
@@ -220,9 +220,9 @@ body{font-family:var(--font-body);color:var(--text);background:var(--warm-white)
 
 /* ─── IMAGE SLIDESHOW ─── */
 .slideshowWrap{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
-.slideshowImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.slideshowBot{z-index:1}
-.slideshowTop{z-index:2;transition:opacity 1.6s ease-in-out}
+.slideshowWrap .slideshowImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:none}
+.slideshowWrap .slideshowBot{z-index:1}
+.slideshowWrap .slideshowTop{z-index:2;transition:opacity 1.6s ease-in-out !important}
 
 /* ─── PROGRESS BAR ─── */
 .progressBar{height:4px;background:rgba(74,93,35,0.1);border-radius:4px;margin:12px 0 16px;overflow:hidden}
