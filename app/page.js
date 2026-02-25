@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const IMG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/images";
 
@@ -316,112 +316,29 @@ function PillarExplorer() {
   );
 }
 
-// ── Page curl SVG overlay ─────────────────────────────────────────────────────
-// Renders a realistic corner-peel that grows from a tiny curl (at-rest hint)
-// to a full diagonal sweep (during the flip animation).
-// `progress` 0‒1:  0 = resting hint, 1 = fully mid-flip
-function PageCurl({ progress = 0, side = "right", onClick }) {
-  // The curl lives in the bottom-right corner (or bottom-left for prev).
-  // We draw it as an SVG that is always 100% × 100% of its container so the
-  // geometry stays proportional regardless of modal size.
-
-  // At progress=0 (rest hint): small 30×30 triangle peeling at the corner.
-  // At progress=1 (full flip): the peel reaches ~70% up the page height.
-
-  const isRight = side === "right";
-
-  // Curl size: maps progress [0,1] → corner offset [30,400] (in SVG units 0-600×800)
-  const raw = 30 + progress * 420;
-  const c = Math.min(raw, 490); // clamp
-
-  // Shadow gradient opacity grows with c
-  const shadowOp = 0.08 + (c / 490) * 0.35;
-
-  return (
-    <svg
-      className="pageCurlSvg"
-      viewBox="0 0 600 800"
-      preserveAspectRatio="none"
-      onClick={onClick}
-      style={{ pointerEvents: progress === 0 ? "auto" : "none" }}
-    >
-      <defs>
-        {/* Shadow cast by the curl on the underlying page */}
-        <linearGradient id="curlShadow" x1={isRight ? "1" : "0"} y1="1" x2={isRight ? "0.6" : "0.4"} y2="0.6">
-          <stop offset="0%" stopColor="#000" stopOpacity={shadowOp} />
-          <stop offset="100%" stopColor="#000" stopOpacity="0" />
-        </linearGradient>
-        {/* Back of the peeled page — warm parchment edge */}
-        <linearGradient id="curlBack" x1={isRight ? "1" : "0"} y1="1" x2={isRight ? "0.7" : "0.3"} y2="0.7">
-          <stop offset="0%"   stopColor="#e8dfc8" />
-          <stop offset="40%"  stopColor="#d4c9a8" />
-          <stop offset="100%" stopColor="#b8a882" stopOpacity="0.6" />
-        </linearGradient>
-        {/* Fold highlight */}
-        <linearGradient id="curlFold" x1={isRight ? "1" : "0"} y1="0" x2={isRight ? "0.85" : "0.15"} y2="1">
-          <stop offset="0%"   stopColor="#fff" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-
-      {isRight ? (
-        <>
-          {/* Shadow on underlying page */}
-          <polygon
-            points={`${600 - c},800 600,${800 - c} 600,800`}
-            fill="url(#curlShadow)"
-          />
-          {/* Back face of peeled corner */}
-          <polygon
-            points={`${600 - c},800 600,${800 - c} 600,800`}
-            fill="url(#curlBack)"
-          />
-          {/* Fold-edge highlight strip */}
-          <line
-            x1={600 - c} y1={800}
-            x2={600} y2={800 - c}
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth={Math.max(1, c * 0.012)}
-          />
-          {/* Subtle fold sheen */}
-          <polygon
-            points={`${600 - c},800 600,${800 - c} 600,800`}
-            fill="url(#curlFold)"
-          />
-        </>
-      ) : (
-        <>
-          <polygon points={`${c},800 0,${800 - c} 0,800`} fill="url(#curlShadow)" />
-          <polygon points={`${c},800 0,${800 - c} 0,800`} fill="url(#curlBack)" />
-          <line x1={c} y1={800} x2={0} y2={800 - c} stroke="rgba(255,255,255,0.22)" strokeWidth={Math.max(1, c * 0.012)} />
-          <polygon points={`${c},800 0,${800 - c} 0,800`} fill="url(#curlFold)" />
-        </>
-      )}
-    </svg>
-  );
-}
-
 function BrandBookModal({ onClose }) {
   const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0); // 0-indexed
   const [loading, setLoading] = useState(true);
-  const [flipping, setFlipping] = useState(false);
-  const [flipDir, setFlipDir] = useState(null);
-  const [flipProgress, setFlipProgress] = useState(0); // 0‒1 during animation
-  const [isMobile, setIsMobile] = useState(false);
+  const [rendered, setRendered] = useState({});
+  const [renderProgress, setRenderProgress] = useState(0);
   const pdfRef = useRef(null);
   const canvasCache = useRef({});
-  const containerRef = useRef(null);
-  const touchStart = useRef(null);
-  const flipRafRef = useRef(null);
+  const scrollRef = useRef(null);
 
+  // Lock body scroll
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check(); window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
   }, []);
 
-  // Load PDF.js
+  // Escape key
+  useEffect(() => {
+    const fn = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [onClose]);
+
+  // Load PDF.js and start rendering all pages
   useEffect(() => {
     let disposed = false;
     const loadScript = (src) => new Promise((res, rej) => {
@@ -436,198 +353,66 @@ function BrandBookModal({ onClose }) {
       const pdf = await pdfjsLib.getDocument(BRAND_BOOK_PDF).promise;
       if (disposed) return;
       pdfRef.current = pdf;
-      setTotalPages(pdf.numPages);
+      const total = pdf.numPages;
+      setTotalPages(total);
       setLoading(false);
+
+      // Render all pages progressively
+      for (let i = 1; i <= total; i++) {
+        if (disposed) return;
+        if (canvasCache.current[i]) { setRendered(p => ({ ...p, [i]: canvasCache.current[i] })); continue; }
+        const page = await pdf.getPage(i);
+        const scale = window.innerWidth < 768 ? 2.0 : 1.8;
+        const viewport = page.getViewport({ scale });
+        const canvas = document.createElement("canvas");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+        if (disposed) return;
+        const url = canvas.toDataURL("image/jpeg", 0.92);
+        canvasCache.current[i] = url;
+        setRendered(p => ({ ...p, [i]: url }));
+        setRenderProgress(i);
+      }
     })();
-    document.body.style.overflow = "hidden";
-    return () => { disposed = true; document.body.style.overflow = ""; };
+    return () => { disposed = true; };
   }, []);
-
-  // Render page to data URL
-  const renderPage = useCallback(async (pageNum) => {
-    if (canvasCache.current[pageNum]) return canvasCache.current[pageNum];
-    if (!pdfRef.current || pageNum < 1 || pageNum > totalPages) return null;
-    const page = await pdfRef.current.getPage(pageNum);
-    const scale = isMobile ? 2.0 : 1.8;
-    const viewport = page.getViewport({ scale });
-    const canvas = document.createElement("canvas");
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
-    const url = canvas.toDataURL("image/jpeg", 0.92);
-    canvasCache.current[pageNum] = url;
-    return url;
-  }, [totalPages, isMobile]);
-
-  // Pre-render current + adjacent pages
-  const [rendered, setRendered] = useState({});
-  useEffect(() => {
-    if (loading || !totalPages) return;
-    let cancelled = false;
-    const needed = new Set();
-    for (let i = Math.max(0, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 3); i++) {
-      needed.add(i + 1);
-    }
-    (async () => {
-      const results = {};
-      for (const p of needed) {
-        if (cancelled) return;
-        results[p] = await renderPage(p);
-      }
-      if (!cancelled) setRendered(prev => ({ ...prev, ...results }));
-    })();
-    return () => { cancelled = true; };
-  }, [currentPage, loading, totalPages, isMobile]);
-
-  const goTo = useCallback((target) => {
-    if (flipping || target === currentPage || target < 0 || target >= totalPages) return;
-    const dir = target > currentPage ? "next" : "prev";
-    setFlipDir(dir);
-    setFlipping(true);
-    setFlipProgress(0);
-
-    // Animate progress 0→1 over 600ms with easeInOut, then commit
-    const duration = 600;
-    const start = performance.now();
-    const animate = (now) => {
-      const t = Math.min((now - start) / duration, 1);
-      // ease-in-out cubic
-      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      setFlipProgress(eased);
-      if (t < 1) {
-        flipRafRef.current = requestAnimationFrame(animate);
-      } else {
-        setCurrentPage(target);
-        setFlipping(false);
-        setFlipDir(null);
-        setFlipProgress(0);
-      }
-    };
-    flipRafRef.current = requestAnimationFrame(animate);
-  }, [flipping, currentPage, totalPages]);
-
-  useEffect(() => () => { if (flipRafRef.current) cancelAnimationFrame(flipRafRef.current); }, []);
-
-  // Keyboard
-  useEffect(() => {
-    const fn = (e) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") goTo(currentPage + 1);
-      if (e.key === "ArrowLeft" || e.key === "ArrowUp") goTo(currentPage - 1);
-    };
-    window.addEventListener("keydown", fn);
-    return () => window.removeEventListener("keydown", fn);
-  }, [currentPage, flipping, totalPages, onClose, goTo]);
-
-  // Touch swipe
-  const onTouchStart = (e) => { touchStart.current = e.touches[0].clientX; };
-  const onTouchEnd = (e) => {
-    if (touchStart.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStart.current;
-    if (Math.abs(dx) > 50) { dx < 0 ? goTo(currentPage + 1) : goTo(currentPage - 1); }
-    touchStart.current = null;
-  };
-
-  // Click left/right half of stage to navigate
-  const onStageClick = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x < rect.width * 0.35) goTo(currentPage - 1);
-    else if (x > rect.width * 0.65) goTo(currentPage + 1);
-  };
-
-  const pNum = currentPage + 1;
-  const nextPNum = currentPage + 2;
-  const prevPNum = currentPage;
-
-  // The flipping-page CSS transform: rotateY sweeps from 0→-180 (next) or 0→+180 (prev)
-  const flipAngle = flipping
-    ? (flipDir === "next" ? -180 * flipProgress : 180 * flipProgress)
-    : 0;
 
   return (
     <div className="modalOverlay" onClick={onClose}>
-      <div className="magModal" onClick={e => e.stopPropagation()}>
-        {loading ? (
-          <div className="magLoading">
-            <div className="topoSpinner" />
-            <span style={{ color: "var(--earth)", marginTop: 16, fontSize: "0.85rem", opacity: 0.6 }}>Loading Brand Book…</span>
-          </div>
-        ) : (
-          <>
-            <button className="magClose" onClick={onClose}>&times;</button>
+      <div className="bbModal" onClick={e => e.stopPropagation()}>
 
-            <div className="magStage" ref={containerRef}
-              onClick={onStageClick}
-              onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        {/* Fixed header bar */}
+        <div className="bbHeader">
+          <span className="bbHeaderTitle">Brand Book</span>
+          {!loading && totalPages > 0 && (
+            <span className="bbHeaderCount">{renderProgress < totalPages ? `Loading pages… ${renderProgress}/${totalPages}` : `${totalPages} pages`}</span>
+          )}
+          <button className="bbClose" onClick={onClose}>&times;</button>
+        </div>
 
-              {/* Underlying page shown during flip */}
-              <div className="magPage magPageBase">
-                {(() => {
-                  const showP = flipping ? (flipDir === "next" ? nextPNum : prevPNum) : pNum;
-                  return rendered[showP]
-                    ? <img src={rendered[showP]} alt={`Page ${showP}`} draggable={false} />
-                    : <div className="magPageLoading"><div className="topoSpinner" /></div>;
-                })()}
-              </div>
-
-              {/* Flipping page with CSS perspective rotation */}
-              {flipping && (
-                <div
-                  className="magFlip"
-                  style={{
-                    transform: `perspective(1200px) rotateY(${flipAngle}deg)`,
-                    transformOrigin: flipDir === "next" ? "left center" : "right center",
-                    transition: "none",
-                  }}
-                >
-                  <div className="magFlipFront">
-                    {rendered[pNum] ? <img src={rendered[pNum]} alt={`Page ${pNum}`} draggable={false} /> : null}
-                    <div className="magFlipSheen" />
-                    {/* Page curl growing on the flipping page itself */}
-                    <PageCurl
-                      progress={flipProgress}
-                      side={flipDir === "next" ? "right" : "left"}
-                    />
-                  </div>
-                  <div className="magFlipBack">
-                    {/* Show next page on back of flipping leaf */}
-                    {flipDir === "next" && rendered[nextPNum]
-                      ? <img src={rendered[nextPNum]} alt="" draggable={false} style={{ maxWidth:"100%", maxHeight:"100%", objectFit:"contain", transform:"scaleX(-1)" }} />
-                      : null}
-                  </div>
-                </div>
-              )}
-
-              {/* Resting curl hint — small corner peel, clickable */}
-              {!flipping && currentPage < totalPages - 1 && (
-                <div className="magCurlHintWrap" onClick={(e) => { e.stopPropagation(); goTo(currentPage + 1); }}>
-                  <PageCurl progress={0} side="right" />
-                </div>
-              )}
-
-              {!flipping && currentPage > 0 && <div className="magTapPrev" />}
-              {!flipping && currentPage < totalPages - 1 && <div className="magTapNext" />}
+        {/* Scrollable page stack */}
+        <div className="bbScroll" ref={scrollRef}>
+          {loading ? (
+            <div className="bbLoading">
+              <div className="topoSpinner" />
+              <span>Loading Brand Book…</span>
             </div>
-
-            {/* Bottom bar */}
-            <div className="magBar">
-              <button className="magNav" disabled={currentPage === 0 || flipping} onClick={() => goTo(currentPage - 1)}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
-              </button>
-              <div className="magProgress">
-                <div className="magProgressTrack">
-                  <div className="magProgressFill" style={{ width: `${((currentPage + 1) / totalPages) * 100}%` }} />
+          ) : (
+            <div className="bbPages">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pNum => (
+                <div key={pNum} className="bbPage">
+                  {rendered[pNum]
+                    ? <img src={rendered[pNum]} alt={`Page ${pNum}`} draggable={false} />
+                    : <div className="bbPageSkeleton"><div className="topoSpinner" /></div>
+                  }
+                  <span className="bbPageNum">{pNum}</span>
                 </div>
-                <span className="magLabel">{currentPage + 1} / {totalPages}</span>
-              </div>
-              <button className="magNav" disabled={currentPage >= totalPages - 1 || flipping} onClick={() => goTo(currentPage + 1)}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-              </button>
+              ))}
             </div>
-          </>
-        )}
+          )}
+        </div>
+
       </div>
     </div>
   );
