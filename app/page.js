@@ -838,7 +838,7 @@ function TopoViewer() {
 
         // Orbit controls
         let isDragging = false, prevMouse = { x: 0, y: 0 };
-        let theta = Math.PI / 4, phi = Math.PI / 5.5, radius = 320;
+        let theta = 0, phi = Math.PI / 8, radius = 320;
         const target = new THREE.Vector3(0, heightScale * 0.35, 0);
         let autoRot = true, autoRotTimer = null;
 
