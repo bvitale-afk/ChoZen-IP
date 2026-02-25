@@ -716,22 +716,27 @@ function HospitalityGrowthChart() {
 const TOPO_SVG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/322_240219_HRZ_ESQUEMAS.svg";
 
 function TopoModal({ onClose }) {
-  const [rotation, setRotation] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
+  const [rotX, setRotX] = useState(25);
+  const [rotY, setRotY] = useState(0);
   const [scale, setScale] = useState(1);
-  const frameRef = useRef(null);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const dragging = useRef(false);
+  const lastPos = useRef({ x: 0, y: 0 });
+  const stageRef = useRef(null);
 
+  // Auto-rotate Y axis
   useEffect(() => {
     if (!autoRotate) return;
     let raf;
     const animate = () => {
-      setRotation(r => (r + 0.3) % 360);
+      setRotY(r => (r + 0.25) % 360);
       raf = requestAnimationFrame(animate);
     };
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
   }, [autoRotate]);
 
+  // Escape to close
   useEffect(() => {
     const fn = e => { if (e.key === "Escape") onClose(); };
     document.body.style.overflow = "hidden";
@@ -739,7 +744,31 @@ function TopoModal({ onClose }) {
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
   }, [onClose]);
 
-  const presetAngles = [0, 45, 90, 135, 180, 225, 270, 315];
+  // Mouse drag
+  const onPointerDown = (e) => {
+    dragging.current = true;
+    lastPos.current = { x: e.clientX, y: e.clientY };
+    setAutoRotate(false);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e) => {
+    if (!dragging.current) return;
+    const dx = e.clientX - lastPos.current.x;
+    const dy = e.clientY - lastPos.current.y;
+    setRotY(r => r + dx * 0.4);
+    setRotX(r => Math.max(-80, Math.min(80, r - dy * 0.4)));
+    lastPos.current = { x: e.clientX, y: e.clientY };
+  };
+  const onPointerUp = () => { dragging.current = false; };
+
+  // Scroll to zoom
+  const onWheel = (e) => {
+    e.preventDefault();
+    setScale(s => Math.max(0.3, Math.min(3, s - e.deltaY * 0.001)));
+  };
+
+  // Reset
+  const reset = () => { setRotX(25); setRotY(0); setScale(1); setAutoRotate(true); };
 
   return (
     <div className="modalOverlay" onClick={onClose}>
@@ -747,18 +776,43 @@ function TopoModal({ onClose }) {
         <div className="topoHeader">
           <div>
             <h3 className="topoTitle">Medellín Topography</h3>
-            <p className="topoSub">Site schematic &bull; HRZ Esquemas</p>
+            <p className="topoSub">Click &amp; drag to rotate &bull; Scroll to zoom</p>
           </div>
           <button className="topoClose" onClick={onClose}>&times;</button>
         </div>
-        <div className="topoStage">
-          <div className="topoSvgWrap" style={{
-            transform: `perspective(1200px) rotateX(12deg) rotateZ(${rotation}deg) scale(${scale})`,
+        <div
+          className="topoStage"
+          ref={stageRef}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerLeave={onPointerUp}
+          onWheel={onWheel}
+        >
+          {/* Grid floor for depth reference */}
+          <div className="topoFloor" style={{ transform: `perspective(1200px) rotateX(75deg) rotateZ(${rotY}deg) scale(${scale * 1.4})` }} />
+          {/* The SVG card */}
+          <div className="topoCard" style={{
+            transform: `perspective(1200px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale})`,
           }}>
-            <img src={TOPO_SVG} alt="Topography" className="topoSvgImg" />
+            {/* Front face */}
+            <img src={TOPO_SVG} alt="Topography" className="topoSvgImg" draggable={false} />
+            {/* Simulated thickness/edge */}
+            <div className="topoEdgeBottom" style={{ transform: `rotateX(-90deg) translateZ(0px) scaleY(1)` }} />
+            <div className="topoEdgeRight" style={{ transform: `rotateY(90deg) translateZ(0px)` }} />
           </div>
-          {/* Degree indicator */}
-          <div className="topoDeg">{Math.round(rotation % 360)}°</div>
+          {/* Shadow on the floor */}
+          <div className="topoShadow" style={{ transform: `perspective(1200px) rotateX(75deg) rotateZ(${rotY}deg) scale(${scale * 0.85})`, opacity: Math.max(0.08, 0.25 - Math.abs(rotX) * 0.003) }} />
+          {/* Rotation readout */}
+          <div className="topoDeg">
+            <span>X {Math.round(rotX)}°</span>
+            <span>Y {Math.round(((rotY % 360) + 360) % 360)}°</span>
+          </div>
+          {/* Drag hint */}
+          {autoRotate && <div className="topoDragHint">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2v4m0 12v4M2 12h4m12 0h4" /><circle cx="12" cy="12" r="3" /></svg>
+            <span>Drag to explore</span>
+          </div>}
         </div>
         <div className="topoControls">
           <div className="topoControlRow">
@@ -766,17 +820,22 @@ function TopoModal({ onClose }) {
               {autoRotate ? "⏸ Pause" : "▶ Auto-Rotate"}
             </button>
             <div className="topoZoom">
-              <button className="topoBtn" onClick={() => setScale(s => Math.max(0.4, s - 0.15))}>−</button>
+              <button className="topoBtn" onClick={() => setScale(s => Math.max(0.3, s - 0.2))}>−</button>
               <span className="topoZoomLabel">{Math.round(scale * 100)}%</span>
-              <button className="topoBtn" onClick={() => setScale(s => Math.min(2.5, s + 0.15))}>+</button>
+              <button className="topoBtn" onClick={() => setScale(s => Math.min(3, s + 0.2))}>+</button>
             </div>
+            <button className="topoBtn" onClick={reset}>↺ Reset</button>
           </div>
           <div className="topoAngles">
-            {presetAngles.map(a => (
-              <button key={a} className={`topoAngleBtn ${Math.abs(rotation % 360 - a) < 5 ? "topoAngleBtnActive" : ""}`} onClick={() => { setAutoRotate(false); setRotation(a); }}>
-                {a}°
-              </button>
-            ))}
+            {["Top", "Front", "Side", "Iso"].map(view => {
+              const presets = { Top: [90, 0], Front: [0, 0], Side: [0, 90], Iso: [25, 45] };
+              const [px, py] = presets[view];
+              return (
+                <button key={view} className="topoAngleBtn" onClick={() => { setAutoRotate(false); setRotX(px); setRotY(py); }}>
+                  {view}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
