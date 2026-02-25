@@ -441,6 +441,109 @@ function ImageSlideshow({ images, alt = "", interval = 4000 }) {
   );
 }
 
+function AmenitiesShowcase() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [prevActive, setPrevActive] = useState(null);
+  const stripRef = useRef(null);
+  const tickRef = useRef(0);
+  const a = AMENITIES[active];
+
+  // Auto-rotate
+  useEffect(() => {
+    if (paused) return;
+    const timer = setInterval(() => {
+      setActive(prev => {
+        setPrevActive(prev);
+        return (prev + 1) % AMENITIES.length;
+      });
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [paused]);
+
+  // Clear prevActive after transition
+  useEffect(() => {
+    tickRef.current += 1;
+    if (tickRef.current <= 1) return;
+    const t = setTimeout(() => setPrevActive(null), 800);
+    return () => clearTimeout(t);
+  }, [active]);
+
+  // Scroll active thumbnail into view
+  useEffect(() => {
+    if (!stripRef.current) return;
+    const thumb = stripRef.current.children[active];
+    if (!thumb) return;
+    const strip = stripRef.current;
+    const scrollLeft = thumb.offsetLeft - strip.offsetWidth / 2 + thumb.offsetWidth / 2;
+    strip.scrollTo({ left: scrollLeft, behavior: "smooth" });
+  }, [active]);
+
+  const select = (i) => {
+    if (i === active) return;
+    setPrevActive(active);
+    setActive(i);
+    setPaused(true);
+  };
+
+  // Drag-to-scroll
+  const dragState = useRef({ down: false, startX: 0, scrollLeft: 0 });
+  const onMouseDown = (e) => {
+    dragState.current = { down: true, startX: e.pageX - stripRef.current.offsetLeft, scrollLeft: stripRef.current.scrollLeft };
+    stripRef.current.style.cursor = "grabbing";
+  };
+  const onMouseUp = () => { dragState.current.down = false; if (stripRef.current) stripRef.current.style.cursor = "grab"; };
+  const onMouseMove = (e) => {
+    if (!dragState.current.down) return;
+    e.preventDefault();
+    const x = e.pageX - stripRef.current.offsetLeft;
+    const walk = (x - dragState.current.startX) * 1.5;
+    stripRef.current.scrollLeft = dragState.current.scrollLeft - walk;
+  };
+
+  return (
+    <div className="amenShowcase" onMouseLeave={() => setPaused(false)}>
+      {/* Featured image */}
+      <div className="amenFeatured">
+        {prevActive !== null && (
+          <img key={`prev-${prevActive}`} src={AMENITIES[prevActive].img} alt="" className="amenFeaturedImg amenFeaturedOut" />
+        )}
+        <img key={`active-${active}`} src={a.img} alt={a.label} className="amenFeaturedImg amenFeaturedIn" />
+        <div className="amenFeaturedOverlay" />
+        <div className="amenFeaturedContent">
+          <div className="amenFeaturedLabel" key={active}>{a.label}</div>
+          <div className="amenFeaturedCount">{String(active + 1).padStart(2, "0")} / {String(AMENITIES.length).padStart(2, "0")}</div>
+        </div>
+        {/* Progress bar */}
+        <div className="amenProgressTrack">
+          <div className="amenProgressBar" key={`${active}-${paused}`} style={{ animationDuration: "3.5s", animationPlayState: paused ? "paused" : "running" }} />
+        </div>
+      </div>
+      {/* Thumbnail strip */}
+      <div
+        className="amenStrip"
+        ref={stripRef}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
+        onMouseMove={onMouseMove}
+      >
+        {AMENITIES.map((am, i) => (
+          <button
+            key={i}
+            className={`amenThumb ${i === active ? "amenThumbActive" : ""}`}
+            onClick={() => select(i)}
+            onMouseEnter={() => select(i)}
+          >
+            <img src={am.img} alt={am.label} draggable={false} />
+            <span className="amenThumbLabel">{am.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function AccordionItem({ title, yes, no, tags, index }) {
   const [open, setOpen] = useState(true);
   return (
@@ -702,14 +805,7 @@ export default function Home() {
           </FadeIn>
           <FadeIn delay={0.1}>
             <h3 className="subHead" style={{ marginTop: 64 }}>Amenities & Experiences</h3>
-            <div className="amenGrid">
-              {AMENITIES.map((a, i) => (
-                <div key={i} className="amenItem">
-                  <img src={a.img} alt={a.label} />
-                  <span>{a.label}</span>
-                </div>
-              ))}
-            </div>
+            <AmenitiesShowcase />
           </FadeIn>
         </div>
       </section>
