@@ -813,6 +813,7 @@ export default function Home() {
                 <button key={i} className={`investToggleBtn ${activeInvest === i ? "active" : ""}`} onClick={() => setActiveInvest(i)} style={{ "--accent": inv.color }}>
                   <span className="investToggleLayer">{inv.layer}</span>
                   <span className="investToggleTitle">{inv.title}</span>
+                  <span className="investToggleIndicator">{activeInvest === i ? "● Viewing" : "Click to View →"}</span>
                 </button>
               ))}
             </div>
