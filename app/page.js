@@ -1,9 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-
-// ═══════════════════════════════════════════════════════════════
-// IMAGE BASE URL
-// ═══════════════════════════════════════════════════════════════
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const IMG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/images";
 
@@ -12,12 +8,12 @@ const IMG = "https://zicvctuf51wytcty.public.blob.vercel-storage.com/images";
 // ═══════════════════════════════════════════════════════════════
 
 const STATS = [
-  { number: "11+", label: "Years in Florida" },
-  { number: "1000s", label: "Community Members Served" },
-  { number: "92", label: "Subtropical Acres" },
-  { number: "55", label: "For-Sale Residences" },
-  { number: "250", label: "Eco-Luxury Rooms" },
-  { number: "4+", label: "Global Locations in Pipeline" },
+  { number: 11, suffix: "+", label: "Years in Florida" },
+  { number: 1000, suffix: "s", label: "Community Members Served" },
+  { number: 92, suffix: "", label: "Subtropical Acres" },
+  { number: 55, suffix: "", label: "For-Sale Residences" },
+  { number: 250, suffix: "", label: "Eco-Luxury Rooms" },
+  { number: 4, suffix: "+", label: "Global Locations in Pipeline" },
 ];
 
 const TESTIMONIALS = [
@@ -27,12 +23,12 @@ const TESTIMONIALS = [
 ];
 
 const PILLARS = [
-  { title: "Wellness", desc: "Regenerative wellness spa, spring-fed mineral pools, thermal therapy, and individualized wellness retreats", img: `${IMG}/spa.jpg` },
-  { title: "Agriculture", desc: "Regenerative onsite farming, food forests, edible landscapes, farm-to-table meals, and a farm store", img: `${IMG}/chozen-farm.jpg` },
-  { title: "Hospitality", desc: "250 rooms of luxury ecoglamping, earth-to-table dining, and world-class regenerative experiences", img: `${IMG}/chozen-hospitality.jpg` },
-  { title: "Nature", desc: "Set within the 22,000-acre St. Sebastian River Preserve \u2014 North America\u2019s most biodiverse lagoon system", img: `${IMG}/nature.jpg` },
-  { title: "Ancestral Wisdom", desc: "Honoring indigenous knowledge, sacred practices, and the guidance of those who walked before us", img: `${IMG}/temple-to-nature.jpg` },
-  { title: "Community", desc: "Optimizing for human connection through revillaging \u2014 close-knit communities of 50\u2013150 people", img: `${IMG}/community.jpg` },
+  { title: "Wellness", desc: "Regenerative wellness spa, spring-fed mineral pools, thermal therapy, and individualized wellness retreats", img: `${IMG}/spa.jpg`, icon: "\u2727" },
+  { title: "Agriculture", desc: "Regenerative onsite farming, food forests, edible landscapes, farm-to-table meals, and a farm store", img: `${IMG}/chozen-farm.jpg`, icon: "\u2618" },
+  { title: "Hospitality", desc: "250 rooms of luxury ecoglamping, earth-to-table dining, and world-class regenerative experiences", img: `${IMG}/chozen-hospitality.jpg`, icon: "\u2302" },
+  { title: "Nature", desc: "Set within the 22,000-acre St. Sebastian River Preserve \u2014 North America\u2019s most biodiverse lagoon system", img: `${IMG}/nature.jpg`, icon: "\u2698" },
+  { title: "Ancestral Wisdom", desc: "Honoring indigenous knowledge, sacred practices, and the guidance of those who walked before us", img: `${IMG}/temple-to-nature.jpg`, icon: "\u2660" },
+  { title: "Community", desc: "Optimizing for human connection through revillaging \u2014 close-knit communities of 50\u2013150 people", img: `${IMG}/community.jpg`, icon: "\u2665" },
 ];
 
 const EXPANSION = [
@@ -56,18 +52,18 @@ const AMENITIES = [
 ];
 
 const FUTURE_LOCATIONS = [
-  { city: "Medell\u00EDn", country: "Colombia", desc: "The real MVP of the model. Branded residential with an agricultural naturehood. Not just expats \u2014 locals cross-pollinating with internationals, building the communities of tomorrow. Maker\u2019s village, artist village, ancestral wisdom, plant medicine where legal.", features: ["Branded Residences", "Agricultural Naturehood", "Maker\u2019s Village", "Ancestral Wisdom"], status: "Active" },
-  { city: "Azores", country: "Portugal", desc: "Island resilience through sustainable living and circular economies. European gateway with Portugal+ Golden Visa Fund alignment.", features: ["Golden Visa Fund", "Circular Economies"], status: "Pipeline" },
+  { city: "Medell\u00EDn", country: "Colombia", desc: "Branded residential with an agricultural naturehood. Maker\u2019s village, artist village, ancestral wisdom, plant medicine where legal.", features: ["Branded Residences", "Agricultural Naturehood", "Maker\u2019s Village", "Ancestral Wisdom"], status: "Active" },
+  { city: "Azores", country: "Portugal", desc: "Island resilience through sustainable living and circular economies. European gateway with Golden Visa Fund alignment.", features: ["Golden Visa Fund", "Circular Economies"], status: "Pipeline" },
   { city: "Bahia", country: "Brazil", desc: "Coastal regeneration and cultural preservation in rich biodiversity.", features: ["Coastal Regeneration", "Biodiversity"], status: "Pipeline" },
-  { city: "Atlanta", country: "Georgia, USA", desc: "Emerging opportunity. Inbound interest for a southeastern US bioregional hub.", features: ["Inbound Interest", "Urban Regeneration"], status: "Exploratory" },
-  { city: "Florian\u00F3polis", country: "Brazil", desc: "Inbound partnership opportunity. Island ecology meets regenerative community.", features: ["Inbound Partnership", "Island Ecology"], status: "Exploratory" },
+  { city: "Atlanta", country: "Georgia, USA", desc: "Emerging opportunity. Southeastern US bioregional hub.", features: ["Inbound Interest", "Urban Regeneration"], status: "Exploratory" },
+  { city: "Florian\u00F3polis", country: "Brazil", desc: "Island ecology meets regenerative community.", features: ["Inbound Partnership", "Island Ecology"], status: "Exploratory" },
 ];
 
 const MARKET_DATA = [
-  { label: "Global Wellness Real Estate", value: "$863.9B", sub: "20.70% CAGR by 2028" },
-  { label: "Mental Wellness Market", value: "$87.1B", sub: "2022" },
-  { label: "Wellness Tourism", value: "$255.9B", sub: "2022" },
-  { label: "Anti-Aging Industry", value: "$83B", sub: "2024" },
+  { label: "Global Wellness Real Estate", value: "$863.9B", sub: "20.70% CAGR by 2028", pct: 86 },
+  { label: "Mental Wellness Market", value: "$87.1B", sub: "2022", pct: 42 },
+  { label: "Wellness Tourism", value: "$255.9B", sub: "2022", pct: 62 },
+  { label: "Anti-Aging Industry", value: "$83B", sub: "2024", pct: 38 },
 ];
 
 const INVESTMENT_LAYERS = [
@@ -124,7 +120,6 @@ const PILLARS_BRAND = [
   { title: "Biophilic Design", yes: "Bamboo architecture, local materials, high-performance building systems.", no: "No harmful materials or depleting practices.", tags: ["Biophilia", "Net Zero", "Bamboo"] },
 ];
 
-// ── Brand Book ──
 const BOOK_PAGES = [
   { title: "Brand Book 2026" },
   { title: "Our Shared Vision", subtitle: "Rewilding Hearts & Minds in the Heart of Florida", text: "We gather thought leaders, changemakers, community builders and placemakers from around the world who seek to explore regenerative systems and implement climate solutions." },
@@ -141,6 +136,44 @@ const BOOK_PAGES = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
+// HOOKS
+// ═══════════════════════════════════════════════════════════════
+
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setInView(true); obs.disconnect(); }
+    }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, inView];
+}
+
+function useParallax(speed = 0.3) {
+  const ref = useRef(null);
+  const [offset, setOffset] = useState(0);
+  useEffect(() => {
+    const fn = () => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom > 0 && rect.top < window.innerHeight) {
+        setOffset((rect.top / window.innerHeight) * speed * 100);
+      }
+    };
+    window.addEventListener("scroll", fn, { passive: true });
+    fn();
+    return () => window.removeEventListener("scroll", fn);
+  }, [speed]);
+  return { ref, offset };
+}
+
+// ═══════════════════════════════════════════════════════════════
 // COMPONENTS
 // ═══════════════════════════════════════════════════════════════
 
@@ -153,14 +186,10 @@ function Nav() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
   const links = [
-    { href: "#story", label: "Story" },
-    { href: "#community", label: "Community" },
-    { href: "#ip", label: "The IP" },
-    { href: "#brand", label: "Brand" },
-    { href: "#florida", label: "Florida" },
-    { href: "#locations", label: "Locations" },
-    { href: "#invest", label: "Invest" },
-    { href: "#team", label: "Team" },
+    { href: "#story", label: "Story" }, { href: "#community", label: "Community" },
+    { href: "#ip", label: "The IP" }, { href: "#brand", label: "Brand" },
+    { href: "#florida", label: "Florida" }, { href: "#locations", label: "Locations" },
+    { href: "#invest", label: "Invest" }, { href: "#team", label: "Team" },
     { href: "#waitlist", label: "Join" },
   ];
   return (
@@ -179,40 +208,36 @@ function Nav() {
   );
 }
 
-function FadeIn({ children, delay = 0, className = "" }) {
-  const ref = useRef(null);
-  const [vis, setVis] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVis(true); obs.disconnect(); }}, { threshold: 0.1 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return <div ref={ref} className={className} style={{ opacity: vis ? 1 : 0, transform: vis ? "translateY(0)" : "translateY(40px)", transition: `opacity 0.8s ${delay}s, transform 0.8s ${delay}s` }}>{children}</div>;
+function FadeIn({ children, delay = 0, className = "", direction = "up" }) {
+  const [ref, vis] = useInView(0.08);
+  const transforms = { up: "translateY(60px)", down: "translateY(-60px)", left: "translateX(60px)", right: "translateX(-60px)", none: "none" };
+  return (
+    <div ref={ref} className={className} style={{
+      opacity: vis ? 1 : 0,
+      transform: vis ? "translate(0)" : transforms[direction],
+      transition: `opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+    }}>{children}</div>
+  );
 }
 
-function useParallax(speed = 0.3) {
-  const ref = useRef(null);
-  const [offset, setOffset] = useState(0);
+function AnimatedNumber({ target, suffix = "", duration = 2000 }) {
+  const [ref, inView] = useInView(0.3);
+  const [count, setCount] = useState(0);
   useEffect(() => {
-    const fn = () => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const visible = rect.bottom > 0 && rect.top < window.innerHeight;
-      if (visible) {
-        setOffset((rect.top / window.innerHeight) * speed * 100);
-      }
-    };
-    window.addEventListener("scroll", fn, { passive: true });
-    fn();
-    return () => window.removeEventListener("scroll", fn);
-  }, [speed]);
-  return { ref, offset };
+    if (!inView) return;
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(start));
+    }, 16);
+    return () => clearInterval(timer);
+  }, [inView, target, duration]);
+  return <span ref={ref}>{count}{suffix}</span>;
 }
 
-function PhotoBreak({ img, title, subtitle, height = "60vh", overlay = 0.45 }) {
+function PhotoBreak({ img, title, subtitle, height = "70vh", overlay = 0.45 }) {
   const { ref, offset } = useParallax(0.35);
   return (
     <div className="photoBreak" style={{ height }} ref={ref}>
@@ -224,6 +249,70 @@ function PhotoBreak({ img, title, subtitle, height = "60vh", overlay = 0.45 }) {
           {title && <h2 className="photoBreakTitle">{title}</h2>}
         </div>
       )}
+    </div>
+  );
+}
+
+function TextReveal({ text, className = "", delay = 0 }) {
+  const [ref, inView] = useInView(0.2);
+  return (
+    <div ref={ref} className="textRevealWrap">
+      <h2 className={`textReveal ${inView ? "revealed" : ""} ${className}`} style={{ transitionDelay: `${delay}s` }}>
+        {text}
+      </h2>
+    </div>
+  );
+}
+
+function HorizontalGallery({ items }) {
+  const scrollRef = useRef(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(true);
+  const check = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 10);
+    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  }, []);
+  const scroll = (dir) => scrollRef.current?.scrollBy({ left: dir * 340, behavior: "smooth" });
+  return (
+    <div className="hGallery">
+      {canLeft && <button className="hGalleryArr hGalleryArrL" onClick={() => scroll(-1)}>&larr;</button>}
+      {canRight && <button className="hGalleryArr hGalleryArrR" onClick={() => scroll(1)}>&rarr;</button>}
+      <div className="hGalleryTrack" ref={scrollRef} onScroll={check}>
+        {items.map((a, i) => (
+          <div key={i} className="hGalleryItem">
+            <img src={a.img} alt={a.label} />
+            <div className="hGalleryLabel">{a.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PillarExplorer() {
+  const [active, setActive] = useState(0);
+  const p = PILLARS[active];
+  return (
+    <div className="pillarExplorer">
+      <div className="pillarExplorerTabs">
+        {PILLARS.map((pil, i) => (
+          <button key={i} className={`pillarTab ${i === active ? "active" : ""}`} onClick={() => setActive(i)}>
+            <span className="pillarTabIcon">{pil.icon}</span>
+            <span className="pillarTabLabel">{pil.title}</span>
+          </button>
+        ))}
+      </div>
+      <div className="pillarExplorerContent">
+        <div className="pillarExplorerImg" key={active}>
+          <img src={p.img} alt={p.title} />
+        </div>
+        <div className="pillarExplorerText" key={`t-${active}`}>
+          <h3>{p.title}</h3>
+          <p>{p.desc}</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -241,13 +330,7 @@ function BrandBookModal({ onClose }) {
   return (
     <div className="modalOverlay" onClick={onClose}>
       <div className="modalContent" onClick={e => e.stopPropagation()}>
-        <div className="modalHeader">
-          <span>Brand Book</span>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: "0.7rem", opacity: 0.5 }}>{page + 1}/{total}</span>
-            <button className="modalClose" onClick={onClose}>&times;</button>
-          </div>
-        </div>
+        <div className="modalHeader"><span>Brand Book</span><div style={{ display: "flex", alignItems: "center", gap: 12 }}><span style={{ fontSize: "0.7rem", opacity: 0.5 }}>{page + 1}/{total}</span><button className="modalClose" onClick={onClose}>&times;</button></div></div>
         <div className="modalBody">
           <h2 className="modalTitle">{p.title}</h2>
           {p.subtitle && <p className="modalSub">{p.subtitle}</p>}
@@ -270,6 +353,7 @@ function WaitlistForm() {
   const [done, setDone] = useState(false);
   if (done) return (
     <div className="waitlistDone">
+      <div className="waitlistDoneIcon">&#10003;</div>
       <h3>Welcome to the Path</h3>
       <p>We&apos;ll be in touch with next steps and exclusive access.</p>
     </div>
@@ -281,8 +365,8 @@ function WaitlistForm() {
       <div className="wfField"><label>I&apos;m Interested In</label>
         <select value={form.interest} onChange={e => setForm({...form, interest: e.target.value})}>
           <option value="">Select one...</option>
-          <option value="florida">Sebastian, FL &mdash; Lot Reservation</option>
-          <option value="medellin">Medell&iacute;n, Colombia &mdash; Lot Reservation</option>
+          <option value="florida">Sebastian, FL — Lot Reservation</option>
+          <option value="medellin">Medellín, Colombia — Lot Reservation</option>
           <option value="community">Community Membership</option>
           <option value="brand-invest">Brand / IP Investment</option>
           <option value="site-invest">Site-Specific Development</option>
@@ -295,6 +379,49 @@ function WaitlistForm() {
   );
 }
 
+function TiltCard({ children, className = "" }) {
+  const ref = useRef(null);
+  const move = (e) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateY(-4px)`;
+  };
+  const leave = () => { if (ref.current) ref.current.style.transform = "perspective(800px) rotateY(0) rotateX(0)"; };
+  return <div ref={ref} className={className} onMouseMove={move} onMouseLeave={leave} style={{ transition: "transform 0.15s ease-out" }}>{children}</div>;
+}
+
+function ProgressBar({ pct, color = "var(--moss)" }) {
+  const [ref, inView] = useInView(0.3);
+  return (
+    <div ref={ref} className="progressBar">
+      <div className="progressFill" style={{ width: inView ? `${pct}%` : "0%", background: color }} />
+    </div>
+  );
+}
+
+function AccordionItem({ title, yes, no, tags, index }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`accordionItem ${open ? "open" : ""}`}>
+      <button className="accordionHeader" onClick={() => setOpen(!open)}>
+        <span className="accordionNum">0{index + 1}</span>
+        <span className="accordionTitle">{title}</span>
+        <span className="accordionArrow">{open ? "\u2212" : "\u002B"}</span>
+      </button>
+      <div className="accordionBody" style={{ maxHeight: open ? 400 : 0 }}>
+        <div className="accordionInner">
+          <div className="accordionCol"><div className="accordionLabel accordionLabelYes">&#10003; We Are</div><p>{yes}</p></div>
+          <div className="accordionCol"><div className="accordionLabel accordionLabelNo">&#10005; We Are Not</div><p>{no}</p></div>
+        </div>
+        <div className="accordionTags">{tags.map(t => <span key={t}>{t}</span>)}</div>
+      </div>
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════
 // MAIN PAGE
 // ═══════════════════════════════════════════════════════════════
@@ -302,7 +429,7 @@ function WaitlistForm() {
 export default function Home() {
   const [bookOpen, setBookOpen] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
-  const heroParallax = useParallax(0.25);
+  const [activeInvest, setActiveInvest] = useState(0);
   const storyParallax = useParallax(0.2);
 
   return (
@@ -331,19 +458,32 @@ export default function Home() {
         <div className="heroScroll"><span /></div>
       </section>
 
+      {/* ═══ MANIFESTO ═══ */}
+      <section className="manifesto">
+        <div className="wrap">
+          <FadeIn>
+            <h2 className="manifestoText">
+              Nature is <em>Medicine.</em><br />
+              Food is <em>Medicine.</em><br />
+              Community is <em>Medicine.</em>
+            </h2>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* ═══ TESTIMONIALS ═══ */}
       <section className="testimonials">
         <div className="wrap">
           <div className="testGrid">
             {TESTIMONIALS.map((t, i) => (
-              <FadeIn key={i} delay={i * 0.1}>
-                <div className="testCard">
+              <FadeIn key={i} delay={i * 0.15}>
+                <TiltCard className="testCard">
                   <div className="testImg"><img src={t.img} alt={t.name} /></div>
                   <p className="testQuote">&ldquo;{t.quote}&rdquo;</p>
                   <div className="testDivider" />
                   <div className="testName">{t.name}</div>
                   <div className="testRole">{t.role}</div>
-                </div>
+                </TiltCard>
               </FadeIn>
             ))}
           </div>
@@ -354,13 +494,10 @@ export default function Home() {
       <section className="sec" id="story">
         <div className="wrap">
           <FadeIn>
-            <div className="secHead">
-              <p className="eyebrow">A Demonstration Project of the Future of Cities</p>
-              <h2>The ChoZen Story</h2>
-              <div className="hdivider" />
-            </div>
+            <p className="eyebrow" style={{ textAlign: "center" }}>A Demonstration Project of the Future of Cities</p>
+            <TextReveal text="The ChoZen Story" className="secTitle" />
+            <div className="hdivider" />
           </FadeIn>
-
           <FadeIn delay={0.1}>
             <div className="storyHero" ref={storyParallax.ref}>
               <img src={`${IMG}/bioregional-hub2.jpg`} alt="Bioregional Hub" style={{ transform: `translateY(${storyParallax.offset}px) scale(1.12)` }} />
@@ -372,29 +509,15 @@ export default function Home() {
               </div>
             </div>
           </FadeIn>
-
           <div className="storyCards">
-            <FadeIn delay={0.15}>
-              <div className="storyCard">
-                <div className="scLabel">The Origin</div>
-                <h4>11+ Years in Florida</h4>
-                <p>What began as a community of changemakers in Sebastian has evolved into a nature, wellness, and hospitality brand &mdash; with a built-in community of thousands and a global vision. A demonstration project of the Future of Cities.</p>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.25}>
-              <div className="storyCard">
-                <div className="scLabel">The Framework</div>
-                <h4>Generation Regeneration</h4>
-                <p>Rooted in the book and framework by Tony Cho. Regenerative placemaking in action &mdash; optimizing for human connection through close-knit communities of 50&ndash;150 people. The alternative to a golf community.</p>
-              </div>
-            </FadeIn>
+            <FadeIn delay={0.15}><TiltCard className="storyCard"><div className="scLabel">The Origin</div><h4>11+ Years in Florida</h4><p>What began as a community of changemakers in Sebastian has evolved into a nature, wellness, and hospitality brand &mdash; with a built-in community of thousands and a global vision.</p></TiltCard></FadeIn>
+            <FadeIn delay={0.25}><TiltCard className="storyCard"><div className="scLabel">The Framework</div><h4>Generation Regeneration</h4><p>Rooted in the book and framework by Tony Cho. Regenerative placemaking in action &mdash; optimizing for human connection through close-knit communities of 50&ndash;150 people.</p></TiltCard></FadeIn>
           </div>
-
           <FadeIn delay={0.2}>
             <div className="statsRow">
               {STATS.map((s, i) => (
                 <div key={i} className="stat">
-                  <div className="statNum">{s.number}</div>
+                  <div className="statNum"><AnimatedNumber target={s.number} suffix={s.suffix} /></div>
                   <div className="statLbl">{s.label}</div>
                 </div>
               ))}
@@ -403,50 +526,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ COMMUNITY HIGHLIGHTS ═══ */}
+      {/* ═══ COMMUNITY ═══ */}
       <section className="communityHighlights" id="community">
         <div className="wrap">
           <FadeIn>
-            <div className="secHead" style={{ textAlign: "center" }}>
-              <p className="eyebrow">Built-In Community</p>
-              <h2>It&apos;s Not Just a Place &mdash; It&apos;s Who&apos;s There</h2>
-              <div className="hdivider" />
-              <p className="secDesc">Anyone can build a flashy development. What sets ChoZen apart is the community &mdash; changemakers, indigenous leaders, world-class practitioners, and visionaries who have gathered here over 11+ years.</p>
-            </div>
+            <p className="eyebrow" style={{ textAlign: "center" }}>Built-In Community</p>
+            <TextReveal text="It's Not Just a Place — It's Who's There" className="secTitle" />
+            <div className="hdivider" />
+            <p className="secDesc">Anyone can build a flashy development. What sets ChoZen apart is the community &mdash; changemakers, indigenous leaders, world-class practitioners, and visionaries.</p>
           </FadeIn>
-          <FadeIn delay={0.1}>
-            <div className="commGrid">
-              <div className="commCard">
-                <div className="commIcon"><img src={`${IMG}/dan-butner.jpg`} alt="Blue Zones" /></div>
-                <h4>Blue Zones Recognized</h4>
-                <p>Dan Buettner, creator of the Blue Zones Project, called ChoZen &ldquo;a blueprint for a blue zone.&rdquo;</p>
-              </div>
-              <div className="commCard">
-                <div className="commIcon"><img src={`${IMG}/temple-to-nature.jpg`} alt="Indigenous Wisdom" /></div>
-                <h4>Indigenous Wisdom</h4>
-                <p>Mapu and indigenous leaders guide ancestral practices, sacred ceremonies, and ecological stewardship rooted in millennia of knowledge.</p>
-              </div>
-              <div className="commCard">
-                <div className="commIcon"><img src={`${IMG}/tony-cho.jpg`} alt="Thought Leaders" /></div>
-                <h4>Thought Leaders</h4>
-                <p>Founders of Future of Cities, Chopra Foundation advisors, environmental activists, and culture makers who are building the new world together.</p>
-              </div>
-              <div className="commCard">
-                <div className="commIcon"><img src={`${IMG}/gathering-spaces.jpg`} alt="Events" /></div>
-                <h4>Events &amp; Gatherings</h4>
-                <p>Thousands served across summits, retreats, wellness gatherings, and seasonal celebrations. Every event deepens the bonds of community.</p>
-              </div>
-            </div>
-          </FadeIn>
+          <div className="commGrid">
+            {[
+              { img: `${IMG}/dan-butner.jpg`, title: "Blue Zones Recognized", text: "Dan Buettner called ChoZen \"a blueprint for a blue zone.\"" },
+              { img: `${IMG}/temple-to-nature.jpg`, title: "Indigenous Wisdom", text: "Ancestral practices, sacred ceremonies, and ecological stewardship." },
+              { img: `${IMG}/tony-cho.jpg`, title: "Thought Leaders", text: "Future of Cities founders, Chopra advisors, activists building the new world." },
+              { img: `${IMG}/gathering-spaces.jpg`, title: "Events & Gatherings", text: "Thousands served across summits, retreats, and seasonal celebrations." },
+            ].map((c, i) => (
+              <FadeIn key={i} delay={0.1 + i * 0.1}>
+                <TiltCard className="commCard">
+                  <div className="commIcon"><img src={c.img} alt={c.title} /></div>
+                  <h4>{c.title}</h4>
+                  <p>{c.text}</p>
+                </TiltCard>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ═══ THE IP ═══ */}
       <section className="ipSection" id="ip">
-        <div className="ipBg">
-          <img src={`${IMG}/sebastian-river.jpg`} alt="" />
-          <div className="ipBgOverlay" />
-        </div>
+        <div className="ipBg"><img src={`${IMG}/sebastian-river.jpg`} alt="" /><div className="ipBgOverlay" /></div>
         <div className="wrap" style={{ position: "relative", zIndex: 1 }}>
           <FadeIn>
             <div className="ipHeader">
@@ -456,8 +566,6 @@ export default function Home() {
               <div className="hdivider" style={{ background: "var(--gold)" }} />
             </div>
           </FadeIn>
-
-          {/* Residential Development */}
           <FadeIn delay={0.08}>
             <div className="ipFeature">
               <div className="ipFeatureImg"><img src={`${IMG}/chozen-village4.jpg`} alt="ChoZen Village" /></div>
@@ -465,19 +573,11 @@ export default function Home() {
                 <p className="ipFeatureEyebrow">Residential Development</p>
                 <h3>ChoZen Village</h3>
                 <p className="ipFeatureTagline">Regenerative Nature Hood</p>
-                <p>Harmonious, eco-friendly living spaces created to nurture your well-being. 55 homes, cottages and tree houses priced from $700K&ndash;$6M+.</p>
-                <div className="ipFeatureTags">
-                  <span>Edible Landscapes</span>
-                  <span>Food Forests</span>
-                  <span>Farmlettes</span>
-                  <span>Sustainable Homes</span>
-                  <span>Community Focused</span>
-                </div>
+                <p>Harmonious, eco-friendly living spaces. 55 homes, cottages and tree houses from $700K&ndash;$6M+.</p>
+                <div className="ipFeatureTags"><span>Edible Landscapes</span><span>Food Forests</span><span>Farmlettes</span><span>Sustainable Homes</span></div>
               </div>
             </div>
           </FadeIn>
-
-          {/* Hospitality Development */}
           <FadeIn delay={0.12}>
             <div className="ipFeature ipFeatureReverse">
               <div className="ipFeatureImg"><img src={`${IMG}/chozen-hospitality.jpg`} alt="ChoZen Retreats" /></div>
@@ -485,101 +585,43 @@ export default function Home() {
                 <p className="ipFeatureEyebrow">Hospitality Development</p>
                 <h3>ChoZen Retreats</h3>
                 <p className="ipFeatureTagline">250 Rooms &bull; Earth-to-Table</p>
-                <p>Thoughtfully designed retreats that blend comfort and sustainability to inspire rest and rejuvenation. Luxury ecoglamping with world-class wellness programming.</p>
-                <div className="ipFeatureTags">
-                  <span>Luxury Ecoglamping</span>
-                  <span>World-Class Wellness</span>
-                  <span>Regenerative Experiences</span>
-                  <span>Community Focused</span>
-                  <span>Earth-to-Table</span>
-                </div>
+                <p>Luxury ecoglamping with world-class wellness programming.</p>
+                <div className="ipFeatureTags"><span>Luxury Ecoglamping</span><span>World-Class Wellness</span><span>Regenerative Experiences</span></div>
               </div>
             </div>
           </FadeIn>
-
-          {/* IP Pillars Grid */}
           <div className="ipGrid">
-            <FadeIn delay={0.16}>
-              <div className="ipCard">
-                <div className="ipCardImg"><img src={`${IMG}/chozen-farm.jpg`} alt="ChoZen Farm" /></div>
-                <div className="ipCardBody">
-                  <h4>ChoZen Farm</h4>
-                  <p>Farm-to-table meals, farm store, edible landscapes, agricultural neighborhoods, food forests, and permaculture education. Regenerative onsite agriculture rooted in native biodiversity.</p>
-                </div>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.2}>
-              <div className="ipCard">
-                <div className="ipCardImg"><img src={`${IMG}/spa.jpg`} alt="Wellness" /></div>
-                <div className="ipCardBody">
-                  <h4>Regenerative Wellness</h4>
-                  <p>Spring-fed mineral pools, thermal therapy, regenerative wellness spa, temple to nature, and individualized wellness retreats guided by world-class practitioners.</p>
-                </div>
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.24}>
-              <div className="ipCard">
-                <div className="ipCardImg"><img src={`${IMG}/community.jpg`} alt="Community" /></div>
-                <div className="ipCardBody">
-                  <h4>Community &amp; Membership</h4>
-                  <p>Close-knit communities of 50&ndash;150 people optimized for human connection. Exclusive membership with retreat center access, programming, seasonal events, and shared rituals.</p>
-                </div>
-              </div>
-            </FadeIn>
+            {[
+              { img: `${IMG}/chozen-farm.jpg`, title: "ChoZen Farm", text: "Farm-to-table meals, farm store, edible landscapes, food forests, permaculture education." },
+              { img: `${IMG}/spa.jpg`, title: "Regenerative Wellness", text: "Spring-fed mineral pools, thermal therapy, temple to nature, individualized retreats." },
+              { img: `${IMG}/community.jpg`, title: "Community & Membership", text: "Close-knit communities of 50\u2013150 people. Exclusive membership with retreat center access." },
+            ].map((card, i) => (
+              <FadeIn key={i} delay={0.16 + i * 0.08}>
+                <div className="ipCard"><div className="ipCardImg"><img src={card.img} alt={card.title} /></div><div className="ipCardBody"><h4>{card.title}</h4><p>{card.text}</p></div></div>
+              </FadeIn>
+            ))}
           </div>
-
-          {/* What You Get */}
           <FadeIn delay={0.28}>
             <div className="ipWhatYouGet">
               <div className="ipWygHeader">
                 <p className="ipFeatureEyebrow">License the ChoZen IP</p>
                 <h3>What You Get</h3>
-                <p className="ipWygSub">When you partner with ChoZen to create a new bioregional hub, you receive a turnkey brand and operating system &mdash; proven in Florida, designed to replicate globally.</p>
+                <p className="ipWygSub">A turnkey brand and operating system &mdash; proven in Florida, designed to replicate globally.</p>
               </div>
               <div className="ipWygGrid">
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Brand &amp; Trademark</h4>
-                  <p>Full rights to the ChoZen name, visual identity, stamp, and brand guidelines. Your development carries the recognition and trust of an established regenerative lifestyle brand.</p>
-                </div>
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Design Playbook</h4>
-                  <p>Biophilic architecture standards, site planning principles, bamboo and local material specs, and conservation land-use ratios. The blueprint for every ChoZen community.</p>
-                </div>
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Programming &amp; Curriculum</h4>
-                  <p>Wellness retreats, farm-to-table dining operations, permaculture education, breathwork, meditation, seasonal ceremonies, and community event playbooks &mdash; ready to deploy.</p>
-                </div>
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Membership Platform</h4>
-                  <p>Access to the ChoZen member network and technology platform. Residents and guests at your location join a global community of changemakers across all hubs.</p>
-                </div>
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Operational Playbooks</h4>
-                  <p>SOPs for hospitality, farm operations, wellness spa management, community governance, and event production. Built from 11+ years of running ChoZen in Florida.</p>
-                </div>
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Built-In Demand</h4>
-                  <p>A waitlist of qualified residents and investors already interested in future locations. Your hub launches with a community, not from scratch.</p>
-                </div>
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Content &amp; Marketing</h4>
-                  <p>Online content library, social media templates, campaign frameworks, and co-branded marketing assets. The storytelling engine that sells the dream.</p>
-                </div>
-                <div className="ipWygCard">
-                  <div className="ipWygIcon">&#9670;</div>
-                  <h4>Network &amp; Partnerships</h4>
-                  <p>Introductions to Blue Zones, Chopra Foundation, Wildpath, IDEAS For Us, and the broader Future of Cities ecosystem. Relationships that give your project instant credibility.</p>
-                </div>
+                {[
+                  { t: "Brand & Trademark", d: "Full rights to the ChoZen name, visual identity, stamp, and brand guidelines." },
+                  { t: "Design Playbook", d: "Biophilic architecture standards, site planning, bamboo specs, conservation ratios." },
+                  { t: "Programming & Curriculum", d: "Wellness retreats, farm-to-table dining, permaculture education, ceremonies." },
+                  { t: "Membership Platform", d: "Digital platform for community with event management and membership tiers." },
+                  { t: "Operational Playbook", d: "SOPs for hospitality, agriculture, wellness, events, and community management." },
+                  { t: "Network & Partnerships", d: "Blue Zones, Chopra Foundation, Wildpath, IDEAS For Us, Future of Cities." },
+                ].map((c, i) => (
+                  <div key={i} className="ipWygCard"><div className="ipWygIcon">&#9670;</div><h4>{c.t}</h4><p>{c.d}</p></div>
+                ))}
               </div>
               <div className="ipWygFooter">
-                <p>Each partnership is bespoke. The first locations will be structured as joint ventures &mdash; true partnerships where we build together.</p>
+                <p>Each partnership is bespoke. First locations structured as joint ventures.</p>
                 <a href="#waitlist" className="btn btnGold">Inquire About Licensing &rarr;</a>
               </div>
             </div>
@@ -591,123 +633,77 @@ export default function Home() {
       <section className="sec secAlt" id="brand">
         <div className="wrap">
           <FadeIn>
-            <div className="secHead">
-              <p className="eyebrow">Brand Identity</p>
-              <h2>A Lifestyle Brand for Regenerative Living</h2>
-              <div className="hdivider" />
+            <p className="eyebrow" style={{ textAlign: "center" }}>Brand Identity</p>
+            <TextReveal text="A Lifestyle Brand for Regenerative Living" className="secTitle" />
+            <div className="hdivider" />
+          </FadeIn>
+          <FadeIn delay={0.1}><PillarExplorer /></FadeIn>
+          <FadeIn delay={0.15}>
+            <h3 className="subHead" style={{ marginTop: 64 }}>We Are vs. We Are Not</h3>
+            <div className="accordionWrap">
+              {PILLARS_BRAND.map((p, i) => <AccordionItem key={i} index={i} title={p.title} yes={p.yes} no={p.no} tags={p.tags} />)}
             </div>
           </FadeIn>
-
-          <div className="pillarGrid">
-            {PILLARS.map((p, i) => (
-              <FadeIn key={i} delay={i * 0.08}>
-                <div className="pillarCard">
-                  <div className="pillarImg"><img src={p.img} alt={p.title} /></div>
-                  <div className="pillarBody">
-                    <h4>{p.title}</h4>
-                    <p>{p.desc}</p>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-
-          {/* We Are / We Are Not */}
-          <FadeIn delay={0.1}>
-            <div className="weAreSection">
-              <h3 className="subHead">We Are vs. We Are Not</h3>
-              <div className="weAreGrid">
-                {PILLARS_BRAND.map((p, i) => (
-                  <div key={i} className="weAreCard">
-                    <div className="waTitle">{p.title}</div>
-                    <div className="waBody">
-                      <div className="waCol waYes"><div className="waLabel">&#10003; We Are</div><p>{p.yes}</p></div>
-                      <div className="waCol waNo"><div className="waLabel">&#10005; We Are Not</div><p>{p.no}</p></div>
-                    </div>
-                    <div className="waTags">{p.tags.map(t => <span key={t}>{t}</span>)}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
-
           <FadeIn><div className="centered" style={{ marginTop: 48 }}><button onClick={() => setBookOpen(true)} className="btn btnPrimary">Explore Full Brand Book &rarr;</button></div></FadeIn>
         </div>
       </section>
 
-      {/* ═══ PHOTO BREAK: ChoZen Path ═══ */}
-      <PhotoBreak img={`${IMG}/chozen-path.jpg`} title="Walk the ChoZen Path" subtitle="Expansion 2026" height="55vh" />
+      <PhotoBreak img={`${IMG}/chozen-path.jpg`} title="Walk the ChoZen Path" subtitle="Expansion 2026" height="65vh" />
 
       {/* ═══ FLORIDA ═══ */}
       <section className="sec" id="florida">
         <div className="wrap">
           <FadeIn>
-            <div className="secHead">
-              <p className="eyebrow">Sebastian, Florida</p>
-              <h2>Nested in Nature: A Sanctuary for Renewal</h2>
-              <div className="hdivider" />
-              <p className="secDesc">Set amidst the 22,000-acre St. Sebastian River Preserve, within North America&apos;s most biodiverse lagoon system. Connected to the Indian River Lagoon, serving over 11 million Floridians.</p>
-            </div>
+            <p className="eyebrow" style={{ textAlign: "center" }}>Sebastian, Florida</p>
+            <TextReveal text="Nested in Nature: A Sanctuary for Renewal" className="secTitle" />
+            <div className="hdivider" />
+            <p className="secDesc">Set amidst the 22,000-acre St. Sebastian River Preserve, within North America&apos;s most biodiverse lagoon system.</p>
           </FadeIn>
-
           <FadeIn>
             <div className="expansionGrid">
               {EXPANSION.map((e, i) => (
-                <div key={i} className="expCard">
-                  <img src={e.img} alt={e.title} className="expImg" />
-                  <div className="expOverlay" />
-                  <div className="expContent">
-                    <h4>{e.title}</h4>
-                    <p>{e.desc}</p>
-                    <span className="expSub">{e.sub}</span>
-                  </div>
-                </div>
+                <div key={i} className="expCard"><img src={e.img} alt={e.title} className="expImg" /><div className="expOverlay" /><div className="expContent"><span className="expSub">{e.sub}</span><h4>{e.title}</h4><p>{e.desc}</p></div></div>
               ))}
             </div>
           </FadeIn>
-
-          {/* Amenities Grid */}
           <FadeIn delay={0.1}>
             <h3 className="subHead" style={{ marginTop: 64 }}>Amenities & Experiences</h3>
-            <div className="amenGrid">
-              {AMENITIES.map((a, i) => (
-                <div key={i} className="amenItem">
-                  <img src={a.img} alt={a.label} />
-                  <span>{a.label}</span>
-                </div>
-              ))}
-            </div>
+            <HorizontalGallery items={AMENITIES} />
           </FadeIn>
-
-          {/* Mission Callout */}
           <FadeIn delay={0.15}>
             <div className="missionCallout">
               <img src={`${IMG}/chozen-stamp.png`} alt="" className="missionStamp" />
               <h3>ChoZen Center for Regenerative Living</h3>
               <p className="nonprofitTag">Adjacent 501(c)(3) Nonprofit</p>
-              <p>Regenerate land and biodiversity. Revitalize local economies. Elevate human well-being. Advance wildlife conservation through partnerships with Wildpath and Path of the Panther.</p>
+              <p>Regenerate land and biodiversity. Revitalize local economies. Elevate human well-being. Advance wildlife conservation through Wildpath and Path of the Panther.</p>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* ═══ PHOTO BREAK: Biophilic Design ═══ */}
-      <PhotoBreak img={`${IMG}/biophilic-design.jpg`} title="Biophilic Design" subtitle="Architecture Rooted in Nature" height="60vh" />
+      <PhotoBreak img={`${IMG}/biophilic-design.jpg`} title="Biophilic Design" subtitle="Architecture Rooted in Nature" height="65vh" />
 
       {/* ═══ LOCATIONS ═══ */}
-      <section className="sec secAlt" id="locations">
+      <section className="sec secDark" id="locations">
         <div className="wrap">
-          <FadeIn><div className="secHead"><p className="eyebrow">Global Expansion</p><h2>Beyond Florida</h2><div className="hdivider" /><p className="secDesc">People are reaching out. From Colombia to Portugal to Brazil &mdash; each hub shaped by its land, culture, and people. Inbound demand is growing.</p></div></FadeIn>
+          <FadeIn>
+            <p className="eyebrow" style={{ textAlign: "center", color: "var(--sage)" }}>Global Expansion</p>
+            <TextReveal text="Beyond Florida" className="secTitle secTitleLight" />
+            <div className="hdivider" style={{ background: "var(--gold)" }} />
+            <p className="secDesc" style={{ color: "var(--sand)" }}>From Colombia to Portugal to Brazil &mdash; each hub shaped by its land, culture, and people.</p>
+          </FadeIn>
           <FadeIn>
             <div className="locGrid">
               {FUTURE_LOCATIONS.map((loc, i) => (
-                <div key={i} className={`locCard ${i === 0 ? "locCardFeatured" : ""}`}>
-                  <div className={`locStatus ${loc.status === "Active" ? "locStatusActive" : loc.status === "Exploratory" ? "locStatusExplore" : ""}`}>{loc.status}</div>
-                  <h3>{loc.city}</h3>
-                  <div className="locCountry">{loc.country}</div>
-                  <p>{loc.desc}</p>
-                  <div className="locFeats">{loc.features.map(f => <span key={f}>{f}</span>)}</div>
-                </div>
+                <FadeIn key={i} delay={i * 0.08}>
+                  <div className={`locCard ${i === 0 ? "locCardFeatured" : ""}`}>
+                    <div className={`locStatus ${loc.status === "Active" ? "locStatusActive" : loc.status === "Exploratory" ? "locStatusExplore" : ""}`}>{loc.status}</div>
+                    <h3>{loc.city}</h3>
+                    <div className="locCountry">{loc.country}</div>
+                    <p>{loc.desc}</p>
+                    <div className="locFeats">{loc.features.map(f => <span key={f}>{f}</span>)}</div>
+                  </div>
+                </FadeIn>
               ))}
             </div>
           </FadeIn>
@@ -717,15 +713,22 @@ export default function Home() {
       {/* ═══ MARKET ═══ */}
       <section className="sec">
         <div className="wrap">
-          <FadeIn><div className="secHead"><p className="eyebrow">Market Opportunity</p><h2>Rising Demand for Well-Being</h2><div className="hdivider" /></div></FadeIn>
+          <FadeIn>
+            <p className="eyebrow" style={{ textAlign: "center" }}>Market Opportunity</p>
+            <TextReveal text="Rising Demand for Well-Being" className="secTitle" />
+            <div className="hdivider" />
+          </FadeIn>
           <FadeIn>
             <div className="marketGrid">
               {MARKET_DATA.map((m, i) => (
-                <div key={i} className="marketCard">
-                  <div className="mktVal">{m.value}</div>
-                  <div className="mktLabel">{m.label}</div>
-                  <div className="mktSub">{m.sub}</div>
-                </div>
+                <FadeIn key={i} delay={i * 0.1}>
+                  <div className="marketCard">
+                    <div className="mktVal">{m.value}</div>
+                    <ProgressBar pct={m.pct} />
+                    <div className="mktLabel">{m.label}</div>
+                    <div className="mktSub">{m.sub}</div>
+                  </div>
+                </FadeIn>
               ))}
             </div>
           </FadeIn>
@@ -733,18 +736,13 @@ export default function Home() {
             <p className="source">Source: Facts and Factors, Global Wellness Institute, Blue Zones</p>
             <h3 className="subHead" style={{ marginTop: 56 }}>Partnerships</h3>
             <div className="partnerGrid">
-              {PARTNERSHIPS.map((p, i) => (
-                <div key={i} className="partnerCard">
-                  {p.img ? <img src={p.img} alt={p.name} /> : <span>{p.name}</span>}
-                </div>
-              ))}
+              {PARTNERSHIPS.map((p, i) => <div key={i} className="partnerCard">{p.img ? <img src={p.img} alt={p.name} /> : <span>{p.name}</span>}</div>)}
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* ═══ PHOTO BREAK: Community ═══ */}
-      <PhotoBreak img={`${IMG}/community.jpg`} title="We Are Co-Creating a Community That Will Inspire Future Generations" height="65vh" overlay={0.5} />
+      <PhotoBreak img={`${IMG}/community.jpg`} title="We Are Co-Creating a Community That Will Inspire Future Generations" height="70vh" overlay={0.5} />
 
       {/* ═══ BLUE ZONES ═══ */}
       <section className="blueZones">
@@ -754,13 +752,10 @@ export default function Home() {
               <div className="bzContent">
                 <h2 className="bzTitle">Blue Zones</h2>
                 <p className="bzQuote">&ldquo;ChoZen is a blueprint for a blue zone.&rdquo;</p>
-                <p className="bzDef">Blue Zones are regions around the world where people consistently live longer, healthier lives, often reaching 90 or even 100 years old with fewer chronic illnesses.</p>
-                <p className="bzText">Dan Buettner, along with a team from National Geographic and leading longevity researchers, identified the Blue Zones in 2004. Their research reveals that small, consistent habits &mdash; like eating well, staying active, nurturing social connections, and reducing stress &mdash; can lead to longer, happier lives.</p>
+                <p className="bzDef">Blue Zones are regions where people consistently live longer, healthier lives, often reaching 90 or 100 years old.</p>
+                <p className="bzText">Dan Buettner and a team from National Geographic identified the Blue Zones in 2004. Small, consistent habits &mdash; eating well, staying active, nurturing connections &mdash; lead to longer, happier lives.</p>
               </div>
-              <div className="bzImage">
-                <img src={`${IMG}/dan-butner.jpg`} alt="Dan Buettner" />
-                <div className="bzCaption">Dan Buettner<br /><span>Creator of the Blue Zones Project</span></div>
-              </div>
+              <div className="bzImage"><img src={`${IMG}/dan-butner.jpg`} alt="Dan Buettner" /><div className="bzCaption">Dan Buettner<br /><span>Creator of the Blue Zones Project</span></div></div>
             </div>
           </FadeIn>
         </div>
@@ -769,31 +764,40 @@ export default function Home() {
       {/* ═══ INVEST ═══ */}
       <section className="sec secDark" id="invest">
         <div className="wrap">
-          <FadeIn><div className="secHead"><p className="eyebrow" style={{color:"var(--sage)"}}>Investment</p><h2 style={{color:"var(--cream)"}}>Investment Opportunities</h2><div className="hdivider" style={{background:"var(--gold)"}} /></div></FadeIn>
           <FadeIn>
-            <div className="investGrid">
+            <p className="eyebrow" style={{ textAlign: "center", color: "var(--sage)" }}>Investment</p>
+            <TextReveal text="Investment Opportunities" className="secTitle secTitleLight" />
+            <div className="hdivider" style={{ background: "var(--gold)" }} />
+          </FadeIn>
+          <FadeIn>
+            <div className="investToggle">
               {INVESTMENT_LAYERS.map((inv, i) => (
-                <div key={i} className="investCard">
-                  <div className="invLayer" style={{color:inv.color}}>{inv.layer}</div>
-                  <h3>{inv.title}</h3>
-                  <div className="invSub">{inv.subtitle}</div>
-                  <p>{inv.desc}</p>
-                  <div className="invItems">{inv.items.map((item, j) => <div key={j} className="invItem"><span className="invDot" style={{background:inv.color}} />{item}</div>)}</div>
-                </div>
+                <button key={i} className={`investToggleBtn ${activeInvest === i ? "active" : ""}`} onClick={() => setActiveInvest(i)} style={{ "--accent": inv.color }}>
+                  <span className="investToggleLayer">{inv.layer}</span>
+                  <span className="investToggleTitle">{inv.title}</span>
+                </button>
               ))}
+            </div>
+            <div className="investDetail" key={activeInvest}>
+              <div className="investDetailLeft">
+                <div className="invLayer" style={{ color: INVESTMENT_LAYERS[activeInvest].color }}>{INVESTMENT_LAYERS[activeInvest].layer}</div>
+                <h3>{INVESTMENT_LAYERS[activeInvest].title}</h3>
+                <div className="invSub">{INVESTMENT_LAYERS[activeInvest].subtitle}</div>
+                <p>{INVESTMENT_LAYERS[activeInvest].desc}</p>
+              </div>
+              <div className="investDetailRight">
+                {INVESTMENT_LAYERS[activeInvest].items.map((item, j) => (
+                  <div key={j} className="invItem"><span className="invDot" style={{ background: INVESTMENT_LAYERS[activeInvest].color }} />{item}</div>
+                ))}
+              </div>
             </div>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <div className="investGrid" style={{marginTop:24}}>
+            <div className="investGrid" style={{ marginTop: 24 }}>
               {[FINANCIALS.village, FINANCIALS.hospitality].map((fin, i) => (
                 <div key={i} className="investCard">
-                  <h3 style={{marginBottom:20}}>{fin.title}</h3>
-                  {fin.rows.map((r, j) => (
-                    <div key={j} className="finRow">
-                      <span>{r.label}</span>
-                      <span className={r.hl ? "finHl" : ""}>{r.value}</span>
-                    </div>
-                  ))}
+                  <h3 style={{ marginBottom: 20 }}>{fin.title}</h3>
+                  {fin.rows.map((r, j) => <div key={j} className="finRow"><span>{r.label}</span><span className={r.hl ? "finHl" : ""}>{r.value}</span></div>)}
                 </div>
               ))}
             </div>
@@ -801,12 +805,8 @@ export default function Home() {
           <FadeIn delay={0.15}>
             <div className="gateBox">
               <h3>Deeper Access Requires Verification</h3>
-              <p>Detailed investment memorandums, financial projections, and partnership structures are available to qualified investors after NDA execution.</p>
-              {!gateOpen ? (
-                <button className="btn btnGold" onClick={() => setGateOpen(true)}>Request Gated Access &rarr;</button>
-              ) : (
-                <div className="gateSuccess"><p>Thank you. Our team will reach out to begin the vetting process.</p></div>
-              )}
+              <p>Detailed investment memorandums, financial projections, and partnership structures available after NDA execution.</p>
+              {!gateOpen ? <button className="btn btnGold" onClick={() => setGateOpen(true)}>Request Gated Access &rarr;</button> : <div className="gateSuccess"><p>Thank you. Our team will reach out to begin the vetting process.</p></div>}
             </div>
           </FadeIn>
         </div>
@@ -815,19 +815,23 @@ export default function Home() {
       {/* ═══ TEAM ═══ */}
       <section className="sec" id="team">
         <div className="wrap">
-          <FadeIn><div className="secHead"><p className="eyebrow">Leadership</p><h2>About the Cofounders</h2><div className="hdivider" /></div></FadeIn>
           <FadeIn>
-            <div className="teamGrid">
-              {COFOUNDERS.map((c, i) => (
-                <div key={i} className="teamCard">
+            <p className="eyebrow" style={{ textAlign: "center" }}>Leadership</p>
+            <TextReveal text="About the Cofounders" className="secTitle" />
+            <div className="hdivider" />
+          </FadeIn>
+          <div className="teamGrid">
+            {COFOUNDERS.map((c, i) => (
+              <FadeIn key={i} delay={i * 0.15} direction={i === 0 ? "right" : "left"}>
+                <div className="teamCard">
                   <div className="teamPhoto"><img src={c.img} alt={c.name} /></div>
                   <h3>{c.name}</h3>
                   <p>{c.bio}</p>
                   <div className="teamOrgs">{c.orgs.map(o => <span key={o}>{o}</span>)}</div>
                 </div>
-              ))}
-            </div>
-          </FadeIn>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -835,18 +839,15 @@ export default function Home() {
       <section className="sec secAlt" id="waitlist">
         <div className="wrap">
           <FadeIn>
-            <div className="secHead">
-              <p className="eyebrow">Get Involved</p>
-              <h2>Apply to Join the ChoZen Path</h2>
-              <div className="hdivider" />
-              <p className="secDesc">Future residents, community members, and investors &mdash; your journey starts here. Secure your spot in a community that will inspire future generations.</p>
-            </div>
+            <p className="eyebrow" style={{ textAlign: "center" }}>Get Involved</p>
+            <TextReveal text="Apply to Join the ChoZen Path" className="secTitle" />
+            <div className="hdivider" />
+            <p className="secDesc">Future residents, community members, and investors &mdash; your journey starts here.</p>
           </FadeIn>
           <FadeIn><WaitlistForm /></FadeIn>
         </div>
       </section>
 
-      {/* ═══ FOOTER ═══ */}
       <footer className="footer">
         <img src={`${IMG}/chozen-stamp.png`} alt="" className="footerStamp" />
         <div className="footerLogo">CHOZEN</div>
