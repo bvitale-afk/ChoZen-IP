@@ -331,29 +331,91 @@ function PillarExplorer() {
 
 function BrandBookModal({ onClose }) {
   const [page, setPage] = useState(0);
-  const p = BOOK_PAGES[page];
+  const [turning, setTurning] = useState(false);
+  const [turnDir, setTurnDir] = useState(null); // 'next' or 'prev'
+  const [fromPage, setFromPage] = useState(0);
   const total = BOOK_PAGES.length;
+
+  const goTo = (target) => {
+    if (turning || target === page || target < 0 || target >= total) return;
+    setFromPage(page);
+    setTurnDir(target > page ? "next" : "prev");
+    setTurning(true);
+    setTimeout(() => {
+      setPage(target);
+      setTurning(false);
+      setTurnDir(null);
+    }, 600);
+  };
+
   useEffect(() => {
-    const fn = e => { if (e.key === "Escape") onClose(); if (e.key === "ArrowRight" && page < total - 1) setPage(page + 1); if (e.key === "ArrowLeft" && page > 0) setPage(page - 1); };
+    const fn = e => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") goTo(page + 1);
+      if (e.key === "ArrowLeft") goTo(page - 1);
+    };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", fn);
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", fn); };
-  }, [page, onClose, total]);
+  }, [page, onClose, total, turning]);
+
+  const renderPage = (p) => (
+    <>
+      <h2 className="modalTitle">{p.title}</h2>
+      {p.subtitle && <p className="modalSub">{p.subtitle}</p>}
+      {p.text && <p className="modalText">{p.text}</p>}
+      {p.items && <div className="modalItems">{p.items.map((item, i) => <div key={i} className="modalItem"><strong>{item.bold}</strong> &mdash; {item.text}</div>)}</div>}
+      {p.lines && <div className="modalLines">{p.lines.map((l, i) => <p key={i}>{l}</p>)}</div>}
+    </>
+  );
+
+  // Determine what shows on the turning page (front = old content, back = new content)
+  const turningFrom = BOOK_PAGES[fromPage];
+  const turningTo = BOOK_PAGES[turnDir === "next" ? Math.min(fromPage + 1, total - 1) : Math.max(fromPage - 1, 0)];
+
   return (
     <div className="modalOverlay" onClick={onClose}>
-      <div className="modalContent" onClick={e => e.stopPropagation()}>
-        <div className="modalHeader"><span>Brand Book</span><div style={{ display: "flex", alignItems: "center", gap: 12 }}><span style={{ fontSize: "0.7rem", opacity: 0.5 }}>{page + 1}/{total}</span><button className="modalClose" onClick={onClose}>&times;</button></div></div>
-        <div className="modalBody">
-          <h2 className="modalTitle">{p.title}</h2>
-          {p.subtitle && <p className="modalSub">{p.subtitle}</p>}
-          {p.text && <p className="modalText">{p.text}</p>}
-          {p.items && <div className="modalItems">{p.items.map((item, i) => <div key={i} className="modalItem"><strong>{item.bold}</strong> &mdash; {item.text}</div>)}</div>}
-          {p.lines && <div className="modalLines">{p.lines.map((l, i) => <p key={i}>{l}</p>)}</div>}
+      <div className="bookModal" onClick={e => e.stopPropagation()}>
+        <div className="bookHeader">
+          <span>Brand Book</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: "0.7rem", opacity: 0.5 }}>{page + 1}/{total}</span>
+            <button className="modalClose" onClick={onClose}>&times;</button>
+          </div>
         </div>
-        <div className="modalFooter">
-          <button disabled={page === 0} onClick={() => setPage(page - 1)} className="modalNav">&larr; Prev</button>
-          <div className="modalDots">{BOOK_PAGES.map((_, i) => <span key={i} onClick={() => setPage(i)} className={`modalDot ${i === page ? "active" : ""}`} />)}</div>
-          <button disabled={page === total - 1} onClick={() => setPage(page + 1)} className="modalNav">Next &rarr;</button>
+        <div className="bookStage">
+          {/* Static base page (current page, visible underneath) */}
+          <div className="bookPage bookPageBase">
+            <div className="bookPageInner">{renderPage(BOOK_PAGES[page])}</div>
+          </div>
+          {/* Turning page overlay */}
+          {turning && turnDir === "next" && (
+            <div className="bookPageTurn bookTurnNext">
+              <div className="bookPageFront">
+                <div className="bookPageInner">{renderPage(turningFrom)}</div>
+              </div>
+              <div className="bookPageBack">
+                <div className="bookPageInner">{renderPage(turningTo)}</div>
+              </div>
+            </div>
+          )}
+          {turning && turnDir === "prev" && (
+            <div className="bookPageTurn bookTurnPrev">
+              <div className="bookPageFront">
+                <div className="bookPageInner">{renderPage(turningTo)}</div>
+              </div>
+              <div className="bookPageBack">
+                <div className="bookPageInner">{renderPage(turningFrom)}</div>
+              </div>
+            </div>
+          )}
+          {/* Page shadow during turn */}
+          {turning && <div className={`bookShadow ${turnDir === "next" ? "bookShadowNext" : "bookShadowPrev"}`} />}
+        </div>
+        <div className="bookFooter">
+          <button disabled={page === 0 || turning} onClick={() => goTo(page - 1)} className="modalNav">&larr; Prev</button>
+          <div className="modalDots">{BOOK_PAGES.map((_, i) => <span key={i} onClick={() => goTo(i)} className={`modalDot ${i === page ? "active" : ""}`} />)}</div>
+          <button disabled={page === total - 1 || turning} onClick={() => goTo(page + 1)} className="modalNav">Next &rarr;</button>
         </div>
       </div>
     </div>
