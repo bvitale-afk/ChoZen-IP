@@ -518,7 +518,7 @@ export default function Home() {
               { img: `${IMG}/tony-cho.jpg`, title: "Thought Leaders", text: "Future of Cities founders, Chopra advisors, activists building the new world." },
               { img: `${IMG}/gathering-spaces.jpg`, title: "Events & Gatherings", text: "Thousands served across summits, retreats, and seasonal celebrations." },
             ].map((c, i) => (
-              <FadeIn key={i} delay={0.1 + i * 0.1}>
+              <FadeIn key={i} delay={0.1 + i * 0.1} className="commGridItem">
                 <TiltCard className="commCard">
                   <div className="commIcon"><img src={c.img} alt={c.title} /></div>
                   <h4>{c.title}</h4>
@@ -549,7 +549,7 @@ export default function Home() {
                 <p className="ipFeatureEyebrow">Residential Development</p>
                 <h3>ChoZen Village</h3>
                 <p className="ipFeatureTagline">Regenerative Nature Hood</p>
-                <p>Harmonious, eco-friendly living spaces. 55 homes, cottages and tree houses from $700K&ndash;$6M+.</p>
+                <p>Harmonious, eco-friendly living spaces created to nurture your well-being. 55 homes, cottages and tree houses priced from $700K&ndash;$6M+. Each residence is designed with regenerative principles &mdash; native landscaping, passive solar orientation, and direct access to nature trails and community gathering spaces.</p>
                 <div className="ipFeatureTags"><span>Edible Landscapes</span><span>Food Forests</span><span>Farmlettes</span><span>Sustainable Homes</span></div>
               </div>
             </div>
@@ -561,7 +561,7 @@ export default function Home() {
                 <p className="ipFeatureEyebrow">Hospitality Development</p>
                 <h3>ChoZen Retreats</h3>
                 <p className="ipFeatureTagline">250 Rooms &bull; Earth-to-Table</p>
-                <p>Luxury ecoglamping with world-class wellness programming.</p>
+                <p>Thoughtfully designed retreats that blend comfort and sustainability to inspire rest and rejuvenation. From luxury safari-style tents to treehouse suites, each experience is curated around earth-to-table dining, thermal therapy, and immersive nature programming.</p>
                 <div className="ipFeatureTags"><span>Luxury Ecoglamping</span><span>World-Class Wellness</span><span>Regenerative Experiences</span></div>
               </div>
             </div>
